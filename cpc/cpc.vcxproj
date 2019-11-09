@@ -153,6 +153,9 @@
   <ItemGroup>
     <ClCompile Include="cpc.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CLI11.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

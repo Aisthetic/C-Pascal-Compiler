@@ -2,10 +2,20 @@
 //
 
 #include <iostream>
+#include "CLI11.hpp"
+using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
-    std::cout << "Hello World!\n"; 
+	CLI::App app{ "App description" };
+
+	std::string filename = "default";
+	app.add_option("-f,--file", filename,	 "A help string");
+
+	CLI11_PARSE(app, argc, argv);
+
+	
+	return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
