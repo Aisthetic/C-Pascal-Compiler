@@ -18,9 +18,15 @@
     <ClCompile Include="cpc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Hashage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLI11.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Hashage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -152,9 +152,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cpc.cpp" />
+    <ClCompile Include="Hashage.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLI11.hpp" />
+    <ClInclude Include="Hashage.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
