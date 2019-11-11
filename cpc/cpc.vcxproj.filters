@@ -21,12 +21,33 @@
     <ClCompile Include="Hashage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Lexical.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LMotsRes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MotReserve.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLI11.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Hashage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lexical.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LMotsRes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MotReserve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

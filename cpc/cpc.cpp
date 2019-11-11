@@ -1,22 +1,30 @@
 // cpc.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
-
 #include <iostream>
 #include "CLI11.hpp"
+#include "Lexical.h"
 using namespace std;
 
 int main(int argc, char* argv[])
 {
 	CLI::App app{ "Compilateur du language C-Pascal" };
-
-	std::string filename = "default";
-	app.add_option("-f,--file", filename,"A help string");
-
+	//Processing multiple files
+	vector<string> files;
+	app.add_option("files", files, "Files to add");
+	
 	CLI11_PARSE(app, argc, argv);
-
-
+	cout << "Processing files:";
+	Lexical *lexical = new Lexical();
+	for (auto file : files) {
+		cout << "Processing file : " << file << endl;
+		lexical->setInput(file);
+		lexical->processAllFile();
+	}
+		
+	
 	return 0;
 }
+
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
 // Debug program: F5 or Debug > Start Debugging menu

@@ -1,5 +1,7 @@
+#pragma once
 #include <iostream>
 #include <string>
+#include "Utilities.h"
 using namespace std;
 
 class Hashage
@@ -8,13 +10,13 @@ private:
 
 	static const int TABLESIZE = 20;
 
-	struct item
+	typedef struct node
 	{
 		string data;
-		item* next;
-	};
+		node* next;
+	} node;
 
-	item* HashTable[TABLESIZE];
+	node* HashTable[TABLESIZE];
 
 	int collisions = 0;
 
@@ -22,7 +24,7 @@ public:
 
 	Hashage();
 
-	int  Hash(string key); // prends une chaine de caractères et retourne son indice
+	int Hash(string key); // prends une chaine de caractères et retourne son indice
 
 	void ajouter(string data); //prends une chaine de caractère et l'ajoute dans notre table
 

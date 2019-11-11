@@ -2,12 +2,14 @@
 #include <string>
 #include "Hashage.h"
 #include <math.h>
+#include "Utilities.h"
 using namespace std;
+
 Hashage::Hashage()
 {
 	for (int i = 0; i < TABLESIZE; i++)
 	{
-		HashTable[i] = new item;
+		HashTable[i] = new node;
 		HashTable[i]->data = "";
 		HashTable[i]->next = NULL;
 	}
@@ -25,8 +27,8 @@ void Hashage::ajouter(string data)
 	else
 	{
 		collisions++;
-		item* Ptr = HashTable[index];
-		item* n = new item;
+		node* Ptr = HashTable[index];
+		node* n = new node;
 		n->data = data;
 		n->next = NULL;
 		while (Ptr->next != NULL)
@@ -47,7 +49,7 @@ int Hashage::nombreDesNoeuds(int index)
 	else
 	{
 		count++;
-		item* Ptr = HashTable[index];
+		node* Ptr = HashTable[index];
 		while (Ptr->next != NULL)
 		{
 			count++;
@@ -78,7 +80,7 @@ void Hashage::afficher()
 }
 void Hashage::afficherNoeuds(int index)
 {
-	item* Ptr = HashTable[index];
+	node* Ptr = HashTable[index];
 
 	if (Ptr->data == "")
 	{
@@ -98,9 +100,9 @@ bool Hashage::supprimer(string name)
 {
 	int index = Hash(name);
 
-	item* delPtr;
-	item* P1;
-	item* P2;
+	node* delPtr;
+	node* P1;
+	node* P2;
 
 	if (existe(name) == -1)// précondition
 		return false; //non trouvé
@@ -167,9 +169,9 @@ int Hashage::existe(string info)
 {
 	int index = Hash(info);
 
-	item* delPtr;
-	item* P1;
-	item* P2;
+	node* delPtr;
+	node* P1;
+	node* P2;
 
 	//Case 0 - seau vide
 	if (HashTable[index]->data == "")

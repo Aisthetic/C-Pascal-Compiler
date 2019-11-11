@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -153,10 +153,17 @@
   <ItemGroup>
     <ClCompile Include="cpc.cpp" />
     <ClCompile Include="Hashage.cpp" />
+    <ClCompile Include="Lexical.cpp" />
+    <ClCompile Include="LMotsRes.cpp" />
+    <ClCompile Include="MotReserve.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLI11.hpp" />
     <ClInclude Include="Hashage.h" />
+    <ClInclude Include="Lexical.h" />
+    <ClInclude Include="LMotsRes.h" />
+    <ClInclude Include="MotReserve.h" />
+    <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
