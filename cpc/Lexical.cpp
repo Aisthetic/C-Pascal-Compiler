@@ -172,6 +172,11 @@ bool Lexical::estCaractere()
 
 bool Lexical::estBlanc(char c)
 {
+	if (c == '#')//commentaire
+	{
+		input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		lireCar();
+	}
 	return (c == ' ') || (c == '\t') || (c == '\n') || (c == '\v');
 }
 
