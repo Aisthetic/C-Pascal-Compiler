@@ -17,7 +17,7 @@ private:
 	Hashage indetifs; //table des identifiants
 	//methods
 	bool estBlanc(char);
-	void lireCar();
+	bool lireCar();//bool pour verifier si on peut toujours lire
 	void initierMotsReserves();
 	
 public:

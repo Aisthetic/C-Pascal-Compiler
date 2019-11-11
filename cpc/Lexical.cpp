@@ -160,9 +160,9 @@ bool Lexical::estBlanc(char c)
 	return (c == ' ') || (c == '\t') || (c == '\n') || (c == '\v');
 }
 
-void Lexical::lireCar()
+bool Lexical::lireCar()
 {
-	currentChar = input.get();
+	return (bool)(input >> currentChar);
 }
 
 void Lexical::initierMotsReserves()
@@ -182,7 +182,13 @@ void Lexical::initierMotsReserves()
 
 void Lexical::processAllFile()
 {
-	//whil
+	lireCar();
+	if (!output.is_open())
+		output.open("lexicalOutput.txt");
+	while (!input.eof()) {
+		auto unite = uniteSuivante();
+		cout << unite.UL << endl;
+	}
 }
 
 void Lexical::setInput(string file)

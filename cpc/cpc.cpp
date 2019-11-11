@@ -13,15 +13,13 @@ int main(int argc, char* argv[])
 	app.add_option("files", files, "Files to add");
 	
 	CLI11_PARSE(app, argc, argv);
-	cout << "Processing files:";
 	Lexical *lexical = new Lexical();
 	for (auto file : files) {
 		cout << "Processing file : " << file << endl;
 		lexical->setInput(file);
 		lexical->processAllFile();
+		cout << "lexical done for " << file;
 	}
-		
-	
 	return 0;
 }
 

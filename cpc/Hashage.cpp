@@ -155,12 +155,13 @@ bool Hashage::supprimer(string name)
 
 int Hashage::Hash(string key) // hashage par la méthode polynomiale et compression par methode de la division
 {
-	int hash1 = 0;
+	long hash1 = 0;
 	int index;
 	int coef = 42;
 	for (int i = 0; i < key.length(); i++)
 	{
-		hash1 = hash1 + ((int)key[i]) * (pow(coef, i));
+		hash1 = hash1 + ((int)key[i]);
+		hash1 = hash1 % TABLESIZE;
 	}
 	index = hash1 % TABLESIZE;
 	return index;
