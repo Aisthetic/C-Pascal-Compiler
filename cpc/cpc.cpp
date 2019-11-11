@@ -11,12 +11,13 @@ int main(int argc, char* argv[])
 	//Processing multiple files
 	vector<string> files;
 	app.add_option("files", files, "Files to add");
-	
+
 	CLI11_PARSE(app, argc, argv);
+
 	Lexical *lexical = new Lexical();
 	for (auto file : files) {
 		cout << "Processing file : " << file << endl;
-		lexical->setInput(file);
+		lexical->setInput("main.txt");
 		lexical->processAllFile();
 		cout << "lexical done for " << file;
 	}

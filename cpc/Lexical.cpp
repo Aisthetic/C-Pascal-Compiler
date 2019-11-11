@@ -125,8 +125,7 @@ TUniteLexicale Lexical::uniteSuivante()
 			string str(lexeme.begin(), lexeme.end());
 			if(motsReserves.existe(str))
 			{
-				unite.UL = IDENT;
-				
+				unite.UL = IDENT;				
 			}
 			else
 			{
@@ -162,7 +161,10 @@ bool Lexical::estBlanc(char c)
 
 bool Lexical::lireCar()
 {
-	return (bool)(input >> currentChar);
+	if (!input.is_open()) 
+		return false;
+	cout << "Current car : " << currentChar << endl;
+ 	return (bool)(input >> currentChar);
 }
 
 void Lexical::initierMotsReserves()
@@ -182,9 +184,11 @@ void Lexical::initierMotsReserves()
 
 void Lexical::processAllFile()
 {
-	lireCar();
+	if (!lireCar()) {
+		return;
+	}
 	if (!output.is_open())
-		output.open("lexicalOutput.txt");
+		output.open("./lexicalOutput.txt");
 	while (!input.eof()) {
 		auto unite = uniteSuivante();
 		cout << unite.UL << endl;
@@ -193,7 +197,13 @@ void Lexical::processAllFile()
 
 void Lexical::setInput(string file)
 {
-	this->input.open(file);
+	input.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try {
+		input.open("main.txt");
+	}
+	catch (exception e) {
+		cout << "Erreur lors de l'ouverture du fichier " << file << endl;
+	}
 }
 
 
