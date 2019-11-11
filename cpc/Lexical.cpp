@@ -19,6 +19,7 @@ TUniteLexicale Lexical::uniteSuivante()
 {
 	TUniteLexicale unite;
 	unite.UL = ERR;//Default case is always an error
+	unite.attribut = 0;
 
 	while (estBlanc(currentChar))//sauter les blancs
 		lireCar();
@@ -141,6 +142,8 @@ TUniteLexicale Lexical::uniteSuivante()
 			unite.attribut = 0;//erreur: charactere non reconnu
 
 	}
+	cout << "UL: " << unite.UL << ", Attribut: " << unite.attribut << endl;
+	lireCar();
 	return unite;
 }
 
@@ -191,7 +194,6 @@ void Lexical::processAllFile()
 		output.open("./lexicalOutput.txt");
 	while (!input.eof()) {
 		auto unite = uniteSuivante();
-		cout << unite.UL << endl;
 	}
 }
 
