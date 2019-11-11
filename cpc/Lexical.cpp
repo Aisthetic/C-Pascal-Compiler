@@ -26,44 +26,58 @@ TUniteLexicale Lexical::uniteSuivante()
 
 	switch (currentChar) {
 	case ';':
+		lireCar();
 		unite.UL = PTVRG;
 		break;
 	case ',':
+		lireCar();
 		unite.UL = VIRG;
 		break;
 	case '{':
+		lireCar();
 		unite.UL = ACCOUV;
 		break;
 	case '}':
+		lireCar();
 		unite.UL = ACCFERM;
 		break;
 	case '(':
+		lireCar();
 		unite.UL = PAROUV;
 		break;
 	case ')':
+		lireCar();
 		unite.UL = PARFERM;
 		break;
 	case '[':
+		lireCar();
 		unite.UL = CROOUV;
 		break;
 	case ']':
+		lireCar();
 		unite.UL = CROFER;
 		break;
 	case '&':
+		lireCar();
 		unite.UL = ET;
 		break;
 	case '|':
+		lireCar();
 		unite.UL = OU;
 		break;
 	case '+':
+		lireCar();
 		unite.UL = ADD;
 		break;
 	case '-':
+		lireCar();
 		unite.UL = SOUS;
 	case '*':
+		lireCar();
 		unite.UL = MUL;
 		break;
 	case '/':
+		lireCar();
 		unite.UL = DIV;
 		break;
 	case '<':
@@ -78,9 +92,11 @@ TUniteLexicale Lexical::uniteSuivante()
 		}
 		break;
 	case '=':
+		lireCar();
 		unite.UL = EGAL;
 		break;
 	case '!':
+		lireCar();
 		unite.UL = NON;
 		break;
 	case '>':
@@ -97,12 +113,11 @@ TUniteLexicale Lexical::uniteSuivante()
 	default:
 		if (estChiffre())
 		{
-			vector<char> lexeme;
-			do{
+			vector<int> lexeme;
+			do {
+				lexeme.push_back(currentChar - '0');
 				lireCar();
-				lexeme.push_back(currentChar);
-			}
-			while(estChiffre());
+			} while (estChiffre());
 			reverse(lexeme.begin(), lexeme.end());
 			int decimal = 1;
 			int total = 0;
@@ -112,29 +127,28 @@ TUniteLexicale Lexical::uniteSuivante()
 				decimal *= 10;
 			}
 			unite.UL = CONST;
-			unite.attribut=total;
+			unite.attribut = total;
 		}
 		else if (estCaractere())
 		{
 			vector<char> lexeme;
-			
-			do{
-				lireCar();
+
+			do {
 				lexeme.push_back(currentChar);
-			}
-			while(estCaractere()||estChiffre());
+				lireCar();
+			} while (estCaractere() || estChiffre());
 			string str(lexeme.begin(), lexeme.end());
-			if(motsReserves.existe(str))
+			if (motsReserves.existe(str))
 			{
-				unite.UL = IDENT;				
+				unite.UL = IDENT;
 			}
 			else
 			{
-				if(indetifs.existe(str)==-1)
+				if (indetifs.existe(str) == -1)
 				{
 					indetifs.ajouter(str);
 				}
-				unite.attribut= motsReserves.existe(str);
+				unite.attribut = motsReserves.existe(str);
 				unite.UL = MOTCLE;
 			}
 		}
@@ -142,19 +156,18 @@ TUniteLexicale Lexical::uniteSuivante()
 			unite.attribut = 0;//erreur: charactere non reconnu
 
 	}
-	cout << "UL: " << unite.UL << ", Attribut: " << unite.attribut << endl;
-	lireCar();
+
 	return unite;
 }
 
 bool Lexical::estChiffre()
 {
-	return (currentChar >= 0 && currentChar <= 9);
+	return currentChar >= '0' && currentChar <= '9';
 }
 
 bool Lexical::estCaractere()
 {
-	return ((currentChar>='A'&&currentChar<='Z')||(currentChar>='a'&&currentChar<='z'));
+	return ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= 'a' && currentChar <= 'z'));
 }
 
 bool Lexical::estBlanc(char c)
@@ -164,10 +177,10 @@ bool Lexical::estBlanc(char c)
 
 bool Lexical::lireCar()
 {
-	if (!input.is_open()) 
+	if (!input.is_open())
 		return false;
 	cout << "Current car : " << currentChar << endl;
- 	return (bool)(input >> currentChar);
+	return (bool)(input >> currentChar);
 }
 
 void Lexical::initierMotsReserves()
@@ -194,16 +207,15 @@ void Lexical::processAllFile()
 		output.open("./lexicalOutput.txt");
 	while (!input.eof()) {
 		auto unite = uniteSuivante();
+		output << "UL: " << unite.UL << ", Attribut: " << unite.attribut << endl;
 	}
 }
 
 void Lexical::setInput(string file)
 {
-	input.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-	try {
-		input.open("main.txt");
-	}
-	catch (exception e) {
+	input.open("main.txt");
+
+	if (!input.good()) {
 		cout << "Erreur lors de l'ouverture du fichier " << file << endl;
 	}
 }
