@@ -27,15 +27,10 @@ void Hashage::ajouter(string data)
 	else
 	{
 		collisions++;
-		node* Ptr = HashTable[index];
 		node* n = new node;
 		n->data = data;
-		n->next = NULL;
-		while (Ptr->next != NULL)
-		{
-			Ptr = Ptr->next;
-		}
-		Ptr->next = n;
+		n->next = HashTable[index];
+		HashTable[index] = n;
 	}
 }
 int Hashage::nombreDesNoeuds(int index)

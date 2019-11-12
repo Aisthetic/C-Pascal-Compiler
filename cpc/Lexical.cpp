@@ -138,9 +138,10 @@ TUniteLexicale Lexical::uniteSuivante()
 				lireCar();
 			} while (estCaractere() || estChiffre());
 			string str(lexeme.begin(), lexeme.end());
-			if (motsReserves.existe(str))
+			if (motsReserves.existe(str)!=-1)
 			{
 				unite.UL = IDENT;
+				unite.attribut = motsReserves.existe(str);
 			}
 			else
 			{
@@ -148,7 +149,7 @@ TUniteLexicale Lexical::uniteSuivante()
 				{
 					indetifs.ajouter(str);
 				}
-				unite.attribut = motsReserves.existe(str);
+				unite.attribut = indetifs.existe(str);
 				unite.UL = MOTCLE;
 			}
 		}
