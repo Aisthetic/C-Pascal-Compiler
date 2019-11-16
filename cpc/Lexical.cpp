@@ -20,9 +20,11 @@ TUniteLexicale Lexical::uniteSuivante()
 	TUniteLexicale unite;
 	unite.UL = ERR;//Default case is always an error
 	unite.attribut = 0;
-
-	while (estBlanc(currentChar))//sauter les blancs
-		lireCar();
+	
+	while (estBlanc(currentChar)&&lireCar())
+	{
+		//silence is golden	
+	}
 
 	switch (currentChar) {
 	case ';':
@@ -113,7 +115,7 @@ TUniteLexicale Lexical::uniteSuivante()
 	default:
 		if (estChiffre())
 		{
-			vector<int> lexeme;
+			vector<int> lexeme{};
 			do {
 				lexeme.push_back(currentChar - '0');
 				lireCar();
@@ -131,16 +133,16 @@ TUniteLexicale Lexical::uniteSuivante()
 		}
 		else if (estCaractere())
 		{
-			vector<char> lexeme;
+			vector<char> lexeme{};
 
 			do {
 				lexeme.push_back(currentChar);
 				lireCar();
-			} while (estCaractere() || estChiffre());
+			} while ((estCaractere() || estChiffre()) );
 			string str(lexeme.begin(), lexeme.end());
 			if (motsReserves.existe(str)!=-1)
 			{
-				unite.UL = IDENT;
+				unite.UL = MOTCLE;
 				unite.attribut = motsReserves.existe(str);
 			}
 			else
@@ -150,7 +152,7 @@ TUniteLexicale Lexical::uniteSuivante()
 					indetifs.ajouter(str);
 				}
 				unite.attribut = indetifs.existe(str);
-				unite.UL = MOTCLE;
+				unite.UL = IDENT;
 			}
 		}
 		else
@@ -168,7 +170,8 @@ bool Lexical::estChiffre()
 
 bool Lexical::estCaractere()
 {
-	return ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= 'a' && currentChar <= 'z'));
+		return ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= 'a' && currentChar <= 'z'));
+	
 }
 
 bool Lexical::estBlanc(char c)
@@ -186,7 +189,10 @@ bool Lexical::lireCar()
 	if (!input.is_open())
 		return false;
 	cout << "Current car : " << currentChar << endl;
-	return (bool)(input >> currentChar);
+	if(!input.eof())
+		return (bool)(input >> ::noskipws>> currentChar);
+	return false;
+	
 }
 
 void Lexical::initierMotsReserves()
@@ -206,15 +212,101 @@ void Lexical::initierMotsReserves()
 
 void Lexical::processAllFile()
 {
-	if (!lireCar()) {
+	int test = currentChar;
+	if ( !lireCar() ) {
 		return;
 	}
 	if (!output.is_open())
 		output.open("./lexicalOutput.txt");
 	while (!input.eof()) {
+		
 		auto unite = uniteSuivante();
-		output << "UL: " << unite.UL << ", Attribut: " << unite.attribut << endl;
+		output << endl << "UL: " << unite.UL << ", Attribut: " << unite.attribut;
+		switch (unite.UL)
+		{
+		case 23:
+			output << "\t lexeme: " << indetifs.pop(unite.attribut);
+			break;
+		case 21:
+			output << "\t lexeme: " << unite.attribut;
+			break;
+		case 22:
+			output << "\t lexeme: " << motsReserves.pop(unite.attribut) ;
+			break;
+		case 0:
+			output << "\t lexeme: " << ";";
+			break;
+		case 1:
+			output << "\t lexeme: " << ",";
+			break;
+		case 2:
+			output << "\t lexeme: " << "{";
+			break;
+		case 3:
+			output << "\t lexeme: " << "}";
+			break;
+		case 4:
+			output << "\t lexeme: " << "(";
+			break;
+		case 5:
+			output << "\t lexeme: " << ")";
+			break;
+		case 6:
+			output << "\t lexeme: " << "[";
+			break;
+		case 7:
+			output << "\t lexeme: " << "]";
+			break;
+		case 8:
+			output << "\t lexeme: " << "&";
+			break;
+		case 9:
+			output << "\t lexeme: " << "|";
+			break;
+		case 10:
+			output << "\t lexeme: " << "+";
+			break;
+		case 11:
+			output << "\t lexeme: " << "-";
+			break;
+		case 12:
+			output << "\t lexeme: " << "*";
+			break;
+		case 13:
+			output << "\t lexeme: " << "/";
+			break;
+		case 14:
+			output << "\t lexeme: " << "<=";
+			break;
+		case 15:
+			output << "\t lexeme: " << "<";
+			break;
+		case 16:
+			output << "\t lexeme: " << "=";
+			break;
+		case 17:
+			output << "\t lexeme: " << "!=";
+			break;
+		case 18:
+			output << "\t lexeme: " << "!";
+			break;
+		case 19:
+			output << "\t lexeme: " << ">=";
+			break;
+		case 20:
+			output << "\t lexeme: " << ">";
+			break;
+		case 24:
+			output << "\t lexeme: " << "ERR";
+			break;
+		default:
+			break;
+		}	
+	
 	}
+	//pour des soucis de débuggage : 
+		//indetifs.afficher();
+		//motsReserves.afficher();
 }
 
 void Lexical::setInput(string file)
