@@ -30,6 +30,9 @@
     <ClCompile Include="MotReserve.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Syntaxique.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLI11.hpp">
@@ -48,6 +51,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MotReserve.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Syntaxique.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

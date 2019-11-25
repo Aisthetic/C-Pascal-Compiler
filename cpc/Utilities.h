@@ -26,11 +26,22 @@ typedef enum
 	CONST, // CONST
 	MOTCLE, // MOT RESERVE
 	IDENT, // IDENTIFIANT
-	ERR,//Erreur
-
+	CAR, // Caractere
+	ERR, //Erreur
+	END //fin de fichier
 } TUnite;
 
-
+typedef enum//on ajoute le e pour éviter la confusion entre les fonctions et les enums pour le compilateur
+{
+	eProgramme,
+	eListeDeDeclarations,
+	eDeclaration,
+	eListeDeFonctions,
+	eFonction,
+	eIdentificateur,
+	eLettre,
+	eCaractere,
+} Production;
 
 typedef struct TUniteLexicale
 {

@@ -156,13 +156,16 @@
     <ClCompile Include="Lexical.cpp" />
     <ClCompile Include="LMotsRes.cpp" />
     <ClCompile Include="MotReserve.cpp" />
+    <ClCompile Include="Syntaxique.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CLI11.hpp" />
+    <ClInclude Include="Constants.h" />
     <ClInclude Include="Hashage.h" />
     <ClInclude Include="Lexical.h" />
     <ClInclude Include="LMotsRes.h" />
     <ClInclude Include="MotReserve.h" />
+    <ClInclude Include="Syntaxique.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
