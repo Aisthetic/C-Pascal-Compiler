@@ -80,11 +80,11 @@ void Syntaxique::listeDeFonctions()
 	else if (uniteCourante.UL== MOTCLE &&uniteCourante.attribut == lexical->identifiants.existe("main")) // à affiner
 	{
 		consommer();
-		consommer('(');
-		consommer(')');
-		consommer('{');
+		consommer("(");
+		consommer(")");
+		consommer("{");
 		listeInstructions();
-		consommer('}');
+		consommer("}");
 	}
 	else
 	{
@@ -101,7 +101,7 @@ void Syntaxique::fonction()
 		consommer(")");
 		listeDeDeclarations();
 		consommer("{");
-		listeInscructions();
+		listeInstructions();
 		consommer("}");
 	}
 	else
@@ -182,9 +182,9 @@ void Syntaxique::declarationSeconde()
 {
 	if (estPremierDe(eExpression))
 	{
-		consommer('[');
+		consommer("[");
 		expression();
-		consommer(']');
+		consommer("]");
 	}
 }
 
