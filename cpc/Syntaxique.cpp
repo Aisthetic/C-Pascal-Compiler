@@ -312,7 +312,7 @@ void Syntaxique::facteur(){
 		identif();
 		facteurPrime();
 	}
-	else if(estPremierDe(ecte){
+	else if(estPremierDe(ecte)){
 		cte();
 	}
 	else if (uniteCourante.UL == "PAROUV" ) {
@@ -326,61 +326,90 @@ void Syntaxique::facteur(){
 		//// souhail : il faut ajouter une condition ici ==> verifier_unite(TIRÉ) 
 	}
 	else {
-		syntaxError(e);
+		syntaxError(eFacteur);
 	}
 }
 	
 void Syntaxique::facteurPrime(){
-	if (uniteCourante.UL == "CROOUV") {
+	if (uniteCourante.UL == CROOUV) {
 		consommer();
 		expression();
 		//// souhail : il faut ajouter une condition ici ==> verifier_unite(COUVFER) 
 	}
-	else if (uniteCourante.UL == "PAROUV" ) {
+	else if (uniteCourante.UL == PAROUV ) {
 		consommer();
 		parametresEffictifs();
 		//// souhail : il faut ajouter une condition ici ==> verifier_unite(PARFER) 
 	}
 }
 void Syntaxique::parametresEffictifs(){
-	if (estPremierDe(eexpressions)) {
+	if (estPremierDe(eExpressions)) {
 		expressions(); 
 	}
 }
 
 void Syntaxique::expressions()
 {
+	if(estPremierDe(eExpression)){
+		expression();
+		expressionPrime();
+	}
+	else {
+		syntaxError(eExpression);
+	}
 }
 
 void Syntaxique::expressionsPrime()
 {
+	if (uniteCourante.UL == VIRG) {
+		expression();
+		expressionPrime();
+	}
+	else if (estSuivantDe(eExpressionPrime)) {
+		//doz 7yd
+	}
+	else {
+		syntaxError(eExpression);
+	}
 }
 
 void Syntaxique::operateurLogique()
 {
+	if (uniteCourante.UL == OU || uniteCourante.UL == ET) {
+		consommer();
+	}
+	else {
+		syntaxError(eOperateurLogique);
+	}
 }
 
 void Syntaxique::comparaison()
 {
+	if (uniteCourante.UL == SUP || uniteCourante.UL == INFEGAL || uniteCourante.UL == SUPEGAL
+		|| uniteCourante.UL == INF || uniteCourante.UL == EGAL || uniteCourante.UL == EGALEGAL)
+		consommer();
+	else
+		syntaxError(eComparaison);
 }
 
 void Syntaxique::identif()
 {
+	if (uniteCourante.UL == IDENT) {
+		consommer();
+	}
+	else
+		syntaxError(eIdentif);
 }
 
-void Syntaxique::mot()
-{
-}
 
 void Syntaxique::cte()
 {
+	if (uniteCourante.UL == CONST) {
+		consommer();
+	}
+	else
+		syntaxError(eCte);
 }
-
-void Syntaxique::ctePrime()
-{
-}
-
-
 
 void Syntaxique::syntaxError(Production prod) {
 	
@@ -422,6 +451,11 @@ bool Syntaxique::estPremierDe(Production unite) {
 
 bool Syntaxique::estSuivantDe(Production unite) {
 	return false;
+}
+
+bool Syntaxique::uniteCouranteEst(string identifiant)
+{
+	return uniteCourante.UL == IDENT && uniteCourante.attribut == lexical->identifiants.existe(identifiant);
 }
 
 //Destructeur

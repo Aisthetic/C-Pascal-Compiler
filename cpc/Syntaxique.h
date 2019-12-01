@@ -15,6 +15,25 @@ public:
 	// M�thodes divers
 	void startParsing();
 
+	
+
+private:
+	// Attributs	
+	Lexical* lexical;
+	TUniteLexicale uniteCourante;
+	vector<string> errors;
+	fstream xmlFile;
+
+	// Methodes
+	void end();
+	void printErrors();
+	void xmlOpen(string caller); // Ecrit dans le fichier XML la balise ouvrante de la fonction caller
+	void xmlClose(string caller);  // De m�me pour la balise fermante$
+	void syntaxError(Production prod);
+	void consommer(char str);
+	bool estPremierDe(Production unite);
+	bool estSuivantDe(Production unite);
+	bool uniteCouranteEst(string identifiant);//vérifie si le lexème correspondant à l'unité courante est égal à l'id en paramètre
 	// M�thodes issues des productions
 	void programme();
 	void listeDeFonctions();
@@ -51,31 +70,10 @@ public:
 	void operateurLogique();
 	void comparaison();
 	void identif();
-	void mot();
 	void cte();
-	void ctePrime();
 	void chiffre();
 	void lettre();
 
-	void syntaxError(Production prod);
-
-	void consommer(char str);
-
-	bool estPremierDe(Production unite);
-
-	bool estSuivantDe(Production unite);
-
-private:
-	// Attributs	
-	Lexical* lexical;
-	TUniteLexicale uniteCourante;
-	vector<string> errors;
-	fstream xmlFile;
-
-	// Methodes
-	void end();
-	void printErrors();
-	void xmlOpen(string caller); // Ecrit dans le fichier XML la balise ouvrante de la fonction caller
-	void xmlClose(string caller);  // De m�me pour la balise fermante
+	
 };
 

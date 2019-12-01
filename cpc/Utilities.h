@@ -19,6 +19,7 @@ typedef enum
 	INFEGAL, // <=
 	INF, // <
 	EGAL, // =
+	EGALEGAL, // ==
 	NONEGAL, // !=
 	NON, // !
 	SUPEGAL, // >=
@@ -44,6 +45,14 @@ typedef enum//on ajoute le e pour éviter la confusion entre les fonctions et les
 	eListeDeDeclarationsPrime,
 	eExpression,
 	eParametre,
+	eExpressionPrime,
+	eOperateurLogique,
+	eComparaison,
+	eIdentif,
+	eExpressions,
+	eFacteur,
+	eCte,
+
 } Production;
 
 typedef struct TUniteLexicale
