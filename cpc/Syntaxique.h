@@ -65,7 +65,7 @@ private:
 	void termePrioritaire();
 	void facteur();
 	void facteurPrime();
-	void parametresEffictifs();
+	void parametresEffectifs();
 	void expressions();
 	void expressionsPrime();
 	void operateurLogique();

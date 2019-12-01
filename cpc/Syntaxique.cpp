@@ -336,8 +336,10 @@ void Syntaxique::expressionPrime()
 {
 	if (estPremierDe(eOperateurLogique)) {
 		operateurLogique();
+		expressionLogique();
 		expressionPrime();
 	}
+
 	else { syntaxError(eExpressionPrime); }
 }
 
@@ -356,6 +358,12 @@ void Syntaxique::expressionLogiquePrime(){
 		comparaison();
 		expressionSimple();
 		expressionLogiquePrime();
+	}
+	else if (estSuivantDe(eExpressionLogiquePrime)) {
+		//doz 7yd
+	}
+	else {
+		syntaxError(eExpressionLogiquePrime);
 	}
 }
 
@@ -385,6 +393,12 @@ void Syntaxique::expressionSimplePrime(){
 		terme();
 		expressionSimplePrime();
 	}
+	else if (estSuivantDe(eExpressionSimplePrime)) {
+		//doz 7yd
+	}
+	else {
+		syntaxError(eExpressionSimplePrime);
+	}
 }
 
 void Syntaxique::terme(){
@@ -406,6 +420,12 @@ void Syntaxique::termePrime(){
 		consommer();
 		facteur();
 		termePrime();
+	}
+	else if (estSuivantDe(eTermePrime)) {
+		//doz 7yd
+	}
+	else {
+		syntaxError(eTermePrime);
 	}
 }
 
@@ -455,13 +475,26 @@ void Syntaxique::facteurPrime(){
 	}
 	else if (uniteCourante.UL == PAROUV ) {
 		consommer();
-		parametresEffictifs();
+		parametresEffectifs();
 		consommer(")"); 
 	}
+	else if (estSuivantDe(eFacteurPrime)) {
+		//doz 7yd
+	}
+	else {
+		syntaxError(eFacteurPrime);
+	}
 }
-void Syntaxique::parametresEffictifs(){
+
+void Syntaxique::parametresEffectifs(){
 	if (estPremierDe(eExpressions)) {
 		expressions(); 
+	}
+	else if (estSuivantDe(eParametresEffectifs)) {
+		//doz 7yd
+	}
+	else {
+		syntaxError(eParametresEffectifs);
 	}
 }
 
@@ -482,11 +515,11 @@ void Syntaxique::expressionsPrime()
 		expression();
 		expressionPrime();
 	}
-	else if (estSuivantDe(eExpressionPrime)) {
+	else if (estSuivantDe(eExpressionsPrime)) {
 		//doz 7yd
 	}
-	else { // souhail : source d'erreur	
-		syntaxError(eExpression); 
+	else { 
+		syntaxError(eExpressionsPrime); 
 	}
 }
 
@@ -536,7 +569,7 @@ void Syntaxique::consommer() {//n�cessaire pour savoir ce qu'on a consomm� (
 void Syntaxique::consommer(string expected) {
 	bool expectedCorrect = false;//true si on trouve ce qu'il fallait consommé
 	if (uniteCourante.UL == IDENT) {
-		return uniteCourante.attribut == lexical->identifiants.existe(expected);
+		return uniteCourante.attribut == lexical->identifiants.existe(expected); // to do : fix this 
 	}
 	uniteCourante = lexical->uniteSuivante();
 }
