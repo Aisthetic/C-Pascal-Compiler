@@ -134,44 +134,126 @@ void Syntaxique::expressionPrime()
 {
 }
 
-void Syntaxique::expressionLogique()
-{
+void Syntaxique::expressionLogique(){
+	if (estPremierDe(eexpressionSimple)) {
+		expressionSimple();
+		expressionLogiquePrime();
+	}
+	else {
+		syntaxError(eexpressionLogique);
+	}
 }
 
-void Syntaxique::expressionLogiquePrime()
-{
+void Syntaxique::expressionLogiquePrime(){
+	if (estPremierDe(ecomparaison)) {
+		comparaison();
+		expressionSimple();
+		expressionLogiquePrime();
+	}
 }
 
-void Syntaxique::expressionSimple()
-{
+void Syntaxique::expressionSimple(){
+	if (estPremierDe(eterme)) {
+		terme();
+		expressionSimplePrime();
+	}
+	else if(uniteCourante.UL == "SOUS" ){
+        consommer(); 
+		terme();
+		expressionSimplePrime();
+	}
+	else {
+		syntaxError(eexpressionSimple);
+	}
 }
 
-void Syntaxique::expressionSimplePrime()
-{
+void Syntaxique::expressionSimplePrime(){
+	if (uniteCourante.UL == "ADD") {
+		consommer();
+		terme();
+		expressionSimplePrime();
+	}
+	else if(uniteCourante.UL == "SOUS" ) {
+		consommer();
+		terme();
+		expressionSimplePrime();
+	}
 }
 
-void Syntaxique::terme()
-{
+void Syntaxique::terme(){
+	if (estPremierDe(etermePrioritaire)) {
+		termePrioritaire();
+		termePrime();
+	}
+	else {
+		syntaxError(eterme);
+	}
+}
+void Syntaxique::termePrime(){
+	if (uniteCourante.UL == "MUL") {
+		consommer();
+		facteur();
+		termePrime();
+	}
+	else if (uniteCourante.UL == "DIV" ) {
+		consommer();
+		facteur();
+		termePrime();
+	}
 }
 
-void Syntaxique::termePrime()
-{
+void Syntaxique::termePrioritaire(){
+	if (uniteCourante.UL == "NON") {
+		consommer();
+		facteur();
+	}
+	else if (estPremierDe(efacteur) ) {
+		facteur();
+	}
+	else {
+		syntaxError(etermePrioritaire);
+	}
 }
 
-void Syntaxique::termePrioritaire()
-{
+void Syntaxique::facteur(){
+	if (estPremierDe(eidentif)) {
+		identif();
+		facteurPrime();
+	}
+	else if(estPremierDe(ecte){
+		cte();
+	}
+	else if (uniteCourante.UL == "PAROUV" ) {
+		consommer();
+		expression();
+	    //// souhail : il faut ajouter une condition ici ==> verifier_unite(PARFER) 
+	}
+	else if(uniteCourante.UL == ""){ //souhail : ****** ajouter ' au lexical UL
+        consommer(); 
+		lettre();
+		//// souhail : il faut ajouter une condition ici ==> verifier_unite(TIRÉ) 
+	}
+	else {
+		syntaxError(e);
+	}
 }
-
-void Syntaxique::facteur()
-{
+	
+void Syntaxique::facteurPrime(){
+	if (uniteCourante.UL == "CROOUV") {
+		consommer();
+		expression();
+		//// souhail : il faut ajouter une condition ici ==> verifier_unite(COUVFER) 
+	}
+	else if (uniteCourante.UL == "PAROUV" ) {
+		consommer();
+		parametresEffictifs();
+		//// souhail : il faut ajouter une condition ici ==> verifier_unite(PARFER) 
+	}
 }
-
-void Syntaxique::facteurPrime()
-{
-}
-
-void Syntaxique::parametresEffictifs()
-{
+void Syntaxique::parametresEffictifs(){
+	if (estPremierDe(eexpressions)) {
+		expressions(); 
+	}
 }
 
 void Syntaxique::expressions()
@@ -242,7 +324,7 @@ void Syntaxique::consommer(char str = ' ') {//n�cessaire pour savoir ce qu'on 
 	uniteCourante = lexical->uniteSuivante();
 }
 //checks if the caracter is premier de l'unite en param
-bool Syntaxique::estPremierDe(Production unite) {
+bool Syntaxique::estPremierDe(Production unite) { 
 	return false;
 }
 
