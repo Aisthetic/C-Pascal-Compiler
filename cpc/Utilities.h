@@ -64,6 +64,7 @@ typedef enum//on ajoute le e pour éviter la confusion entre les fonctions et les
 	eExpressionPrime,
 	eTermePrioritaire,
 	eTerme,
+	eExpressionSimple,
 } Production;
 
 typedef struct TUniteLexicale
