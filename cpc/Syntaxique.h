@@ -14,6 +14,7 @@ public:
 	
 	// M�thodes divers
 	void startParsing();
+	bool isMotCle(string mc); // voir si l'unite coutrante est mot cle egal au parametre entre 
 
 	
 
@@ -48,7 +49,7 @@ private:
 	void parametres();
 	void parametresPrime();
 	void parametre();
-	void listeInscructions();
+	void listeInstructions();
 	void instruction();
 	void instructionPrime();
 	void instructionTriple();

@@ -32,6 +32,17 @@ void Syntaxique::startParsing()
 		printErrors();	//affiche toutes les erreurs trouv�es
 }
 
+bool Syntaxique::isMotCle(string mc)
+{
+	if (uniteCourante.UL == MOTCLE) {
+		if (uniteCourante.UL == lexical->identifiants.existe(mc)) {
+			return true;
+		}
+		else { return false; }
+	}
+	else { return false; }
+}
+
 void Syntaxique::end() {
 	xmlFile.close();
 }
@@ -188,42 +199,147 @@ void Syntaxique::listeDeParametres()
 
 void Syntaxique::parametres()
 {
+	if (estPremierDe(eParametre)) {
+		parametre();
+		parametresPrime();
+	}
+	else { syntaxError(eParametres); }
 }
 
 void Syntaxique::parametresPrime()
 {
+	if (estPremierDe(eParametresPrime)) {
+		consommer(',');
+		parametre();
+		parametresPrime();
+	}
+	else { syntaxError(eParametresPrime); }
+	// ajouter traitement epsilon
 }
 
 void Syntaxique::parametre()
 {
+	if (isMotCle("entier") {
+		identif();
+	}
+	else if (isMotCle("Car")) {
+		identif();
+	}
+	else { syntaxError(eParametre); }
 }
 
-void Syntaxique::listeInscructions()
+void Syntaxique::listeInstructions()
 {
+	if (estPremierDe(eInstruction)) {
+		instruction();
+		consommer(';');
+		listeInstructions();
+	}
+	else { syntaxError(eListeInstructions); }
+	// traitement epsilon
 }
 
-void Syntaxique::instruction()
+void Syntaxique::instruction() // a revoir
 {
+	if (estPremierDe(eIdentificateur)) {
+		identif();
+		instructionPrime();
+	}
+	else if (estPremierDe(eInstruction)) {
+		if (isMotCle("retour")) {
+			consommer();
+			expression();
+		}
+		else if (isMotCle("si")) {
+			consommer();
+			expression();
+			if (isMotCle("alors")) {
+				consommer();
+				consommer('{');
+				listeInstructions();
+				consommer('}');
+				instructionSeconde();
+			}
+			else { return syntaxError(eInstruction); }
+		}
+		else if (isMotCle("tantque")) {
+			consommer('(');
+			expression();
+			consommer(')');
+			if (isMotCle("faire")) {
+				consommer();
+				consommer('{');
+				listeInstructions();
+				consommer('}');
+			}
+			else { return syntaxError(eInstruction); }
+		}
+		else if (isMotCle("ecrire")) {
+			consommer();
+			consommer('(');
+			expression();
+			consommer(')');
+		}
+		else { return syntaxError(eInstruction); }
+	}
 }
 
 void Syntaxique::instructionPrime()
 {
+	if (estPremierDe(eInstructionTriple)) {
+		instructionTriple();
+	}
+	else if (eInstruction) {
+		consommer('[');
+		expression();
+		consommer(']');
+		consommer('=');
+		instructionTriple();
+	}
+	else { syntaxError(eInstructionPrime); }
 }
 
 void Syntaxique::instructionTriple()
 {
+	if (isMotCle("lire")) {
+		consommer();
+		consommer('(');
+		consommer(')');
+	}
+	else if (estPremierDe(eExpression)) {
+		expression();
+	}
+	else { syntaxError(eInstructionTriple); }
 }
 
 void Syntaxique::instructionSeconde()
 {
+	if (isMotCle("sinon")) {
+		consommer();
+		consommer('{');
+		listeInstructions();
+		consommer('}');
+	} 
+	// traitement epsilon
+	else { syntaxError(eInstructionSeconde); }
 }
 
 void Syntaxique::expression()
 {
+	if (estPremierDe(eExpressionLogique)) {
+		expressionLogique();
+		expressionPrime();
+	} 
+	else { syntaxError(eExpression); }
 }
 
 void Syntaxique::expressionPrime()
 {
+	if (estPremierDe(eOperateurLogique)) {
+		operateurLogique();
+		expressionPrime();
+	}
+	else { syntaxError(eExpressionPrime); }
 }
 
 void Syntaxique::expressionLogique(){
