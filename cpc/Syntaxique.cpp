@@ -376,12 +376,12 @@ void Syntaxique::expressionSimple(){
 }
 
 void Syntaxique::expressionSimplePrime(){
-	if (uniteCourante.UL == "ADD") {
+	if (uniteCourante.UL == ADD) {
 		consommer();
 		terme();
 		expressionSimplePrime();
 	}
-	else if(uniteCourante.UL == "SOUS" ) {
+	else if(uniteCourante.UL == SOUS ) {
 		consommer();
 		terme();
 		expressionSimplePrime();
@@ -389,21 +389,21 @@ void Syntaxique::expressionSimplePrime(){
 }
 
 void Syntaxique::terme(){
-	if (estPremierDe(etermePrioritaire)) {
+	if (estPremierDe(eTermePrioritaire)) {
 		termePrioritaire();
 		termePrime();
 	}
 	else {
-		syntaxError(eterme);
+		syntaxError(eTerme);
 	}
 }
 void Syntaxique::termePrime(){
-	if (uniteCourante.UL == "MUL") {
+	if (uniteCourante.UL == MUL) {
 		consommer();
 		facteur();
 		termePrime();
 	}
-	else if (uniteCourante.UL == "DIV" ) {
+	else if (uniteCourante.UL == DIV ) {
 		consommer();
 		facteur();
 		termePrime();
@@ -411,27 +411,27 @@ void Syntaxique::termePrime(){
 }
 
 void Syntaxique::termePrioritaire(){
-	if (uniteCourante.UL == "NON") {
+	if (uniteCourante.UL == NON) {
 		consommer();
 		facteur();
 	}
-	else if (estPremierDe(efacteur) ) {
+	else if (estPremierDe(eFacteur) ) {
 		facteur();
 	}
 	else {
-		syntaxError(etermePrioritaire);
+		syntaxError(eTermePrioritaire);
 	}
 }
 
 void Syntaxique::facteur(){
-	if (estPremierDe(eidentif)) {
+	if (estPremierDe(eIdentif)) {
 		identif();
 		facteurPrime();
 	}
-	else if(estPremierDe(ecte)){
+	else if(estPremierDe(eCte)){
 		cte();
 	}
-	else if (uniteCourante.UL == "PAROUV" ) {
+	else if (uniteCourante.UL == PAROUV ) {
 		consommer();
 		expression();
 	    //// souhail : il faut ajouter une condition ici ==> verifier_unite(PARFER) 
@@ -517,7 +517,6 @@ void Syntaxique::identif()
 		syntaxError(eIdentif);
 }
 
-
 void Syntaxique::cte()
 {
 	if (uniteCourante.UL == CONST) {
@@ -527,39 +526,12 @@ void Syntaxique::cte()
 		syntaxError(eCte);
 }
 
-void Syntaxique::syntaxError(Production prod) {
-	
-}
-void Syntaxique::chiffre() {
-	if (uniteCourante.attribut >= '0' && uniteCourante.attribut <= '9') {
-		xmlOpen("lettre");
-		xmlFile << (char)uniteCourante.attribut;
-		xmlClose("lettre");
-		consommer(uniteCourante.attribut);
-	}
-	else {
-		syntaxError(eCaractere);
-	}
-
-}
-
-void Syntaxique::lettre() {
-	if (((uniteCourante.attribut >= 'A' && uniteCourante.attribut <= 'Z') || (uniteCourante.attribut >= 'a' && uniteCourante.attribut <= 'z'))) {
-		xmlOpen("lettre");
-		xmlFile << (char)uniteCourante.attribut;
-		xmlClose("lettre");
-		consommer(uniteCourante.attribut);
-	}
-	else {
-		syntaxError(eLettre);
-	}
-}
-
-
+//Methods
 
 void Syntaxique::consommer(char str = ' ') {//n�cessaire pour savoir ce qu'on a consomm� (exemple lorsqu'on consomme le ;)
 	uniteCourante = lexical->uniteSuivante();
 }
+
 //checks if the caracter is premier de l'unite en param
 bool Syntaxique::estPremierDe(Production unite) { 
 	return false;
@@ -572,6 +544,10 @@ bool Syntaxique::estSuivantDe(Production unite) {
 bool Syntaxique::uniteCouranteEst(string identifiant)
 {
 	return uniteCourante.UL == IDENT && uniteCourante.attribut == lexical->identifiants.existe(identifiant);
+}
+
+void Syntaxique::syntaxError(Production prod) {
+
 }
 
 //Destructeur

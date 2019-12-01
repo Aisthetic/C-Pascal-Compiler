@@ -72,9 +72,5 @@ private:
 	void comparaison();
 	void identif();
 	void cte();
-	void chiffre();
-	void lettre();
-
-	
 };
 
