@@ -74,16 +74,16 @@ void Syntaxique::listeDeFonctions()
 {
 	if (estPremierDe(eFonction))
 	{
-		consommer();
 		fonction();
-		consommer();
-		listeDeDeclarations();
+		listeDeFonctions();
 	}
-	else if (uniteCourante.UL== MOTCLE &&uniteCourante.UL == lexical->identifiants.existe("main")) // à affiner
+	else if (uniteCourante.UL== MOTCLE &&uniteCourante.attribut == lexical->identifiants.existe("main")) // à affiner
 	{
 		consommer();
+		consommer('(');
+		consommer(')');
 		consommer('{');
-		listeInscructions();
+		listeInstructions();
 		consommer('}');
 	}
 	else
@@ -101,7 +101,7 @@ void Syntaxique::fonction()
 		consommer(')');
 		listeDeDeclarations();
 		consommer('{');
-		listeInscructions();
+		listeInstructions();
 		consommer('}');
 	}
 	else
@@ -115,7 +115,6 @@ void Syntaxique::listeDeDeclarations()
 {
 	if (estPremierDe(eDeclaration))
 	{
-		consommer();
 		declarations();
 	}
 	else
@@ -151,12 +150,12 @@ void Syntaxique::declarationsPrime()
 
 void Syntaxique::declaration()
 {
-	if (uniteCourante.UL == MOTCLE && uniteCourante.UL == lexical->identifiants.existe("entier"))
+	if (uniteCourante.UL == MOTCLE && uniteCourante.attribut == lexical->identifiants.existe("entier"))
 	{
 		consommer();
 		declarationPrime();
 	}
-	else if (uniteCourante.UL == MOTCLE && uniteCourante.UL == lexical->identifiants.existe("car"))
+	else if (uniteCourante.UL == MOTCLE && uniteCourante.attribut == lexical->identifiants.existe("car"))
 	{
 		consommer();
 		declarationPrime();
@@ -183,8 +182,9 @@ void Syntaxique::declarationSeconde()
 {
 	if (estPremierDe(eExpression))
 	{
-		consommer();
+		consommer('[');
 		expression();
+		consommer(']');
 	}
 }
 
@@ -192,7 +192,6 @@ void Syntaxique::listeDeParametres()
 {
 	if (estPremierDe(eParametre))
 	{
-		consommer();
 		parametre();
 	}
 }
@@ -219,7 +218,7 @@ void Syntaxique::parametresPrime()
 
 void Syntaxique::parametre()
 {
-	if (isMotCle("entier") {
+	if (isMotCle("entier")) {
 		identif();
 	}
 	else if (isMotCle("Car")) {
