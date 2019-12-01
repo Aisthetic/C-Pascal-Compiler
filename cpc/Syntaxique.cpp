@@ -58,60 +58,155 @@ void Syntaxique::programme() {
 		syntaxError(eProgramme);
 	}
 }
-void Syntaxique::listeDeDeclarations() {
-	if (estPremierDe(eDeclaration)) {
-		declaration();
-		consommer(',');//,
-		listeDeDeclarations();
-		consommer(';');
-	}
-	else if (estSuivantDe(eListeDeDeclarations)) {
 
-	}
-	else {
-		syntaxError(eListeDeDeclarations);
-	}
+void Syntaxique::listeDeFonctions()
+{
 }
-void Syntaxique::declaration() {
+void Syntaxique::fonction()
+{
+}
 
+void Syntaxique::listeDeDeclarations()
+{
 }
-void Syntaxique::identificateur() {
 
+void Syntaxique::declarations()
+{
 }
-void Syntaxique::listeDeFonctions() {
-	if (estPremierDe(eFonction)) {
-		fonction();
-		listeDeFonctions();
-	}
-	else if (uniteCourante.UL == IDENT && uniteCourante.attribut==lexical->identifiants.existe("main")) {
-		consommer('main');//main
-		consommer('(');//(
-		consommer(')');//)
-		consommer('{');//{
-		listeDInstructions();
-		consommer('}');//}
-	}
-}
-void Syntaxique::fonction() {
-	if (estPremierDe(eIdentificateur)) {
-		identificateur();
-		consommer('(');//(
-		listeDeParametres();
-		consommer(')');//)
-		listeDeDeclarations();
-		consommer(';');//;
-		consommer('}');//}
-	}
-}
-void Syntaxique::listeDeParametres() {
 
+void Syntaxique::declarationsPrime()
+{
 }
-void Syntaxique::listeDInstructions() {
 
+void Syntaxique::declaration()
+{
 }
-void Syntaxique::constprime() {
-	//if 
+
+void Syntaxique::declarationPrime()
+{
 }
+
+void Syntaxique::declarationSeconde()
+{
+}
+
+void Syntaxique::listeParametres()
+{
+}
+
+void Syntaxique::parametres()
+{
+}
+
+void Syntaxique::parametresPrime()
+{
+}
+
+void Syntaxique::parametre()
+{
+}
+
+void Syntaxique::listeInscructions()
+{
+}
+
+void Syntaxique::instruction()
+{
+}
+
+void Syntaxique::instructionPrime()
+{
+}
+
+void Syntaxique::instructionTriple()
+{
+}
+
+void Syntaxique::instructionSeconde()
+{
+}
+
+void Syntaxique::expression()
+{
+}
+
+void Syntaxique::expressionPrime()
+{
+}
+
+void Syntaxique::expressionLogique()
+{
+}
+
+void Syntaxique::expressionLogiquePrime()
+{
+}
+
+void Syntaxique::expressionSimple()
+{
+}
+
+void Syntaxique::expressionSimplePrime()
+{
+}
+
+void Syntaxique::terme()
+{
+}
+
+void Syntaxique::termePrime()
+{
+}
+
+void Syntaxique::termePrioritaire()
+{
+}
+
+void Syntaxique::facteur()
+{
+}
+
+void Syntaxique::facteurPrime()
+{
+}
+
+void Syntaxique::parametresEffictifs()
+{
+}
+
+void Syntaxique::expressions()
+{
+}
+
+void Syntaxique::expressionsPrime()
+{
+}
+
+void Syntaxique::operateurLogique()
+{
+}
+
+void Syntaxique::comparaison()
+{
+}
+
+void Syntaxique::identif()
+{
+}
+
+void Syntaxique::mot()
+{
+}
+
+void Syntaxique::cte()
+{
+}
+
+void Syntaxique::ctePrime()
+{
+}
+
+
 
 void Syntaxique::syntaxError(Production prod) {
 	
@@ -140,6 +235,8 @@ void Syntaxique::lettre() {
 		syntaxError(eLettre);
 	}
 }
+
+
 
 void Syntaxique::consommer(char str = ' ') {//nécessaire pour savoir ce qu'on a consommé (exemple lorsqu'on consomme le ;)
 	uniteCourante = lexical->uniteSuivante();

@@ -17,18 +17,47 @@ public:
 
 	// Méthodes issues des productions
 	void programme();
-	void listeDeDeclarations();
-	void declaration();
-	void identificateur();
 	void listeDeFonctions();
-	void declarationFonction();
 	void fonction();
-	void listeDeParametres();
-	void listeDInstructions();
-	void constprime();
-	void syntaxError(Production);
+	void listeDeDeclarations();
+	void declarations();
+	void declarationsPrime();
+	void declaration();
+	void declarationPrime();
+	void declarationSeconde();
+	void listeParametres();
+	void parametres();
+	void parametresPrime();
+	void parametre();
+	void listeInscructions();
+	void instruction();
+	void instructionPrime();
+	void instructionTriple();
+	void instructionSeconde();
+	void expression();
+	void expressionPrime();
+	void expressionLogique();
+	void expressionLogiquePrime();
+	void expressionSimple();
+	void expressionSimplePrime();
+	void terme();
+	void termePrime();
+	void termePrioritaire();
+	void facteur();
+	void facteurPrime();
+	void parametresEffictifs();
+	void expressions();
+	void expressionsPrime();
+	void operateurLogique();
+	void comparaison();
+	void identif();
+	void mot();
+	void cte();
+	void ctePrime();
 	void chiffre();
 	void lettre();
+
+	void syntaxError(Production prod);
 
 	void consommer(char str);
 
