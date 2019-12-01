@@ -12,10 +12,10 @@ public:
 	Syntaxique(Lexical* lexical);
 	~Syntaxique();
 	
-	// Méthodes divers
+	// Mï¿½thodes divers
 	void startParsing();
 
-	// Méthodes issues des productions
+	// Mï¿½thodes issues des productions
 	void programme();
 	void listeDeFonctions();
 	void fonction();
@@ -25,7 +25,7 @@ public:
 	void declaration();
 	void declarationPrime();
 	void declarationSeconde();
-	void listeParametres();
+	void listeDeParametres();
 	void parametres();
 	void parametresPrime();
 	void parametre();
@@ -76,6 +76,6 @@ private:
 	void end();
 	void printErrors();
 	void xmlOpen(string caller); // Ecrit dans le fichier XML la balise ouvrante de la fonction caller
-	void xmlClose(string caller);  // De même pour la balise fermante
+	void xmlClose(string caller);  // De mï¿½me pour la balise fermante
 };
 

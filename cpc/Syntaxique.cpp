@@ -29,7 +29,7 @@ void Syntaxique::startParsing()
 		end(); //finish him!
 	}
 	else
-		printErrors();	//affiche toutes les erreurs trouvées
+		printErrors();	//affiche toutes les erreurs trouvï¿½es
 }
 
 void Syntaxique::end() {
@@ -48,7 +48,7 @@ void Syntaxique::xmlClose(string caller)
 {
 	xmlFile << "</" << caller << ">";
 }
-//Règles de grammaire
+//Rï¿½gles de grammaire
 void Syntaxique::programme() {
 	if (estPremierDe(eListeDeDeclarations)) {
 		listeDeDeclarations();
@@ -90,7 +90,7 @@ void Syntaxique::declarationSeconde()
 {
 }
 
-void Syntaxique::listeParametres()
+void Syntaxique::listeDeParametres()
 {
 }
 
@@ -238,7 +238,7 @@ void Syntaxique::lettre() {
 
 
 
-void Syntaxique::consommer(char str = ' ') {//nécessaire pour savoir ce qu'on a consommé (exemple lorsqu'on consomme le ;)
+void Syntaxique::consommer(char str = ' ') {//nï¿½cessaire pour savoir ce qu'on a consommï¿½ (exemple lorsqu'on consomme le ;)
 	uniteCourante = lexical->uniteSuivante();
 }
 //checks if the caracter is premier de l'unite en param
