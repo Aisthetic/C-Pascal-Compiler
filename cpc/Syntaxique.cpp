@@ -262,12 +262,7 @@ void Syntaxique::instruction() // a revoir
 			else { return syntaxError(eInstruction); }
 		}
 		else if (isMotCle("tantque")) {
-<<<<<<< HEAD
-			consommer();
-			consommer('(');
-=======
 			consommer("(");
->>>>>>> 2dc456ca00fc85b2bdf56aec08f3334529de640d
 			expression();
 			consommer(")");
 			if (isMotCle("faire")) {
@@ -438,22 +433,14 @@ void Syntaxique::facteur(){
 	else if (uniteCourante.UL == PAROUV ) {
 		consommer();
 		expression();
-<<<<<<< HEAD
-	    consommer(')');
-=======
 		if (uniteCourante.UL == PARFERM)
 			consommer();
 		else
 			syntaxError(eFacteur);//à revoir
->>>>>>> 2dc456ca00fc85b2bdf56aec08f3334529de640d
 	}
 	else if(uniteCourante.UL == CAR){
         consommer(); 
-<<<<<<< HEAD
-		lettre();
-		consommer('\'');
-=======
->>>>>>> 2dc456ca00fc85b2bdf56aec08f3334529de640d
+		consommer("\\");
 	}
 	else {
 		syntaxError(eFacteur);
@@ -464,12 +451,12 @@ void Syntaxique::facteurPrime(){
 	if (uniteCourante.UL == CROOUV) {
 		consommer();
 		expression();
-		consommer(']'); 
+		consommer("]"); 
 	}
 	else if (uniteCourante.UL == PAROUV ) {
 		consommer();
 		parametresEffictifs();
-		consommer(')'); 
+		consommer(")"); 
 	}
 }
 void Syntaxique::parametresEffictifs(){
@@ -542,14 +529,8 @@ void Syntaxique::cte()
 
 //Methods
 
-<<<<<<< HEAD
-void Syntaxique::consommer(char str = ' ') { //n�cessaire pour savoir ce qu'on a consomm� (exemple lorsqu'on consomme le ;)
-	uniteCourante = lexical->uniteSuivante(); 
-	// souhail : ajouter le traitement de verification du suivant
-=======
 void Syntaxique::consommer() {//n�cessaire pour savoir ce qu'on a consomm� (exemple lorsqu'on consomme le ;)
 	uniteCourante = lexical->uniteSuivante();
->>>>>>> 2dc456ca00fc85b2bdf56aec08f3334529de640d
 }
 
 void Syntaxique::consommer(string expected) {
