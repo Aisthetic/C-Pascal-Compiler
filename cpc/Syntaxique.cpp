@@ -263,6 +263,7 @@ void Syntaxique::instruction() // a revoir
 			else { return syntaxError(eInstruction); }
 		}
 		else if (isMotCle("tantque")) {
+			consommer();
 			consommer('(');
 			expression();
 			consommer(')');
@@ -365,7 +366,7 @@ void Syntaxique::expressionSimple(){
 		terme();
 		expressionSimplePrime();
 	}
-	else if(uniteCourante.UL == "SOUS" ){
+	else if(uniteCourante.UL == SOUS ){
         consommer(); 
 		terme();
 		expressionSimplePrime();
@@ -434,12 +435,12 @@ void Syntaxique::facteur(){
 	else if (uniteCourante.UL == PAROUV ) {
 		consommer();
 		expression();
-	    //// souhail : il faut ajouter une condition ici ==> verifier_unite(PARFER) 
+	    consommer(')');
 	}
 	else if(uniteCourante.UL == ""){ //souhail : ****** ajouter ' au lexical UL
         consommer(); 
 		lettre();
-		//// souhail : il faut ajouter une condition ici ==> verifier_unite(TIRÉ) 
+		consommer('\'');
 	}
 	else {
 		syntaxError(eFacteur);
@@ -450,12 +451,12 @@ void Syntaxique::facteurPrime(){
 	if (uniteCourante.UL == CROOUV) {
 		consommer();
 		expression();
-		//// souhail : il faut ajouter une condition ici ==> verifier_unite(COUVFER) 
+		consommer(']'); 
 	}
 	else if (uniteCourante.UL == PAROUV ) {
 		consommer();
 		parametresEffictifs();
-		//// souhail : il faut ajouter une condition ici ==> verifier_unite(PARFER) 
+		consommer(')'); 
 	}
 }
 void Syntaxique::parametresEffictifs(){
@@ -484,8 +485,8 @@ void Syntaxique::expressionsPrime()
 	else if (estSuivantDe(eExpressionPrime)) {
 		//doz 7yd
 	}
-	else {
-		syntaxError(eExpression);
+	else { // souhail : source d'erreur	
+		syntaxError(eExpression); 
 	}
 }
 
@@ -528,8 +529,9 @@ void Syntaxique::cte()
 
 //Methods
 
-void Syntaxique::consommer(char str = ' ') {//n�cessaire pour savoir ce qu'on a consomm� (exemple lorsqu'on consomme le ;)
-	uniteCourante = lexical->uniteSuivante();
+void Syntaxique::consommer(char str = ' ') { //n�cessaire pour savoir ce qu'on a consomm� (exemple lorsqu'on consomme le ;)
+	uniteCourante = lexical->uniteSuivante(); 
+	// souhail : ajouter le traitement de verification du suivant
 }
 
 //checks if the caracter is premier de l'unite en param
