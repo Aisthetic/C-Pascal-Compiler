@@ -96,13 +96,13 @@ void Syntaxique::fonction()
 	if (estPremierDe(eIdentificateur))
 	{
 		consommer();
-		consommer('(');
+		consommer("(");
 		listeDeParametres();
-		consommer(')');
+		consommer(")");
 		listeDeDeclarations();
-		consommer('{');
-		listeInstructions();
-		consommer('}');
+		consommer("{");
+		listeInscructions();
+		consommer("}");
 	}
 	else
 	{
@@ -139,7 +139,7 @@ void Syntaxique::declarationsPrime()
 {
 	if(estPremierDe(eDeclaration))
 	{
-		consommer(',');
+		consommer(",");
 		declaration();
 		declarationsPrime();
 	}
@@ -208,7 +208,7 @@ void Syntaxique::parametres()
 void Syntaxique::parametresPrime()
 {
 	if (estPremierDe(eParametresPrime)) {
-		consommer(',');
+		consommer(",");
 		parametre();
 		parametresPrime();
 	}
@@ -231,7 +231,7 @@ void Syntaxique::listeInstructions()
 {
 	if (estPremierDe(eInstruction)) {
 		instruction();
-		consommer(';');
+		consommer(";");
 		listeInstructions();
 	}
 	else { syntaxError(eListeInstructions); }
@@ -254,30 +254,30 @@ void Syntaxique::instruction() // a revoir
 			expression();
 			if (isMotCle("alors")) {
 				consommer();
-				consommer('{');
+				consommer("{");
 				listeInstructions();
-				consommer('}');
+				consommer("}");
 				instructionSeconde();
 			}
 			else { return syntaxError(eInstruction); }
 		}
 		else if (isMotCle("tantque")) {
-			consommer('(');
+			consommer("(");
 			expression();
-			consommer(')');
+			consommer(")");
 			if (isMotCle("faire")) {
 				consommer();
-				consommer('{');
+				consommer("{");
 				listeInstructions();
-				consommer('}');
+				consommer("}");
 			}
 			else { return syntaxError(eInstruction); }
 		}
 		else if (isMotCle("ecrire")) {
 			consommer();
-			consommer('(');
+			consommer("(");
 			expression();
-			consommer(')');
+			consommer(")");
 		}
 		else { return syntaxError(eInstruction); }
 	}
@@ -289,10 +289,10 @@ void Syntaxique::instructionPrime()
 		instructionTriple();
 	}
 	else if (eInstruction) {
-		consommer('[');
+		consommer("[");
 		expression();
-		consommer(']');
-		consommer('=');
+		consommer("]");
+		consommer("=");
 		instructionTriple();
 	}
 	else { syntaxError(eInstructionPrime); }
@@ -302,8 +302,8 @@ void Syntaxique::instructionTriple()
 {
 	if (isMotCle("lire")) {
 		consommer();
-		consommer('(');
-		consommer(')');
+		consommer("(");
+		consommer(")");
 	}
 	else if (estPremierDe(eExpression)) {
 		expression();
@@ -315,9 +315,9 @@ void Syntaxique::instructionSeconde()
 {
 	if (isMotCle("sinon")) {
 		consommer();
-		consommer('{');
+		consommer("{");
 		listeInstructions();
-		consommer('}');
+		consommer("}");
 	} 
 	// traitement epsilon
 	else { syntaxError(eInstructionSeconde); }
@@ -342,17 +342,17 @@ void Syntaxique::expressionPrime()
 }
 
 void Syntaxique::expressionLogique(){
-	if (estPremierDe(eexpressionSimple)) {
+	if (estPremierDe(eExpressionSimple)) {
 		expressionSimple();
 		expressionLogiquePrime();
 	}
 	else {
-		syntaxError(eexpressionLogique);
+		syntaxError(eExpressionLogique);
 	}
 }
 
 void Syntaxique::expressionLogiquePrime(){
-	if (estPremierDe(ecomparaison)) {
+	if (estPremierDe(eComparaison)) {
 		comparaison();
 		expressionSimple();
 		expressionLogiquePrime();
@@ -360,17 +360,17 @@ void Syntaxique::expressionLogiquePrime(){
 }
 
 void Syntaxique::expressionSimple(){
-	if (estPremierDe(eterme)) {
+	if (estPremierDe(eTerme)) {
 		terme();
 		expressionSimplePrime();
 	}
-	else if(uniteCourante.UL == "SOUS" ){
+	else if(uniteCourante.UL == SOUS ){
         consommer(); 
 		terme();
 		expressionSimplePrime();
 	}
 	else {
-		syntaxError(eexpressionSimple);
+		syntaxError(eExpression);
 	}
 }
 
@@ -433,12 +433,13 @@ void Syntaxique::facteur(){
 	else if (uniteCourante.UL == PAROUV ) {
 		consommer();
 		expression();
-	    //// souhail : il faut ajouter une condition ici ==> verifier_unite(PARFER) 
+		if (uniteCourante.UL == PARFERM)
+			consommer();
+		else
+			syntaxError(eFacteur);//à revoir
 	}
-	else if(uniteCourante.UL == ""){ //souhail : ****** ajouter ' au lexical UL
+	else if(uniteCourante.UL == CAR){
         consommer(); 
-		lettre();
-		//// souhail : il faut ajouter une condition ici ==> verifier_unite(TIRÉ) 
 	}
 	else {
 		syntaxError(eFacteur);
@@ -527,10 +528,17 @@ void Syntaxique::cte()
 
 //Methods
 
-void Syntaxique::consommer(char str = ' ') {//n�cessaire pour savoir ce qu'on a consomm� (exemple lorsqu'on consomme le ;)
+void Syntaxique::consommer() {//n�cessaire pour savoir ce qu'on a consomm� (exemple lorsqu'on consomme le ;)
 	uniteCourante = lexical->uniteSuivante();
 }
 
+void Syntaxique::consommer(string expected) {
+	bool expectedCorrect = false;//true si on trouve ce qu'il fallait consommé
+	if (uniteCourante.UL == IDENT) {
+		return uniteCourante.attribut == lexical->identifiants.existe(expected);
+	}
+	uniteCourante = lexical->uniteSuivante();
+}
 //checks if the caracter is premier de l'unite en param
 bool Syntaxique::estPremierDe(Production unite) { 
 	return false;
@@ -540,10 +548,7 @@ bool Syntaxique::estSuivantDe(Production unite) {
 	return false;
 }
 
-bool Syntaxique::uniteCouranteEst(string identifiant)
-{
-	return uniteCourante.UL == IDENT && uniteCourante.attribut == lexical->identifiants.existe(identifiant);
-}
+
 
 void Syntaxique::syntaxError(Production prod) {
 
