@@ -14,6 +14,7 @@ public:
 	
 	// M�thodes divers
 	void startParsing();
+	bool isMotCle(string mc); // voir si l'unite coutrante est mot cle egal au parametre entre 
 
 	// M�thodes issues des productions
 	void programme();
@@ -29,7 +30,7 @@ public:
 	void parametres();
 	void parametresPrime();
 	void parametre();
-	void listeInscructions();
+	void listeInstructions();
 	void instruction();
 	void instructionPrime();
 	void instructionTriple();
