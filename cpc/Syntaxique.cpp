@@ -61,37 +61,129 @@ void Syntaxique::programme() {
 
 void Syntaxique::listeDeFonctions()
 {
+	if (estPremierDe(eFonction))
+	{
+		consommer();
+		fonction();
+		consommer();
+		listeDeDeclarations();
+	}
+	else if (uniteCourante.UL== MOTCLE &&uniteCourante.UL == lexical->identifiants.existe("main")) // à affiner
+	{
+		consommer();
+		consommer('{');
+		listeInscructions();
+		consommer('}');
+	}
+	else
+	{
+		syntaxError(eFonction);
+	}
 }
 void Syntaxique::fonction()
 {
+	if (estPremierDe(eIdentificateur))
+	{
+		consommer();
+		consommer('(');
+		listeDeParametres();
+		consommer(')');
+		listeDeDeclarations();
+		consommer('{');
+		listeInscructions();
+		consommer('}');
+	}
+	else
+	{
+		syntaxError(eIdentificateur);
+	}
+
 }
 
 void Syntaxique::listeDeDeclarations()
 {
+	if (estPremierDe(eDeclaration))
+	{
+		consommer();
+		declarations();
+	}
+	else
+	{
+		syntaxError(eDeclaration);
+	}
 }
 
 void Syntaxique::declarations()
 {
+	if (estPremierDe(eDeclaration))
+	{
+		declaration();
+		declarationPrime();
+	}
+	else {
+		syntaxError(eDeclaration);
+	}
 }
 
 void Syntaxique::declarationsPrime()
 {
+	if(estPremierDe(eDeclaration))
+	{
+		consommer(',');
+		declaration();
+		declarationsPrime();
+	}
+	else {
+		syntaxError(eListeDeDeclarationsPrime);
+	}
 }
 
 void Syntaxique::declaration()
 {
+	if (uniteCourante.UL == MOTCLE && uniteCourante.UL == lexical->identifiants.existe("entier"))
+	{
+		consommer();
+		declarationPrime();
+	}
+	else if (uniteCourante.UL == MOTCLE && uniteCourante.UL == lexical->identifiants.existe("car"))
+	{
+		consommer();
+		declarationPrime();
+	}
+	else
+	{
+		syntaxError(eDeclaration);
+	}
 }
 
 void Syntaxique::declarationPrime()
 {
+	if (estPremierDe(eIdentificateur))
+	{
+		consommer();
+		declarationSeconde();
+	}
+	else {
+		syntaxError(eDeclaration);
+	}
 }
 
 void Syntaxique::declarationSeconde()
 {
+	if (estPremierDe(eExpression))
+	{
+		consommer();
+		expression();
+	}
 }
 
 void Syntaxique::listeDeParametres()
 {
+	if (estPremierDe(eParametre))
+	{
+		consommer();
+		parametre();
+	}
 }
 
 void Syntaxique::parametres()
