@@ -69,8 +69,6 @@ typedef enum//on ajoute le e pour �viter la confusion entre les fonctions et l
 	eInstructionTriple,
 	eInstructionSeconde,
 	eExpressionLogique,
-	eOperateurLogique,
-	eExpressionPrime,
 	eTermePrioritaire,
 	eTerme,
 	eExpressionSimple,
