@@ -645,11 +645,11 @@ bool Syntaxique::estPremierDe(Production production) {
 		return uniteCourante.UL == PAROUV || uniteCourante.UL == CROOUV;
 		break;
 		//souhail finishes
+	//begin zac
 	case eParametresEffectifs:
 		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
 		break;
-	case eExpression:
-		//todo
+	case eExpression: //todo
 		break;
 	case eExpressionPrime:
 		return uniteCourante.UL == VIRG;
@@ -659,8 +659,11 @@ bool Syntaxique::estPremierDe(Production production) {
 	case eComparaison:
 		return uniteCourante.UL == INF || uniteCourante.UL == SUP || uniteCourante.UL == INFEGAL
 			|| uniteCourante.UL == EGALEGAL;
-	/*case eIdentificateur:
-		return */
+	case eIdentificateur:
+		return uniteCourante.UL == IDENT;
+	case eCte:
+		return uniteCourante.UL == CONST;
+	//end zac
 	default:
 		throw new exception("Production non reconnue");
 		break;
@@ -735,11 +738,24 @@ bool Syntaxique::estSuivantDe(Production production) {
 		return uniteCourante.UL == PARFERM;
 		break;
 		//souhail finishes
-
-
-	case eParametresEffectifs:
-		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
+	//begin zac
+	case eExpression: 
+		return uniteCourante.UL == PARFERM;
 		break;
+	case eExpressionPrime:
+		return uniteCourante.UL == PARFERM;
+		break;
+	case eOperateurLogique:
+		return estPremierDe(eExpressionLogique);
+	case eComparaison:
+		return uniteCourante.UL == IDENT || uniteCourante.UL == CONST || uniteCourante.UL == CAR
+			|| uniteCourante.UL == PAROUV || uniteCourante.UL == NON || uniteCourante.UL == SOUS;
+	case eIdentificateur:
+		return estPremierDe(eFacteur) || estSuivantDe(eFacteur) || estPremierDe(eInstructionPrime)
+			|| estSuivantDe(eParametre) || estSuivantDe(eDeclarationSeconde) || uniteCourante.UL == PAROUV ;
+	case eCte:
+		return estSuivantDe(eFacteur);
+		//end zac
 	default:
 		throw new exception("Production non reconnue");
 		break;
