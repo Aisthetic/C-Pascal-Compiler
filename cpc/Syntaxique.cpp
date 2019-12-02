@@ -458,9 +458,14 @@ void Syntaxique::facteur(){
 		else
 			syntaxError(eFacteur);//à revoir
 	}
-	else if(uniteCourante.UL == CAR){
+	else if(uniteCourante.UL == QUOTE){
         consommer(); 
-		consommer("\\");
+		if (uniteCourante.UL == CAR) {
+			consommer();
+			}
+			else syntaxError(eCaractere);
+		
+		consommer("\'");
 	}
 	else {
 		syntaxError(eFacteur);
@@ -611,6 +616,39 @@ bool Syntaxique::estPremierDe(Production production) {
 		break;
 		//outidrarine finishes
 
+		//souhail starts
+	case eExpressionLogique:
+		return estPremierDe(eExpressionSimple) == true;
+		break;
+	case eExpressionLogiquePrime:
+		return estPremierDe(eComparaison) == true;
+		break;
+	case eExpressionSimple:
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON || uniteCourante.UL == SOUS;
+		break;	
+	case eExpressionSimplePrime:
+		return uniteCourante.UL == ADD || uniteCourante.UL == SOUS;
+		break;	
+	case eTerme:
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON ;
+		break;
+	case eTermePrime:
+		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
+		break;
+	case eTermePrioritaire:
+		return estPremierDe(eTerme) == true;
+		break;
+	case eFacteur:
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE ;
+		break;
+	case eFacteurPrime:
+		return uniteCourante.UL == PAROUV || uniteCourante.UL == CROOUV;
+		break;
+	case eParametresEffectifs:
+		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
+		break;
+		//souhail finishes
+
 	case eParametresEffectifs:
 		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
 		break;
@@ -656,6 +694,38 @@ bool Syntaxique::estSuivantDe(Production production) {
 		break;
 		//outidrarine finishes
 	
+		//souhail starts
+	case eExpressionLogique:
+		return estSuivantDe(eExpression) == true || uniteCourante.UL == ET || uniteCourante.UL == OU ;
+		break;
+	case eExpressionLogiquePrime:
+		return estSuivantDe(eExpressionLogique) == true;
+		break;
+	case eExpressionSimple:
+		return estSuivantDe(eExpressionLogique) == true || estPremierDe(eComparaison) == true;
+		break;
+	case eExpressionSimplePrime:
+		return estSuivantDe(eExpressionSimple) == true;
+		break;	
+	case eTerme:
+		return estSuivantDe(eExpressionSimple) == true || uniteCourante.UL == ADD || uniteCourante.UL == SOUS;
+		break;
+	case eTermePrime:
+		return estSuivantDe(eTerme) == true;
+		break;
+	case eTermePrioritaire:
+		return estSuivantDe(eTerme) == true ||  uniteCourante.UL == MUL || uniteCourante.UL == DIV;
+		break;
+	case eFacteur:
+		return estSuivantDe(eTermePrioritaire) == true;
+		break;
+	case eFacteurPrime:
+		return estSuivantDe(eTermePrioritaire) == true;
+		break;
+	case eParametresEffectifs:
+		return uniteCourante.UL == PARFERM;
+		break;
+		//souhail finishes
 
 
 	case eParametresEffectifs:
