@@ -443,7 +443,7 @@ void Syntaxique::termePrioritaire(){
 }
 
 void Syntaxique::facteur(){
-	if (estPremierDe(eIdentif)) {
+	if (estPremierDe(eIdentificateur)) {
 		identif();
 		facteurPrime();
 	}
@@ -553,7 +553,7 @@ void Syntaxique::identif()
 		consommer();
 	}
 	else
-		syntaxError(eIdentif);
+		syntaxError(eIdentificateur);
 }
 
 void Syntaxique::cte()
@@ -644,11 +644,23 @@ bool Syntaxique::estPremierDe(Production production) {
 	case eFacteurPrime:
 		return uniteCourante.UL == PAROUV || uniteCourante.UL == CROOUV;
 		break;
+		//souhail finishes
 	case eParametresEffectifs:
 		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
 		break;
-		//souhail finishes
-
+	case eExpression:
+		//todo
+		break;
+	case eExpressionPrime:
+		return uniteCourante.UL == VIRG;
+		break;
+	case eOperateurLogique:
+		return uniteCourante.UL == OU || uniteCourante.UL == ET;
+	case eComparaison:
+		return uniteCourante.UL == INF || uniteCourante.UL == SUP || uniteCourante.UL == INFEGAL
+			|| uniteCourante.UL == EGALEGAL;
+	/*case eIdentificateur:
+		return */
 	default:
 		throw new exception("Production non reconnue");
 		break;
