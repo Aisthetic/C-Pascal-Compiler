@@ -19,7 +19,7 @@ typedef enum
 	INFEGAL, // <=
 	INF, // <
 	EGAL, // =
-	EGALEGAL, // ==
+	
 	NONEGAL, // !=
 	NON, // !
 	SUPEGAL, // >=
@@ -31,9 +31,10 @@ typedef enum
 	ERR, //Erreur
 	END, //fin de fichier
 	ENTIER, //eniter
-	REAL, //real
 	MAIN, // main
 	QUOTE,// '
+
+	EGALEGAL, // ==  to aaaaaaddddddddddddd
 } TUnite;
 
 typedef enum//on ajoute le e pour �viter la confusion entre les fonctions et les enums pour le compilateur

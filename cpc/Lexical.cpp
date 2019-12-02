@@ -122,7 +122,7 @@ TUniteLexicale Lexical::uniteSuivante()
 		}
 		break;
 	default:
-		if (estChiffre())
+		if (estChiffre()) //dans le cas d'un chiffre
 		{
 			vector<int> lexeme{};
 			do {
@@ -140,7 +140,7 @@ TUniteLexicale Lexical::uniteSuivante()
 			unite.UL = CONST;
 			unite.attribut = total;
 		}
-		else if (estCaractere())
+		else if (estCaractere())//dans le cas d'une suite de alphabets
 		{
 			vector<char> lexeme{};
 
@@ -149,7 +149,23 @@ TUniteLexicale Lexical::uniteSuivante()
 				lireCar();
 			} while ((estCaractere() || estChiffre()));
 			string str(lexeme.begin(), lexeme.end());
-			if (motsReserves.existe(str) != -1)
+			//////////////////////////////////////////////////////////////////
+			if (!str.compare("entier") || !str.compare("car"))
+			{
+				if (!str.compare("entier"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = ENTIER;
+					unite.attribut = motsReserves.existe(str);
+				}
+				if (!str.compare("car"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = CAR;
+					unite.attribut = motsReserves.existe(str);
+				}
+			}
+			else if(motsReserves.existe(str) != -1)
 			{
 				unite.UL = MOTCLE;
 				unite.attribut = motsReserves.existe(str);
@@ -216,7 +232,7 @@ void Lexical::initierMotsReserves()
 	motsReserves.ajouter("retour");
 	motsReserves.ajouter("ecrire");
 	motsReserves.ajouter("lire");
-	motsReserves.ajouter("Car");
+	motsReserves.ajouter("car");
 	motsReserves.ajouter("main");
 }
 
@@ -224,79 +240,79 @@ void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 {
 	switch (unite.UL)
 	{
-	case 23:
+	case IDENT:
 		output << "\t lexeme: " << identifiants.pop(unite.attribut);
 		break;
-	case 21:
+	case CONST:
 		output << "\t lexeme: " << unite.attribut;
 		break;
-	case 22:
+	case MOTCLE:
 		output << "\t lexeme: " << motsReserves.pop(unite.attribut);
 		break;
-	case 0:
+	case PTVRG:
 		output << "\t lexeme: " << ";";
 		break;
-	case 1:
+	case VIRG:
 		output << "\t lexeme: " << ",";
 		break;
-	case 2:
+	case ACCOUV:
 		output << "\t lexeme: " << "{";
 		break;
-	case 3:
+	case ACCFERM:
 		output << "\t lexeme: " << "}";
 		break;
-	case 4:
+	case PAROUV:
 		output << "\t lexeme: " << "(";
 		break;
-	case 5:
+	case PARFERM:
 		output << "\t lexeme: " << ")";
 		break;
-	case 6:
+	case CROOUV:
 		output << "\t lexeme: " << "[";
 		break;
-	case 7:
+	case CROFER:
 		output << "\t lexeme: " << "]";
 		break;
-	case 8:
+	case ET:
 		output << "\t lexeme: " << "&";
 		break;
-	case 9:
+	case OU:
 		output << "\t lexeme: " << "|";
 		break;
-	case 10:
+	case ADD:
 		output << "\t lexeme: " << "+";
 		break;
-	case 11:
+	case SOUS:
 		output << "\t lexeme: " << "-";
 		break;
-	case 12:
+	case MUL:
 		output << "\t lexeme: " << "*";
 		break;
-	case 13:
+	case DIV:
 		output << "\t lexeme: " << "/";
 		break;
-	case 14:
+	case INFEGAL:
 		output << "\t lexeme: " << "<=";
 		break;
-	case 15:
+	case INF:
 		output << "\t lexeme: " << "<";
 		break;
-	case 16:
+	case EGAL:
 		output << "\t lexeme: " << "=";
 		break;
-	case 17:
+	case NONEGAL:
 		output << "\t lexeme: " << "!=";
 		break;
-	case 18:
+	case NON:
 		output << "\t lexeme: " << "!";
 		break;
-	case 19:
+	case SUPEGAL:
 		output << "\t lexeme: " << ">=";
 		break;
-	case 20:
+	case SUP:
 		output << "\t lexeme: " << ">";
 		break;
-	case 24:
+	case ERR:
 		output << "\t lexeme: " << "ERR";
 		break;
 	default:
@@ -317,7 +333,8 @@ void Lexical::processAllFile()
 	}
 	while (!input.eof()) {
 		auto unite = uniteSuivante();
-		output << endl << "UL: " << unite.UL << ", Attribut: " << unite.attribut << ", Lexeme: " << unite.attribut;
+		output << endl << "UL: " << unite.UL << ", Attribut: " << unite.attribut;
+		lexemeToString(unite);
 	}
 	//pour des soucis de débuggage : 
 	identifiants.afficher();
