@@ -16,14 +16,15 @@ int main(int argc, char* argv[])
 
 	CLI11_PARSE(app, argc, argv);
 
+	//Utilisation du 2eme constructeur pour avoir acces au lexical depuis le main (facile à debug)
 	Lexical *lexical = new Lexical();
 	Syntaxique* syntaxique = new Syntaxique(lexical);
 
 	for (auto file : files) {
 		cout << "Processing file : " << file << endl;
 		lexical->setInput("main.txt");
-		lexical->processAllFile();
-		cout << "lexical done for " << file;
+		syntaxique->startParsing();
+		cout << "Syntaxic done for " << file;
 	}
 	return 0;
 }

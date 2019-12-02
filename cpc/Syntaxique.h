@@ -8,7 +8,7 @@ class Syntaxique
 {
 public:
 	// Constructeurs - Destructeurs
-	Syntaxique();
+	Syntaxique(string inputFile);
 	Syntaxique(Lexical* lexical);
 	~Syntaxique();
 	
@@ -20,7 +20,7 @@ private:
 	Lexical* lexical;
 	TUniteLexicale uniteCourante;
 	vector<string> errors;
-	fstream xmlFile;
+	ofstream xmlFile;
 
 	// Methodes
 	void end();
