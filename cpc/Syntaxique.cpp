@@ -649,9 +649,6 @@ bool Syntaxique::estPremierDe(Production production) {
 		break;
 		//souhail finishes
 
-	case eParametresEffectifs:
-		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
-		break;
 	default:
 		throw new exception("Production non reconnue");
 		break;
@@ -728,9 +725,6 @@ bool Syntaxique::estSuivantDe(Production production) {
 		//souhail finishes
 
 
-	case eParametresEffectifs:
-		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
-		break;
 	default:
 		throw new exception("Production non reconnue");
 		break;
