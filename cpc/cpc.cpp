@@ -3,6 +3,7 @@
 #include <iostream>
 #include "CLI11.hpp"
 #include "Lexical.h"
+#include "Syntaxique.h"
 #include <unordered_map>
 using namespace std;
 
@@ -16,6 +17,8 @@ int main(int argc, char* argv[])
 	CLI11_PARSE(app, argc, argv);
 
 	Lexical *lexical = new Lexical();
+	Syntaxique* syntaxique = new Syntaxique(lexical);
+
 	for (auto file : files) {
 		cout << "Processing file : " << file << endl;
 		lexical->setInput("main.txt");

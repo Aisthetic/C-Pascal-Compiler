@@ -14,9 +14,6 @@ public:
 	
 	// M�thodes divers
 	void startParsing();
-	bool isMotCle(string mc); // voir si l'unite coutrante est mot cle egal au parametre entre 
-
-	
 
 private:
 	// Attributs	
@@ -35,6 +32,7 @@ private:
 	void consommer(string expected);//consomme en vérifiant si ul==expected
 	bool estPremierDe(Production unite);
 	bool estSuivantDe(Production unite);
+	bool isMotCle(string mc); // voir si l'unite coutrante est mot cle egal au parametre entre 
 	// M�thodes issues des productions
 	void programme();
 	void listeDeFonctions();

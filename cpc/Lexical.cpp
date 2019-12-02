@@ -8,12 +8,13 @@ using namespace std;
 
 Lexical::Lexical()
 {
+	currentChar = '$';
 	initierMotsReserves();
 }
 
 Lexical::~Lexical()
 {
-
+	//todo
 }
 
 TUniteLexicale Lexical::uniteSuivante()
@@ -23,9 +24,8 @@ TUniteLexicale Lexical::uniteSuivante()
 	unite.UL = ERR;//Default case is always an error
 	unite.attribut = 0;
 
-	if (parsingFileOver)
+	if (currentChar=='$')//in du traitement du fichier 
 	{
-		parsingFileOver = false;
 		unite.UL = END;
 		return unite;
 	}
@@ -169,7 +169,7 @@ TUniteLexicale Lexical::uniteSuivante()
 
 	}
 	if (input.eof())
-		parsingFileOver = true;//so that next uniteSuivante's call returns an UL.end
+		currentChar = '$';//so that next uniteSuivante's call returns an UL.end
 	return unite;
 }
 
@@ -307,10 +307,6 @@ void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 
 void Lexical::processAllFile()
 {
-	int test = currentChar;
-	if (!lireCar()) {
-		return;
-	}
 	if (!output.is_open())//si un input est déjà ouvert on passe au processing direct
 	{
 		output.open(LEXICAL_OUTPUT_DIRECTORY + "/" + inputFilename);
@@ -319,7 +315,6 @@ void Lexical::processAllFile()
 			return;
 		}
 	}
-
 	while (!input.eof()) {
 		auto unite = uniteSuivante();
 		output << endl << "UL: " << unite.UL << ", Attribut: " << unite.attribut << ", Lexeme: " << unite.attribut;
@@ -336,7 +331,7 @@ void Lexical::setInput(string file)
 	if (!input.good()) {
 		cout << "Erreur lors de l'ouverture du fichier " << file << endl;
 	}
-	parsingFileOver = false;
+	lireCar();
 }
 
 

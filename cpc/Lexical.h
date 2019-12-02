@@ -15,8 +15,6 @@ private:
 	ofstream output;
 	char currentChar; //le charactère courant
 	Hashage motsReserves; //contenaire des mots reserve
-	
-	bool parsingFileOver;//indique si on a parsé le fichier jusqu'à la fin
 	//methods
 	bool estBlanc(char);
 	bool lireCar();//bool pour verifier si on peut toujours lire
