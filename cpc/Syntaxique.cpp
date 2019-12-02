@@ -35,7 +35,7 @@ void Syntaxique::startParsing()
 bool Syntaxique::isMotCle(string mc)
 {
 	if (uniteCourante.UL == MOTCLE) {
-		if (uniteCourante.UL == lexical->identifiants.existe(mc)) {
+		if (uniteCourante.attribut == lexical->identifiants.existe(mc)) {
 			return true;
 		}
 		else { return false; }
@@ -61,6 +61,7 @@ void Syntaxique::xmlClose(string caller)
 }
 //R�gles de grammaire
 void Syntaxique::programme() {
+	xmlOpen("programme");
 	if (estPremierDe(eListeDeDeclarations)) {
 		listeDeDeclarations();
 		listeDeFonctions();
@@ -68,10 +69,12 @@ void Syntaxique::programme() {
 	else {
 		syntaxError(eProgramme);
 	}
+	xmlClose("programme");
 }
 
 void Syntaxique::listeDeFonctions()
 {
+	xmlOpen("listeDeFonctions");
 	if (estPremierDe(eFonction))
 	{
 		fonction();
@@ -90,9 +93,11 @@ void Syntaxique::listeDeFonctions()
 	{
 		syntaxError(eFonction);
 	}
+	xmlClose("listeDeFonctions");
 }
 void Syntaxique::fonction()
 {
+	xmlOpen("fonction");
 	if (estPremierDe(eIdentificateur))
 	{
 		consommer();
@@ -108,11 +113,12 @@ void Syntaxique::fonction()
 	{
 		syntaxError(eIdentificateur);
 	}
-
+	xmlClose("fonction");
 }
 
 void Syntaxique::listeDeDeclarations()
 {
+	xmlOpen("listeDeDeclarations");
 	if (estPremierDe(eDeclaration))
 	{
 		declarations();
@@ -121,10 +127,12 @@ void Syntaxique::listeDeDeclarations()
 	{
 		syntaxError(eDeclaration);
 	}
+	xmlClose("listeDeDeclarations");
 }
 
 void Syntaxique::declarations()
 {
+	xmlOpen("declarations");
 	if (estPremierDe(eDeclaration))
 	{
 		declaration();
@@ -133,10 +141,12 @@ void Syntaxique::declarations()
 	else {
 		syntaxError(eDeclaration);
 	}
+	xmlClose("declarations");
 }
 
 void Syntaxique::declarationsPrime()
 {
+	xmlOpen("declarationsPrime");
 	if(estPremierDe(eDeclaration))
 	{
 		consommer(",");
@@ -146,10 +156,12 @@ void Syntaxique::declarationsPrime()
 	else {
 		syntaxError(eListeDeDeclarationsPrime);
 	}
+	xmlClose("declarationsPrime");
 }
 
 void Syntaxique::declaration()
 {
+	xmlOpen("declaration");
 	if (uniteCourante.UL == MOTCLE && uniteCourante.attribut == lexical->identifiants.existe("entier"))
 	{
 		consommer();
@@ -164,10 +176,12 @@ void Syntaxique::declaration()
 	{
 		syntaxError(eDeclaration);
 	}
+	xmlClose("declaration");
 }
 
 void Syntaxique::declarationPrime()
 {
+	xmlOpen("declarationPrime");
 	if (estPremierDe(eIdentificateur))
 	{
 		consommer();
@@ -176,37 +190,45 @@ void Syntaxique::declarationPrime()
 	else {
 		syntaxError(eDeclaration);
 	}
+	xmlClose("declarationPrime");
 }
 
 void Syntaxique::declarationSeconde()
 {
+	xmlOpen("declarationSeconde");
 	if (estPremierDe(eExpression))
 	{
 		consommer("[");
 		expression();
 		consommer("]");
 	}
+	xmlClose("declarationSeconde");
 }
 
 void Syntaxique::listeDeParametres()
 {
+	xmlOpen("listeDeParametres");
 	if (estPremierDe(eParametre))
 	{
 		parametre();
 	}
+	xmlClose("listeDeParametres");
 }
 
 void Syntaxique::parametres()
 {
+	xmlOpen("parametres");
 	if (estPremierDe(eParametre)) {
 		parametre();
 		parametresPrime();
 	}
 	else { syntaxError(eParametres); }
+	xmlClose("parametres");
 }
 
 void Syntaxique::parametresPrime()
 {
+	xmlOpen("parametresPrime");
 	if (estPremierDe(eParametresPrime)) {
 		consommer(",");
 		parametre();
@@ -214,10 +236,12 @@ void Syntaxique::parametresPrime()
 	}
 	else { syntaxError(eParametresPrime); }
 	// ajouter traitement epsilon
+	xmlClose("parametresPrime");
 }
 
 void Syntaxique::parametre()
 {
+	xmlOpen("parametre");
 	if (isMotCle("entier")) {
 		identif();
 	}
@@ -225,10 +249,12 @@ void Syntaxique::parametre()
 		identif();
 	}
 	else { syntaxError(eParametre); }
+	xmlClose("parametre");
 }
 
 void Syntaxique::listeInstructions()
 {
+	xmlOpen("listeInstructions");
 	if (estPremierDe(eInstruction)) {
 		instruction();
 		consommer(";");
@@ -236,10 +262,12 @@ void Syntaxique::listeInstructions()
 	}
 	else { syntaxError(eListeInstructions); }
 	// traitement epsilon
+	xmlClose("listeInstructions");
 }
 
 void Syntaxique::instruction() // a revoir
 {
+	xmlOpen("instruction");
 	if (estPremierDe(eIdentificateur)) {
 		identif();
 		instructionPrime();
@@ -281,10 +309,12 @@ void Syntaxique::instruction() // a revoir
 		}
 		else { return syntaxError(eInstruction); }
 	}
+	xmlOpen("instruction");
 }
 
 void Syntaxique::instructionPrime()
 {
+	xmlOpen("instructionPrime");
 	if (estPremierDe(eInstructionTriple)) {
 		instructionTriple();
 	}
@@ -296,10 +326,12 @@ void Syntaxique::instructionPrime()
 		instructionTriple();
 	}
 	else { syntaxError(eInstructionPrime); }
+	xmlClose("instructionPrime");
 }
 
 void Syntaxique::instructionTriple()
 {
+	xmlOpen("instructionTriple");
 	if (isMotCle("lire")) {
 		consommer();
 		consommer("(");
@@ -309,10 +341,12 @@ void Syntaxique::instructionTriple()
 		expression();
 	}
 	else { syntaxError(eInstructionTriple); }
+	xmlClose("instructionTriple");
 }
 
 void Syntaxique::instructionSeconde()
 {
+	xmlOpen("instructionSeconde");
 	if (isMotCle("sinon")) {
 		consommer();
 		consommer("{");
@@ -321,19 +355,23 @@ void Syntaxique::instructionSeconde()
 	} 
 	// traitement epsilon
 	else { syntaxError(eInstructionSeconde); }
+	xmlClose("instructionSeconde");
 }
 
 void Syntaxique::expression()
 {
+	xmlOpen("expression");
 	if (estPremierDe(eExpressionLogique)) {
 		expressionLogique();
 		expressionPrime();
 	} 
 	else { syntaxError(eExpression); }
+	xmlClose("expression");
 }
 
 void Syntaxique::expressionPrime()
 {
+	xmlOpen("expressionPrime");
 	if (estPremierDe(eOperateurLogique)) {
 		operateurLogique();
 		expressionLogique();
@@ -341,9 +379,11 @@ void Syntaxique::expressionPrime()
 	}
 
 	else { syntaxError(eExpressionPrime); }
+	xmlClose("expressionPrime");
 }
 
 void Syntaxique::expressionLogique(){
+	xmlOpen("expressionLogique");
 	if (estPremierDe(eExpressionSimple)) {
 		expressionSimple();
 		expressionLogiquePrime();
@@ -351,9 +391,11 @@ void Syntaxique::expressionLogique(){
 	else {
 		syntaxError(eExpressionLogique);
 	}
+	xmlClose("expressionLogique");
 }
 
 void Syntaxique::expressionLogiquePrime(){
+	xmlOpen("expressionLogiquePrime");
 	if (estPremierDe(eComparaison)) {
 		comparaison();
 		expressionSimple();
@@ -365,9 +407,11 @@ void Syntaxique::expressionLogiquePrime(){
 	else {
 		syntaxError(eExpressionLogiquePrime);
 	}
+	xmlClose("expressionLogiquePrime");
 }
 
 void Syntaxique::expressionSimple(){
+	xmlOpen("expressionSimple");
 	if (estPremierDe(eTerme)) {
 		terme();
 		expressionSimplePrime();
@@ -380,9 +424,11 @@ void Syntaxique::expressionSimple(){
 	else {
 		syntaxError(eExpression);
 	}
+	xmlClose("expressionSimple");
 }
 
 void Syntaxique::expressionSimplePrime(){
+	xmlOpen("expressionSimplePrime");
 	if (uniteCourante.UL == ADD) {
 		consommer();
 		terme();
@@ -399,9 +445,11 @@ void Syntaxique::expressionSimplePrime(){
 	else {
 		syntaxError(eExpressionSimplePrime);
 	}
+	xmlClose("expressionSimplePrime");
 }
 
 void Syntaxique::terme(){
+	xmlOpen("terme");
 	if (estPremierDe(eTermePrioritaire)) {
 		termePrioritaire();
 		termePrime();
@@ -409,8 +457,10 @@ void Syntaxique::terme(){
 	else {
 		syntaxError(eTerme);
 	}
+	xmlClose("terme");
 }
 void Syntaxique::termePrime(){
+	xmlOpen("termePrime");
 	if (uniteCourante.UL == MUL) {
 		consommer();
 		facteur();
@@ -427,9 +477,11 @@ void Syntaxique::termePrime(){
 	else {
 		syntaxError(eTermePrime);
 	}
+	xmlOpen("termePrime");
 }
 
 void Syntaxique::termePrioritaire(){
+	xmlOpen("termePrioritaire");
 	if (uniteCourante.UL == NON) {
 		consommer();
 		facteur();
@@ -440,9 +492,11 @@ void Syntaxique::termePrioritaire(){
 	else {
 		syntaxError(eTermePrioritaire);
 	}
+	xmlClose("termePrioritaire");
 }
 
 void Syntaxique::facteur(){
+	xmlOpen("facteur");
 	if (estPremierDe(eIdentificateur)) {
 		identif();
 		facteurPrime();
@@ -470,9 +524,11 @@ void Syntaxique::facteur(){
 	else {
 		syntaxError(eFacteur);
 	}
+	xmlClose("facteur");
 }
 	
 void Syntaxique::facteurPrime(){
+	xmlOpen("facteurPrime");
 	if (uniteCourante.UL == CROOUV) {
 		consommer();
 		expression();
@@ -489,9 +545,11 @@ void Syntaxique::facteurPrime(){
 	else {
 		syntaxError(eFacteurPrime);
 	}
+	xmlClose("facteurPrime");
 }
 
 void Syntaxique::parametresEffectifs(){
+	xmlOpen("parametresEffectifs");
 	if (estPremierDe(eExpressions)) {
 		expressions(); 
 	}
@@ -501,10 +559,12 @@ void Syntaxique::parametresEffectifs(){
 	else {
 		syntaxError(eParametresEffectifs);
 	}
+	xmlClose("parametresEffectifs");
 }
 
 void Syntaxique::expressions()
 {
+	xmlOpen("expressions");
 	if(estPremierDe(eExpression)){
 		expression();
 		expressionPrime();
@@ -512,10 +572,12 @@ void Syntaxique::expressions()
 	else {
 		syntaxError(eExpression);
 	}
+	xmlClose("expressions");
 }
 
 void Syntaxique::expressionsPrime()
 {
+	xmlOpen("expressionsPrime");
 	if (uniteCourante.UL == VIRG) {
 		expression();
 		expressionPrime();
@@ -526,43 +588,52 @@ void Syntaxique::expressionsPrime()
 	else { 
 		syntaxError(eExpressionsPrime); 
 	}
+	xmlClose("expressionsPrime");
 }
 
 void Syntaxique::operateurLogique()
 {
+	xmlOpen("operateurLogique");
 	if (uniteCourante.UL == OU || uniteCourante.UL == ET) {
 		consommer();
 	}
 	else {
 		syntaxError(eOperateurLogique);
 	}
+	xmlClose("operateurLogique");
 }
 
 void Syntaxique::comparaison()
 {
+	xmlOpen("comparaison");
 	if (uniteCourante.UL == SUP || uniteCourante.UL == INFEGAL || uniteCourante.UL == SUPEGAL
 		|| uniteCourante.UL == INF || uniteCourante.UL == EGAL || uniteCourante.UL == EGALEGAL)
 		consommer();
 	else
 		syntaxError(eComparaison);
+	xmlClose("comparaison");
 }
 
 void Syntaxique::identif()
 {
+	xmlOpen("identif");
 	if (uniteCourante.UL == IDENT) {
 		consommer();
 	}
 	else
 		syntaxError(eIdentificateur);
+	xmlClose("identif");
 }
 
 void Syntaxique::cte()
 {
+	xmlOpen("cte");
 	if (uniteCourante.UL == CONST) {
 		consommer();
 	}
 	else
 		syntaxError(eCte);
+	xmlClose("cte");
 }
 
 //Methods
