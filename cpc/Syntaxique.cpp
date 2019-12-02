@@ -2,11 +2,13 @@
 #include "Lexical.h"
 using namespace std;
 
-//Constructeurs
-Syntaxique::Syntaxique()
+Syntaxique::Syntaxique(string inputFile)
 {
+	lexical = new Lexical();
+	lexical->setInput(inputFile);
 }
 
+//Constructeurs
 Syntaxique::Syntaxique(Lexical* pLexical)
 {
 	lexical = pLexical;
@@ -20,16 +22,15 @@ Syntaxique::Syntaxique(Lexical* pLexical)
 void Syntaxique::startParsing()
 {
 	// Gestion du fichier XML
-	xmlFile.open("lexical.xml");
-	xmlOpen("programme");
+	xmlFile.open("./lexical.xml");
 	consommer();
 	programme();
-	if (uniteCourante.UL == END) {
-		xmlClose("programme");
-		end(); //finish him!
+	if (uniteCourante.UL != END) {
+		syntaxError(eEnd);
 	}
 	else
 		printErrors();	//affiche toutes les erreurs trouv�es
+	end(); //finish him!
 }
 
 bool Syntaxique::isMotCle(string mc)
@@ -44,7 +45,7 @@ bool Syntaxique::isMotCle(string mc)
 }
 
 void Syntaxique::end() {
-	xmlFile.close();
+	xmlFile.flush();
 }
 
 void Syntaxique::printErrors() {

@@ -101,7 +101,20 @@ TUniteLexicale Lexical::uniteSuivante()
 		}
 		break;
 	case '\''://Constante caractère
-
+		vector<int> value{};
+		lireCar();//On lit le contenu de la constante
+		if (estCaractere())
+		{
+			unite.UL = CAR;
+			unite.attribut = currentChar;//code ascii
+			lireCar();
+			if (currentChar != '\'')
+			{
+				input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			}
+			
+		}
+		break;
 	case '=':
 		lireCar();
 		unite.UL = EGAL;
@@ -198,7 +211,8 @@ bool Lexical::lireCar()
 {
 	if (!input.is_open())//si l'input stream est ouvert
 		return false;
-	cout << "Current car : " << currentChar << endl;
+	if(logDebug)
+		cout << "Current car : " << currentChar << endl;
 	if (!input.eof())//reached end of line
 		return (bool)(input >> ::noskipws >> currentChar);
 	return false;
@@ -222,6 +236,8 @@ void Lexical::initierMotsReserves()
 
 void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 {
+	if (!logDebug)
+		return;
 	switch (unite.UL)
 	{
 	case 23:
