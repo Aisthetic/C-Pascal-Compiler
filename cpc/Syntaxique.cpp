@@ -569,17 +569,34 @@ void Syntaxique::consommer() {//n�cessaire pour savoir ce qu'on a consomm� (
 void Syntaxique::consommer(string expected) {
 	bool expectedCorrect = false;//true si on trouve ce qu'il fallait consommé
 	if (uniteCourante.UL == IDENT) {
-		return uniteCourante.attribut == lexical->identifiants.existe(expected); // to do : fix this 
+		// TODO: handle errors correctly
+		//return uniteCourante.attribut == lexical->identifiants.existe(expected); 
 	}
 	uniteCourante = lexical->uniteSuivante();
 }
 //checks if the caracter is premier de l'unite en param
-bool Syntaxique::estPremierDe(Production unite) { 
-	return false;
+bool Syntaxique::estPremierDe(Production production) { 
+	switch (production)
+	{
+	case eParametresEffectifs:
+		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
+		break;
+	default:
+		throw new exception("Production non reconnue");
+		break;
+	}
 }
 
-bool Syntaxique::estSuivantDe(Production unite) {
-	return false;
+bool Syntaxique::estSuivantDe(Production production) {
+	switch (production)
+	{
+	case eParametresEffectifs:
+		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
+		break;
+	default:
+		throw new exception("Production non reconnue");
+		break;
+	}
 }
 
 
