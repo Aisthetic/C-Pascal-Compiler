@@ -34,9 +34,10 @@ typedef enum
 	REAL, //real
 	MAIN, // main
 	DOLAR,//$
+	QUOTE,// '
 } TUnite;
 
-typedef enum//on ajoute le e pour éviter la confusion entre les fonctions et les enums pour le compilateur
+typedef enum//on ajoute le e pour ï¿½viter la confusion entre les fonctions et les enums pour le compilateur
 {
 	eProgramme,
 	eDeclarations,
