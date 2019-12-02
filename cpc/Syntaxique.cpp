@@ -578,6 +578,39 @@ void Syntaxique::consommer(string expected) {
 bool Syntaxique::estPremierDe(Production production) { 
 	switch (production)
 	{
+		//outidrarine starts
+	case eProgramme:
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
+		break;
+	case eListeDeFonctions:
+		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN;
+		break;
+	case eFonction:
+		return uniteCourante.UL == IDENT;
+		break;
+	case eListeDeDeclarations:
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
+		break;
+	case eDeclarations:
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
+		break;
+	case eDeclarationsPrime:
+		return uniteCourante.UL == VIRG;
+		break;
+	case eDeclaration:
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
+		break;
+	case eDeclarationPrime:
+		return uniteCourante.UL == VIRG;
+		break;
+	case eDeclarationSeconde:
+		return uniteCourante.UL == ACCOUV;
+		break;
+	case eListeParametres:
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
+		break;
+		//outidrarine finishes
+
 	case eParametresEffectifs:
 		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
 		break;
@@ -590,6 +623,41 @@ bool Syntaxique::estPremierDe(Production production) {
 bool Syntaxique::estSuivantDe(Production production) {
 	switch (production)
 	{
+		//outidrarine starts
+	case eProgramme:
+		return uniteCourante.UL == DOLAR;
+		break;
+	case eListeDeFonctions:
+		return uniteCourante.UL == DOLAR;
+		break;
+	case eFonction:
+		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN ;
+		break;
+	case eListeDeDeclarations:
+		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN;
+		break;
+	case eDeclarations:
+		return uniteCourante.UL == PTVRG;
+		break;
+	case eDeclarationsPrime:
+		return uniteCourante.UL == VIRG || uniteCourante.UL == PTVRG;
+		break;
+	case eDeclaration:
+		return uniteCourante.UL == VIRG || uniteCourante.UL == PTVRG;
+		break;
+	case eDeclarationPrime:
+		return uniteCourante.UL == VIRG || uniteCourante.UL == PTVRG;
+		break;
+	case eDeclarationSeconde:
+		return uniteCourante.UL == PAROUV;
+		break;
+	case eListeParametres:
+		return uniteCourante.UL == PAROUV;
+		break;
+		//outidrarine finishes
+	
+
+
 	case eParametresEffectifs:
 		return uniteCourante.UL == MUL || uniteCourante.UL == DIV;
 		break;

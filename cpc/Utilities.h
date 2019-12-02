@@ -29,20 +29,29 @@ typedef enum
 	IDENT, // IDENTIFIANT
 	CAR, // Caractere
 	ERR, //Erreur
-	END //fin de fichier
+	END, //fin de fichier
+	ENTIER, //eniter
+	REAL, //real
+	MAIN, // main
+	DOLAR,//$
 } TUnite;
 
 typedef enum//on ajoute le e pour éviter la confusion entre les fonctions et les enums pour le compilateur
 {
 	eProgramme,
+	eDeclarations,
+	eDeclarationsPrime,
 	eListeDeDeclarations,
+	eListeDeDeclarationsPrime,
 	eDeclaration,
+	eDeclarationPrime,
+	eDeclarationSeconde,
+	eListeParametres,
 	eListeDeFonctions,
 	eFonction,
 	eIdentificateur,
 	eLettre,
 	eCaractere,
-	eListeDeDeclarationsPrime,
 	eExpression,
 	eParametre,
 	eExpressionPrime,
