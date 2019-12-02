@@ -33,7 +33,6 @@ typedef enum
 	ENTIER, //eniter
 	REAL, //real
 	MAIN, // main
-	DOLAR,//$
 	QUOTE,// '
 } TUnite;
 

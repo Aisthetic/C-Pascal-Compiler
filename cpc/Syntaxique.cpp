@@ -675,10 +675,10 @@ bool Syntaxique::estSuivantDe(Production production) {
 	{
 		//outidrarine starts
 	case eProgramme:
-		return uniteCourante.UL == DOLAR;
+		return uniteCourante.UL == END;
 		break;
 	case eListeDeFonctions:
-		return uniteCourante.UL == DOLAR;
+		return uniteCourante.UL == END;
 		break;
 	case eFonction:
 		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN ;
