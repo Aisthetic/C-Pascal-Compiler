@@ -33,6 +33,8 @@ TUniteLexicale Lexical::uniteSuivante()
 	{
 		//silence is golden	
 	}
+	//Déclaration utilisée dans le switch
+	bool err = false;//case '\''
 	switch (currentChar) {
 	case ';':
 		lireCar();
@@ -101,18 +103,19 @@ TUniteLexicale Lexical::uniteSuivante()
 		}
 		break;
 	case '\''://Constante caractère
-		vector<int> value{};
 		lireCar();//On lit le contenu de la constante
-		if (estCaractere())
+		unite.UL = CAR;
+		unite.attribut = currentChar;//code ascii
+		lireCar();
+		
+		while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de ligne = fin de caractère
 		{
-			unite.UL = CAR;
-			unite.attribut = currentChar;//code ascii
-			lireCar();
-			if (currentChar != '\'')
-			{
-				input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-			}
-			
+			err = true;
+			input.ignore();
+		}
+		if (err) {
+		unite.UL = ERR;
+		unite.attribut = 1;//Caractère incorrect
 		}
 		break;
 	case '=':
