@@ -22,7 +22,8 @@ private:
 	void lexemeToString(TUniteLexicale);
 	bool estChiffre(); // prend le caractère courant est vérifie s'il est chiffre
 	bool estCaractere(); //prend la caractère courant est vérifie s'il est caractère 
-	bool logDebug; //true if you want to see debug output
+	bool logDebug; //true if you want to see debug outputffffffffffffffffffffffffff
+	friend class Syntaxique;
 public:
 	Hashage identifiants; //table des identifiants //todo getter
 	//const & des
@@ -33,5 +34,6 @@ public:
 	void processAllFile(); //fonction test
 	//getters & setters
 	void setInput(string);
+	void makeOutput();
 };
 
