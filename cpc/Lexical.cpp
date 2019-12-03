@@ -104,11 +104,11 @@ TUniteLexicale Lexical::uniteSuivante()
 		break;
 	case '\''://Constante caractère
 		lireCar();//On lit le contenu de la constante
-		unite.UL = CAR;
+		unite.UL = CONSTCAR;
 		unite.attribut = currentChar;//code ascii
 		lireCar();
 		
-		while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de ligne = fin de caractère
+		while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de caractère = fin de ligne ou un autre "'"
 		{
 			err = true;
 			input.ignore();
@@ -297,7 +297,6 @@ void Lexical::initierMotsReserves()
 	motsReserves.ajouter("retour");
 	motsReserves.ajouter("car");
 	motsReserves.ajouter("main");
-
 	motsReserves.ajouter("ecrire");
 	motsReserves.ajouter("lire");
 }

@@ -28,7 +28,7 @@ private:
 	void xmlOpen(string caller); // Ecrit dans le fichier XML la balise ouvrante de la fonction caller
 	void xmlClose(string caller);  // De m�me pour la balise fermante$
 	void syntaxError(Production prod);
-	void consommer();
+	//void consommer();
 	void consommer(string expected);//consomme en vérifiant si ul==expected
 	bool estPremierDe(Production unite);
 	bool estSuivantDe(Production unite);

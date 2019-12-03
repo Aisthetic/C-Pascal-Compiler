@@ -1,3 +1,4 @@
-main()  				
+main()  	
+entier a;			
 {
 }

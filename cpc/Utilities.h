@@ -24,13 +24,14 @@ typedef enum
 	NON, // !
 	SUPEGAL, // >=
 	SUP, // >
-	CONST, // CONST
+	CONST, // Constante entiere comme 3
+	CONSTCAR, //Constante caractere comme 'a'
 	MOTCLE, // MOT RESERVE
 	IDENT, // IDENTIFIANT
-	CAR, // Caractere
+	CAR, // Type caractere
+	ENTIER, //Type eniter
 	ERR, //Erreur
 	END, //fin de fichier
-	ENTIER, //eniter
 	MAIN, // main
 	QUOTE,// '
 
