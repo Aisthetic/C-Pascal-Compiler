@@ -10,6 +10,7 @@ Lexical::Lexical()
 {
 	currentChar = '$';
 	initierMotsReserves();
+	logDebug = true;
 }
 
 Lexical::~Lexical()
@@ -160,12 +161,16 @@ TUniteLexicale Lexical::uniteSuivante()
 		{
 			vector<char> lexeme{};
 
+			//*****collecting all the lexeme inside a vector*****
+
 			do {
 				lexeme.push_back(currentChar);
 				lireCar();
 			} while ((estCaractere() || estChiffre()));
 			string str(lexeme.begin(), lexeme.end());
-			//////////////////////////////////////////////////////////////////
+
+			//*****end of collection*****
+
 			if (!str.compare("entier") || !str.compare("car"))
 			{
 				if (!str.compare("entier"))
