@@ -5,9 +5,10 @@
 #include "Constants.h"
 using namespace std;
 
-
 Lexical::Lexical()
 {
+	logDebug = true;
+	cout << "Lexical debugging is enabled" << endl;
 	currentChar = '$';
 	initierMotsReserves();
 }
@@ -19,7 +20,6 @@ Lexical::~Lexical()
 
 TUniteLexicale Lexical::uniteSuivante()
 {
-
 	TUniteLexicale unite;
 	unite.UL = ERR;//Default case is always an error
 	unite.attribut = 0;
