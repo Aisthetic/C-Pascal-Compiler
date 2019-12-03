@@ -129,6 +129,10 @@ void Syntaxique::listeDeDeclarations()
 	{
 		declarations();
 	}
+	else if (estPremierDe(eListeDeFonctions))
+	{
+		//silence is golden
+	}
 	else
 	{
 		syntaxError(eDeclaration);
@@ -158,6 +162,9 @@ void Syntaxique::declarationsPrime()
 		consommer(",");
 		declaration();
 		declarationsPrime();
+	}
+	else if(estSuivantDe(eDeclarationsPrime)){
+		//silence is golden
 	}
 	else {
 		syntaxError(eListeDeDeclarationsPrime);
@@ -208,6 +215,14 @@ void Syntaxique::declarationSeconde()
 		expression();
 		consommer("]");
 	}
+	else if (estSuivantDe(eDeclarationSeconde))
+	{
+		//silence is golden
+	}
+	else
+	{
+		syntaxError(eDeclarationSeconde);
+	}
 	xmlClose("declarationSeconde");
 }
 
@@ -217,6 +232,14 @@ void Syntaxique::listeDeParametres()
 	if (estPremierDe(eParametre))
 	{
 		parametre();
+	}
+	else if (estSuivantDe(eListeParametres))
+	{
+		//silence is golden
+	}
+	else
+	{
+		syntaxError(eListeParametres);
 	}
 	xmlClose("listeDeParametres");
 }
