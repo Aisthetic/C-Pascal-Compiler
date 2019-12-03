@@ -38,7 +38,7 @@ typedef enum
 
 
 	// Mots reserves
-	RETOUR, // to add too ---------/\------------
+	// to add too ---------/\------------
 	SI,
 	SINON,
 	ALORS,

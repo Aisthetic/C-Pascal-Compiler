@@ -171,7 +171,9 @@ TUniteLexicale Lexical::uniteSuivante()
 
 			//*****end of collection*****
 
-			if (!str.compare("entier") || !str.compare("car"))
+
+			//starts figuring reserved words
+			if (!str.compare("entier") || !str.compare("car") || !str.compare("retour") || !str.compare("si") || !str.compare("sinon") || !str.compare("alors") || !str.compare("tanque") || !str.compare("faire") || !str.compare("main"))
 			{
 				if (!str.compare("entier"))
 				{
@@ -183,6 +185,48 @@ TUniteLexicale Lexical::uniteSuivante()
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = CAR;
+					unite.attribut = motsReserves.existe(str);
+				}
+				if (!str.compare("si"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = SI;
+					unite.attribut = motsReserves.existe(str);
+				}
+				if (!str.compare("sinon"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = SINON;
+					unite.attribut = motsReserves.existe(str);
+				}
+				if (!str.compare("ALORS"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = ALORS;
+					unite.attribut = motsReserves.existe(str);
+				}
+				if (!str.compare("TANTQUE"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = TANTQUE;
+					unite.attribut = motsReserves.existe(str);
+				}
+				if (!str.compare("faire"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = FAIRE;
+					unite.attribut = motsReserves.existe(str);
+				}
+				if (!str.compare("retour"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = RETOUR;
+					unite.attribut = motsReserves.existe(str);
+				}
+				if (!str.compare("main"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = MAIN;
 					unite.attribut = motsReserves.existe(str);
 				}
 			}
@@ -252,10 +296,11 @@ void Lexical::initierMotsReserves()
 	motsReserves.ajouter("tantque");
 	motsReserves.ajouter("faire");
 	motsReserves.ajouter("retour");
-	motsReserves.ajouter("ecrire");
-	motsReserves.ajouter("lire");
 	motsReserves.ajouter("car");
 	motsReserves.ajouter("main");
+
+	motsReserves.ajouter("ecrire");
+	motsReserves.ajouter("lire");
 }
 
 void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
@@ -272,6 +317,34 @@ void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 		break;
 	case MOTCLE:
 		output << "\t lexeme: " << motsReserves.pop(unite.attribut);
+		break;
+
+	case ENTIER:
+		output << "\t lexeme: " << "entier";
+		break;
+	case CAR:
+		output << "\t lexeme: " << "CAR";
+		break;
+	case SI:
+		output << "\t lexeme: " << "SI";
+		break;
+	case SINON:
+		output << "\t lexeme: " << "SINON";
+		break;
+	case ALORS:
+		output << "\t lexeme: " << "ALORS";
+		break;
+	case TANTQUE:
+		output << "\t lexeme: " << "TANTQUE";
+		break;
+	case FAIRE:
+		output << "\t lexeme: " << "FAIRE";
+		break;
+	case RETOUR:
+		output << "\t lexeme: " << "RETOUR";
+		break;
+	case MAIN:
+		output << "\t lexeme: " << "MAIN";
 		break;
 	case PTVRG:
 		output << "\t lexeme: " << ";";
