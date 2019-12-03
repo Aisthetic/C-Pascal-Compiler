@@ -258,8 +258,11 @@ void Syntaxique::parametresPrime()
 		parametre();
 		parametresPrime();
 	}
+	else if (estSuivantDe(eParametresPrime))
+	{
+		//silence is golden
+	}
 	else { syntaxError(eParametresPrime); }
-	// ajouter traitement epsilon
 	xmlClose("parametresPrime");
 }
 
@@ -284,8 +287,11 @@ void Syntaxique::listeInstructions()
 		consommer(";");
 		listeInstructions();
 	}
+	else if (estSuivantDe(eListeInstructions))
+	{
+		//silence is golden
+	}
 	else { syntaxError(eListeInstructions); }
-	// traitement epsilon
 	xmlClose("listeInstructions");
 }
 
@@ -353,6 +359,22 @@ void Syntaxique::instructionPrime()
 	xmlClose("instructionPrime");
 }
 
+void Syntaxique::instructionSeconde()
+{
+	xmlOpen("instructionSeconde");
+	if (isMotCle("sinon")) {
+		consommer();
+		consommer("{");
+		listeInstructions();
+		consommer("}");
+	} 
+	else if (estSuivantDe(eInstructionSeconde))
+	{
+		//silence is golden
+	}
+	else { syntaxError(eInstructionSeconde); }
+	xmlClose("instructionSeconde");
+}
 void Syntaxique::instructionTriple()
 {
 	xmlOpen("instructionTriple");
@@ -367,21 +389,6 @@ void Syntaxique::instructionTriple()
 	else { syntaxError(eInstructionTriple); }
 	xmlClose("instructionTriple");
 }
-
-void Syntaxique::instructionSeconde()
-{
-	xmlOpen("instructionSeconde");
-	if (isMotCle("sinon")) {
-		consommer();
-		consommer("{");
-		listeInstructions();
-		consommer("}");
-	} 
-	// traitement epsilon
-	else { syntaxError(eInstructionSeconde); }
-	xmlClose("instructionSeconde");
-}
-
 void Syntaxique::expression()
 {
 	xmlOpen("expression");
@@ -401,7 +408,9 @@ void Syntaxique::expressionPrime()
 		expressionLogique();
 		expressionPrime();
 	}
-
+	else if (estSuivantDe(eExpressionPrime)) {
+		//silence is golden
+	}
 	else { syntaxError(eExpressionPrime); }
 	xmlClose("expressionPrime");
 }
