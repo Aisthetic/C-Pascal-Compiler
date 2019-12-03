@@ -736,6 +736,33 @@ bool Syntaxique::estPremierDe(Production production) {
 	case eCte:
 		return uniteCourante.UL == CONST;
 	//end zac
+
+	// start testoxe
+	case eParametres :
+		return uniteCourante.attribut == ENTIER || uniteCourante.UL == CAR;
+		break;
+	case eParametresPrime :
+		return uniteCourante.UL == VIRG;
+		break;
+	case eParametre : 
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
+		break;
+	case eListeInstructions :
+		return estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE || uniteCourante.UL == MOTCLE;
+		break;
+	case eInstruction :
+		return estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == MOTCLE || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE;
+		break;
+	case eInstructionPrime :
+		return uniteCourante.UL == EGAL || uniteCourante.UL == CROOUV;
+		break;
+	case eInstructionSeconde :
+		return uniteCourante.UL == SINON;
+		break;
+	case eInstructionTriple :
+		return estPremierDe(eExpression) || uniteCourante.UL == LIRE;
+		break;
+
 	default:
 		throw new exception("Production non reconnue");
 		break;
@@ -828,6 +855,33 @@ bool Syntaxique::estSuivantDe(Production production) {
 	case eCte:
 		return estSuivantDe(eFacteur);
 		//end zac
+
+		//start testoxe
+	case eParametres :
+		return uniteCourante.UL == PARFERM;
+		break;
+	case eParametresPrime :
+		return uniteCourante.UL == PARFERM;
+		break;
+	case eParametre :
+		return uniteCourante.UL == VIRG || uniteCourante.UL == PARFERM;
+		break;
+	case eListeInstructions :
+		return uniteCourante.UL == ACCFERM;
+		break;
+	case eInstruction :
+		return uniteCourante.UL == PTVRG;
+		break;
+	case eInstructionPrime :
+		return uniteCourante.UL == PTVRG;
+		break;
+	case eInstructionSeconde :
+		return uniteCourante.UL == PTVRG;
+		break;
+	case eInstructionTriple :
+		return uniteCourante.UL == PTVRG;
+		break;
+
 	default:
 		throw new exception("Production non reconnue");
 		break;
