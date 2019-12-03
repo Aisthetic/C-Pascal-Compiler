@@ -1,17 +1,22 @@
 #include "Syntaxique.h"
 #include "Lexical.h"
+#include "Constants.h"
 using namespace std;
 
+
+
+//Constructeurs
 Syntaxique::Syntaxique(string inputFile)
 {
 	lexical = new Lexical();
 	lexical->setInput(inputFile);
+	uniteCourante = { END,0 };
 }
 
-//Constructeurs
 Syntaxique::Syntaxique(Lexical* pLexical)
 {
 	lexical = pLexical;
+	uniteCourante = { END,0 };
 }
 
 //Functions
@@ -22,7 +27,7 @@ Syntaxique::Syntaxique(Lexical* pLexical)
 void Syntaxique::startParsing()
 {
 	// Gestion du fichier XML
-	xmlFile.open("./lexical.xml");
+	xmlFile.open(XML_DIRECTORY + "/"+ lexical->inputFilename +".xml");
 	consommer();
 	programme();
 	if (uniteCourante.UL != END) {

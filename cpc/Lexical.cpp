@@ -7,7 +7,6 @@ using namespace std;
 
 Lexical::Lexical()
 {
-	logDebug = true;
 	cout << "Lexical debugging is enabled" << endl;
 	currentChar = '$';
 	initierMotsReserves();
@@ -16,7 +15,7 @@ Lexical::Lexical()
 
 Lexical::~Lexical()
 {
-	//todo
+	output.flush();
 }
 
 TUniteLexicale Lexical::uniteSuivante()
@@ -420,14 +419,7 @@ void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 
 void Lexical::processAllFile()
 {
-	if (!output.is_open())//si un input est déjà ouvert on passe au processing direct
-	{
-		output.open(LEXICAL_OUTPUT_DIRECTORY + "/" + inputFilename);
-		if (!output.is_open()) {
-			cout << "Impossible d'ouvrir le fichier d'output";
-			return;
-		}
-	}
+	makeOutput();
 	while (!input.eof()) {
 		auto unite = uniteSuivante();
 		output << endl << "UL: " << unite.UL << ", Attribut: " << unite.attribut;
@@ -446,6 +438,18 @@ void Lexical::setInput(string file)
 		cout << "Erreur lors de l'ouverture du fichier " << file << endl;
 	}
 	lireCar();
+}
+
+//Cree un fichier d'output
+void Lexical::makeOutput() {
+	if (!output.is_open())//si un input est déjà ouvert on passe au processing direct
+	{
+		output.open(LEXICAL_OUTPUT_DIRECTORY + "/" + inputFilename);
+		if (!output.is_open()) {
+			cout << "Impossible d'ouvrir le fichier d'output";
+			return;
+		}
+	}
 }
 
 
