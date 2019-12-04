@@ -129,7 +129,7 @@ void Syntaxique::fonction()
 void Syntaxique::listeDeDeclarations()
 {
 	xmlOpen("listeDeDeclarations");
-	if (estPremierDe(eDeclaration))
+	if (estPremierDe(eDeclarations))
 	{
 		declarations();
 	}
@@ -147,10 +147,10 @@ void Syntaxique::listeDeDeclarations()
 void Syntaxique::declarations()
 {
 	xmlOpen("declarations");
-	if (estPremierDe(eDeclaration))
+	if (estPremierDe(eDeclarations))
 	{
 		declaration();
-		declarationPrime();
+		declarationsPrime();
 	}
 	else {
 		syntaxError(eDeclaration);
@@ -161,7 +161,7 @@ void Syntaxique::declarations()
 void Syntaxique::declarationsPrime()
 {
 	xmlOpen("declarationsPrime");
-	if(estPremierDe(eDeclaration))
+	if(estPremierDe(eDeclarationsPrime))
 	{
 		consommer("virg");
 		declaration();
@@ -171,7 +171,7 @@ void Syntaxique::declarationsPrime()
 		//silence is golden
 	}
 	else {
-		syntaxError(eListeDeDeclarationsPrime);
+		syntaxError(eDeclarationsPrime);
 	}
 	xmlClose("declarationsPrime");
 }
@@ -201,7 +201,7 @@ void Syntaxique::declarationPrime()
 	xmlOpen("declarationPrime");
 	if (estPremierDe(eIdentificateur))
 	{
-		consommer("Ident");
+		consommer("ENTIER");
 		declarationSeconde();
 	}
 	else {
@@ -213,11 +213,11 @@ void Syntaxique::declarationPrime()
 void Syntaxique::declarationSeconde()
 {
 	xmlOpen("declarationSeconde");
-	if (estPremierDe(eExpression))
+	if (estPremierDe(eDeclarationSeconde))
 	{
-		consommer("[");
+		consommer("CROVR");
 		expression();
-		consommer("]");
+		consommer("OCROFER");
 	}
 	else if (estSuivantDe(eDeclarationSeconde))
 	{
@@ -519,7 +519,7 @@ void Syntaxique::termePrime(){
 	else {
 		syntaxError(eTermePrime);
 	}
-	xmlOpen("termePrime");
+	xmlClose("termePrime");
 }
 
 void Syntaxique::termePrioritaire(){
@@ -689,6 +689,7 @@ void Syntaxique::consommer(string expected) {
 		// TODO: handle errors correctly
 		//return uniteCourante.attribut == lexical->identifiants.existe(expected); 
 	}
+	
 	//Xml pour les terminaux
 	xmlOpen(expected);
 	xmlClose(expected);
@@ -715,7 +716,7 @@ bool Syntaxique::estPremierDe(Production production) {
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
 		break;
 	case eDeclarationsPrime:
-		return uniteCourante.UL == VIRG || estSuivantDe(eListeDeDeclarationsPrime);
+		return uniteCourante.UL == VIRG || estSuivantDe(eDeclarationsPrime);
 		break;
 	case eDeclaration:
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
@@ -724,7 +725,7 @@ bool Syntaxique::estPremierDe(Production production) {
 		return uniteCourante.UL == VIRG || estSuivantDe(production);
 		break;
 	case eDeclarationSeconde:
-		return uniteCourante.UL == ACCOUV || estSuivantDe(eDeclarationSeconde);
+		return uniteCourante.UL == CROOUV || estSuivantDe(eDeclarationSeconde);
 		break;
 	case eListeParametres:
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || estSuivantDe(eListeParametres);
@@ -739,13 +740,13 @@ bool Syntaxique::estPremierDe(Production production) {
 		return estPremierDe(eComparaison) == true || estSuivantDe(production);;
 		break;
 	case eExpressionSimple:
-		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON || uniteCourante.UL == SOUS;
+		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON || uniteCourante.UL == SOUS;
 		break;	
 	case eExpressionSimplePrime:
 		return uniteCourante.UL == ADD || uniteCourante.UL == SOUS || estSuivantDe(production);
 		break;	
 	case eTerme:
-		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON ;
+		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON ;
 		break;
 	case eTermePrime:
 		return uniteCourante.UL == MUL || uniteCourante.UL == DIV || estSuivantDe(production);
@@ -754,7 +755,7 @@ bool Syntaxique::estPremierDe(Production production) {
 		return estPremierDe(eTerme) == true;
 		break;
 	case eFacteur:
-		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE ;
+		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE ;
 		break;
 	case eFacteurPrime:
 		return uniteCourante.UL == PAROUV || uniteCourante.UL == CROOUV || estSuivantDe(production);
@@ -846,7 +847,7 @@ bool Syntaxique::estSuivantDe(Production production) {
 		return uniteCourante.UL == VIRG || uniteCourante.UL == PTVRG;
 		break;
 	case eDeclarationSeconde:
-		return uniteCourante.UL == PAROUV;
+		return uniteCourante.UL == VIRG || uniteCourante.UL == PTVRG;
 		break;
 	case eListeParametres:
 		return uniteCourante.UL == PAROUV;
@@ -929,6 +930,14 @@ bool Syntaxique::estSuivantDe(Production production) {
 	case eInstructionTriple :
 		return uniteCourante.UL == PTVRG;
 		break;
+
+	case eExpression:
+		return uniteCourante.UL == VIRG || uniteCourante.UL == ALORS || uniteCourante.UL == FAIRE || uniteCourante.UL == CROFER || uniteCourante.UL == ACCFERM || uniteCourante.UL == PTVRG || uniteCourante.UL == PARFERM;
+	case eExpressionPrime:
+		return uniteCourante.UL == VIRG || uniteCourante.UL == ALORS || uniteCourante.UL == FAIRE || uniteCourante.UL == CROFER || uniteCourante.UL == ACCFERM || uniteCourante.UL == PTVRG || uniteCourante.UL == PARFERM;
+
+
+
 
 	default:
 		throw new exception("Production non reconnue");
