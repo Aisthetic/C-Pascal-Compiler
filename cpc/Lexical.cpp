@@ -172,7 +172,7 @@ TUniteLexicale Lexical::uniteSuivante()
 
 
 			//starts figuring reserved words
-			if (!str.compare("entier") || !str.compare("car") || !str.compare("retour") || !str.compare("si") || !str.compare("sinon") || !str.compare("alors") || !str.compare("tanque") || !str.compare("faire") || !str.compare("main"))
+			if (!str.compare("ecrire") || !str.compare("lire") || !str.compare("entier") || !str.compare("car") || !str.compare("retour") || !str.compare("si") || !str.compare("sinon") || !str.compare("alors") || !str.compare("tantque") || !str.compare("faire") || !str.compare("main"))
 			{
 				if (!str.compare("entier"))
 				{
@@ -194,12 +194,12 @@ TUniteLexicale Lexical::uniteSuivante()
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = SINON;
 				}
-				if (!str.compare("ALORS"))
+				if (!str.compare("alors"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = ALORS;
 				}
-				if (!str.compare("TANTQUE"))
+				if (!str.compare("tantque"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = TANTQUE;

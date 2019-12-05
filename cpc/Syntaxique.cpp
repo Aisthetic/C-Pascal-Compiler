@@ -263,7 +263,7 @@ void Syntaxique::parametresPrime()
 {
 	xmlOpen("parametresPrime");
 	if (estPremierDe(eParametresPrime)) {
-		consommer(",");
+		consommer("virg");
 		parametre();
 		parametresPrime();
 	}
@@ -310,46 +310,45 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		identif();
 		instructionPrime();
 	}
-	else if (estPremierDe(eInstruction)) {
-		if (uniteCourante.UL==RETOUR) 
-		{
-			consommer("retour");
-			expression();
-		}
-		else if (uniteCourante.UL == SI) 
-		{
-			consommer("si");
-			expression();
-			if (uniteCourante.UL==ALORS) {
-				consommer("alors");
-				consommer("ACCOUV");
-				listeInstructions();
-				consommer("ACCFERM");
-				instructionSeconde();
-			}
-			else { return syntaxError(eInstruction); }
-		}
-		else if (uniteCourante.UL==TANTQUE) 
-		{
-			consommer("(");
-			expression();
-			consommer(")");
-			if (uniteCourante.UL==FAIRE) {
-				consommer("faire");
-				consommer("{");
-				listeInstructions();
-				consommer("}");
-			}
-			else { return syntaxError(eInstruction); }
-		}
-		else if (isMotCle("ecrire")) {
-			consommer("ecrire");
-			consommer("(");
-			expression();
-			consommer(")");
+	else if (uniteCourante.UL == RETOUR)
+	{
+		consommer("retour");
+		expression();
+	}
+	else if (uniteCourante.UL == SI)
+	{
+		consommer("si");
+		expression();
+		if (uniteCourante.UL == ALORS) {
+			consommer("alors");
+			consommer("ACCOUV");
+			listeInstructions();
+			consommer("ACCFERM");
+			instructionSeconde();
 		}
 		else { return syntaxError(eInstruction); }
 	}
+	else if (uniteCourante.UL == TANTQUE)
+	{
+		consommer("parOuv");
+		expression();
+		consommer("parFerm");
+		if (uniteCourante.UL == FAIRE) {
+			consommer("faire");
+			consommer("accOuv");
+			listeInstructions();
+			consommer("accFerm");
+		}
+		else { return syntaxError(eInstruction); }
+	}
+	else if (uniteCourante.UL == ECRIRE) {
+		consommer("ecrire");
+		consommer("parOuv");
+		expression();
+		consommer("parFerm");
+	}
+	else { return syntaxError(eInstruction); }
+	
 	xmlClose("instruction");//retard dair open hna
 }
 
@@ -390,10 +389,10 @@ void Syntaxique::instructionSeconde()
 void Syntaxique::instructionTriple()
 {
 	xmlOpen("instructionTriple");
-	if (isMotCle("lire")) {
+	if (uniteCourante.UL == LIRE) {
 		consommer("lire");
-		consommer("(");
-		consommer(")");
+		consommer("parOuv");
+		consommer("parFerm");
 	}
 	else if (estPremierDe(eExpression)) {
 		expression();
@@ -686,7 +685,7 @@ void Syntaxique::cte()
 //	uniteCourante = lexical->uniteSuivante();
 //}
 
-void Syntaxique::consommer(string expected) {
+void Syntaxique::consommer(TUnite expected) {
 	bool expectedCorrect = false;//true si on trouve ce qu'il fallait consommé
 	if (uniteCourante.UL == IDENT) {
 		// TODO: handle errors correctly
@@ -694,8 +693,8 @@ void Syntaxique::consommer(string expected) {
 	}
 	
 	//Xml pour les terminaux
-	xmlOpen(expected);
-	xmlClose(expected);
+	xmlFile << expected << " "; //espace pour éviter de concatener deux terminaux consécutifs
+
 	uniteCourante = lexical->uniteSuivante();
 }
 //checks if the caracter is premier de l'unite en param
@@ -803,7 +802,8 @@ bool Syntaxique::estPremierDe(Production production) {
 		return estSuivantDe(eListeInstructions) || estSuivantDe(eExpression) || estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE || uniteCourante.UL == MOTCLE;
 		break;
 	case eInstruction :
-		return estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == MOTCLE || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE;
+		return estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == MOTCLE 
+			|| uniteCourante.UL == SI || uniteCourante.UL == TANTQUE || uniteCourante.UL == LIRE || uniteCourante.UL == ECRIRE ;
 		break;
 	case eInstructionPrime :
 		return uniteCourante.UL == EGAL || uniteCourante.UL == CROOUV;
@@ -933,15 +933,10 @@ bool Syntaxique::estSuivantDe(Production production) {
 	case eInstructionTriple :
 		return uniteCourante.UL == PTVRG;
 		break;
-
 	case eExpression:
 		return uniteCourante.UL == VIRG || uniteCourante.UL == ALORS || uniteCourante.UL == FAIRE || uniteCourante.UL == CROFER || uniteCourante.UL == ACCFERM || uniteCourante.UL == PTVRG || uniteCourante.UL == PARFERM;
 	case eExpressionPrime:
 		return uniteCourante.UL == VIRG || uniteCourante.UL == ALORS || uniteCourante.UL == FAIRE || uniteCourante.UL == CROFER || uniteCourante.UL == ACCFERM || uniteCourante.UL == PTVRG || uniteCourante.UL == PARFERM;
-
-
-
-
 	default:
 		throw new exception("Production non reconnue");
 		break;
