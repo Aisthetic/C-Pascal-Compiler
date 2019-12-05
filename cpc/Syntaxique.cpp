@@ -81,12 +81,12 @@ void Syntaxique::programme() {
 void Syntaxique::listeDeFonctions()
 {
 	xmlOpen("listeDeFonctions");
-	if (estPremierDe(eFonction))
+	if (estPremierDe(eListeDeFonctions)&&uniteCourante.UL!=MAIN)
 	{
 		fonction();
 		listeDeFonctions();
 	}
-	else if (uniteCourante.UL== MAIN) // TODO: mettre une production pour le main seul ?
+	if (uniteCourante.UL== MAIN) // TODO: mettre une production pour le main seul ?
 	{
 		xmlOpen("main");
 		uniteCourante = lexical->uniteSuivante();
@@ -129,7 +129,7 @@ void Syntaxique::fonction()
 void Syntaxique::listeDeDeclarations()
 {
 	xmlOpen("listeDeDeclarations");
-	if (estPremierDe(eDeclarations))
+	if (estPremierDe(eListeDeDeclarations))
 	{
 		declarations();
 	}
@@ -139,7 +139,7 @@ void Syntaxique::listeDeDeclarations()
 	}
 	else
 	{
-		syntaxError(eDeclaration);
+		syntaxError(eListeDeDeclarations);
 	}
 	xmlClose("listeDeDeclarations");
 }
@@ -201,7 +201,7 @@ void Syntaxique::declarationPrime()
 	xmlOpen("declarationPrime");
 	if (estPremierDe(eIdentificateur))
 	{
-		consommer("ENTIER");
+		consommer("IDENT");
 		declarationSeconde();
 	}
 	else {
@@ -235,7 +235,7 @@ void Syntaxique::listeDeParametres()
 	xmlOpen("listeDeParametres");
 	if (estPremierDe(eParametre))
 	{
-		parametre();
+		parametres();
 	}
 	else if (estSuivantDe(eListeParametres))
 	{
@@ -278,12 +278,11 @@ void Syntaxique::parametresPrime()
 void Syntaxique::parametre()
 {
 	xmlOpen("parametre");
-	if (isMotCle("entier")) {
+	if (estPremierDe(eParametre)) {
+		consommer("TYPE");
 		identif();
 	}
-	else if (isMotCle("Car")) {
-		identif();
-	}
+	
 	else { syntaxError(eParametre); }
 	xmlClose("parametre");
 }
@@ -312,27 +311,30 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		instructionPrime();
 	}
 	else if (estPremierDe(eInstruction)) {
-		if (isMotCle("retour")) {
+		if (uniteCourante.UL==RETOUR) 
+		{
 			consommer("retour");
 			expression();
 		}
-		else if (uniteCourante.UL == SI) {
+		else if (uniteCourante.UL == SI) 
+		{
 			consommer("si");
 			expression();
-			if (isMotCle("alors")) {
+			if (uniteCourante.UL==ALORS) {
 				consommer("alors");
-				consommer("{");
+				consommer("ACCOUV");
 				listeInstructions();
-				consommer("}");
+				consommer("ACCFERM");
 				instructionSeconde();
 			}
 			else { return syntaxError(eInstruction); }
 		}
-		else if (isMotCle("tantque")) {
+		else if (uniteCourante.UL==TANTQUE) 
+		{
 			consommer("(");
 			expression();
 			consommer(")");
-			if (isMotCle("faire")) {
+			if (uniteCourante.UL==FAIRE) {
 				consommer("faire");
 				consommer("{");
 				listeInstructions();
@@ -354,10 +356,11 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 void Syntaxique::instructionPrime()
 {
 	xmlOpen("instructionPrime");
-	if (estPremierDe(eInstructionTriple)) {
+	if (estPremierDe(eInstructionPrime)) {
+		consommer("EGAL");
 		instructionTriple();
 	}
-	else if (eInstruction) {
+	else if (uniteCourante.UL==CROFER) {
 		consommer("croOuv");
 		expression();
 		consommer("croFerm");
@@ -725,7 +728,7 @@ bool Syntaxique::estPremierDe(Production production) {
 		return uniteCourante.UL == VIRG || estSuivantDe(production);
 		break;
 	case eDeclarationSeconde:
-		return uniteCourante.UL == CROOUV || estSuivantDe(eDeclarationSeconde);
+		return uniteCourante.UL == CROOUV ;
 		break;
 	case eListeParametres:
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || estSuivantDe(eListeParametres);
@@ -740,22 +743,22 @@ bool Syntaxique::estPremierDe(Production production) {
 		return estPremierDe(eComparaison) == true || estSuivantDe(production);;
 		break;
 	case eExpressionSimple:
-		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON || uniteCourante.UL == SOUS;
+		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON || uniteCourante.UL == SOUS || uniteCourante.UL==IDENT;
 		break;	
 	case eExpressionSimplePrime:
 		return uniteCourante.UL == ADD || uniteCourante.UL == SOUS || estSuivantDe(production);
 		break;	
 	case eTerme:
-		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON ;
+		return estPremierDe(eFacteur) ;
 		break;
 	case eTermePrime:
 		return uniteCourante.UL == MUL || uniteCourante.UL == DIV || estSuivantDe(production);
 		break;
 	case eTermePrioritaire:
-		return estPremierDe(eTerme) == true;
+		return estPremierDe(eTerme) || uniteCourante.UL==NON;
 		break;
 	case eFacteur:
-		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE ;
+		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE ||uniteCourante.UL==IDENT;
 		break;
 	case eFacteurPrime:
 		return uniteCourante.UL == PAROUV || uniteCourante.UL == CROOUV || estSuivantDe(production);
@@ -800,7 +803,7 @@ bool Syntaxique::estPremierDe(Production production) {
 		return estSuivantDe(eListeInstructions) || estSuivantDe(eExpression) || estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE || uniteCourante.UL == MOTCLE;
 		break;
 	case eInstruction :
-		return estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == MOTCLE || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE;
+		return estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == MOTCLE || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE;
 		break;
 	case eInstructionPrime :
 		return uniteCourante.UL == EGAL || uniteCourante.UL == CROOUV;
