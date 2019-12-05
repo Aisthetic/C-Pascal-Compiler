@@ -178,55 +178,56 @@ TUniteLexicale Lexical::uniteSuivante()
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = ENTIER;
-					unite.attribut = motsReserves.existe(str);
 				}
 				if (!str.compare("car"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = CAR;
-					unite.attribut = motsReserves.existe(str);
 				}
 				if (!str.compare("si"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = SI;
-					unite.attribut = motsReserves.existe(str);
 				}
 				if (!str.compare("sinon"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = SINON;
-					unite.attribut = motsReserves.existe(str);
 				}
 				if (!str.compare("ALORS"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = ALORS;
-					unite.attribut = motsReserves.existe(str);
 				}
 				if (!str.compare("TANTQUE"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = TANTQUE;
-					unite.attribut = motsReserves.existe(str);
 				}
 				if (!str.compare("faire"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = FAIRE;
-					unite.attribut = motsReserves.existe(str);
 				}
 				if (!str.compare("retour"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = RETOUR;
-					unite.attribut = motsReserves.existe(str);
 				}
 				if (!str.compare("main"))
 				{
 					unite.attribut = motsReserves.existe(str);
 					unite.UL = MAIN;
+				}
+				if (!str.compare("ecrire"))
+				{
 					unite.attribut = motsReserves.existe(str);
+					unite.UL = ECRIRE;
+				}
+				if (!str.compare("lire"))
+				{
+					unite.attribut = motsReserves.existe(str);
+					unite.UL = LIRE;
 				}
 			}
 			else if(motsReserves.existe(str) != -1)
@@ -319,6 +320,12 @@ void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 
 	case ENTIER:
 		output << "\t lexeme: " << "entier";
+		break;
+	case LIRE:
+		output << "\t lexeme: " << "lire";
+		break;
+	case ECRIRE:
+		output << "\t lexeme: " << "ecrire";
 		break;
 	case CAR:
 		output << "\t lexeme: " << "CAR";
