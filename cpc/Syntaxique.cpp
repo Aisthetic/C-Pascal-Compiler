@@ -610,7 +610,7 @@ void Syntaxique::expressions()
 	xmlOpen("expressions");
 	if(estPremierDe(eExpression)){
 		expression();
-		expressionPrime();
+		expressionsPrime();
 	}
 	else {
 		syntaxError(eExpression);
@@ -622,6 +622,7 @@ void Syntaxique::expressionsPrime()
 {
 	xmlOpen("expressionsPrime");
 	if (uniteCourante.UL == VIRG) {
+		consommer("VIRG");
 		expression();
 		expressionPrime();
 	}
@@ -685,7 +686,7 @@ void Syntaxique::cte()
 //	uniteCourante = lexical->uniteSuivante();
 //}
 
-void Syntaxique::consommer(TUnite expected) {
+void Syntaxique::consommer(string expected) {
 	bool expectedCorrect = false;//true si on trouve ce qu'il fallait consommé
 	if (uniteCourante.UL == IDENT) {
 		// TODO: handle errors correctly
