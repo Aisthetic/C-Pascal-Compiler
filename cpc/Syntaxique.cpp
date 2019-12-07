@@ -87,7 +87,7 @@ void Syntaxique::listeDeFonctions()
 		fonction();
 		listeDeFonctions();
 	}
-	if (uniteCourante.UL== MAIN) // TODO: mettre une production pour le main seul ?
+	else if (uniteCourante.UL== MAIN) // TODO: mettre une production pour le main seul ?
 	{
 		xmlOpen("main");
 		uniteCourante = lexical->uniteSuivante();

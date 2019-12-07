@@ -24,14 +24,17 @@ TUniteLexicale Lexical::uniteSuivante()
 	unite.UL = ERR;//Default case is always an error
 	unite.attribut = 0;
 
+	while (estBlanc(currentChar))
+	{
+		if (input.eof())//Reached end of file
+			currentChar = '$';
+		else
+			lireCar();
+	}
 	if (currentChar=='$')//in du traitement du fichier 
 	{
 		unite.UL = END;
 		return unite;
-	}
-	while (estBlanc(currentChar) && lireCar())
-	{
-		//silence is golden	
 	}
 	//Déclaration utilisée dans le switch
 	bool err = false;//case '\''
@@ -249,8 +252,7 @@ TUniteLexicale Lexical::uniteSuivante()
 			unite.attribut = 0;//erreur: charactere non reconnu
 
 	}
-	if (input.eof())
-		currentChar = '$';//so that next uniteSuivante's call returns an UL.end
+	
 	return unite;
 }
 
