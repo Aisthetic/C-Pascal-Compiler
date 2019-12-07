@@ -10,7 +10,7 @@ main()
 entier d;
 {
   a = lire();  	
-  tantque 0 < a faire {  
+  tantque(0 < a) faire {  
 	d = f(d, 2 * a);	
 	ecrire(d + 1);  	
 	a = a - 1;

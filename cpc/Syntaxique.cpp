@@ -71,6 +71,7 @@ void Syntaxique::programme() {
 	if (estPremierDe(eListeDeDeclarations)) {
 		listeDeDeclarations();
 		listeDeFonctions();
+
 	}
 	else {
 		syntaxError(eProgramme);
@@ -132,6 +133,7 @@ void Syntaxique::listeDeDeclarations()
 	if (estPremierDe(eListeDeDeclarations))
 	{
 		declarations();
+		consommer("PTVIRG");
 	}
 	else if (estSuivantDe(eListeDeDeclarations))
 	{
@@ -292,7 +294,6 @@ void Syntaxique::listeInstructions()
 	xmlOpen("listeInstructions");
 	if (estPremierDe(eInstruction)) {
 		instruction();
-		consommer("PointVirg");
 		listeInstructions();
 	}
 	else if (estSuivantDe(eListeInstructions))
@@ -309,11 +310,13 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	if (estPremierDe(eIdentificateur)) {
 		identif();
 		instructionPrime();
+		consommer("PointVirg");
 	}
 	else if (uniteCourante.UL == RETOUR)
 	{
 		consommer("retour");
 		expression();
+		consommer("PointVirg");
 	}
 	else if (uniteCourante.UL == SI)
 	{
@@ -330,6 +333,7 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	}
 	else if (uniteCourante.UL == TANTQUE)
 	{
+		consommer("TANQUE");
 		consommer("parOuv");
 		expression();
 		consommer("parFerm");
@@ -346,6 +350,7 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		consommer("parOuv");
 		expression();
 		consommer("parFerm");
+		consommer("PointVirg");
 	}
 	else { return syntaxError(eInstruction); }
 	
@@ -713,25 +718,25 @@ bool Syntaxique::estPremierDe(Production production) {
 		return uniteCourante.UL == IDENT;
 		break;
 	case eListeDeDeclarations:
-		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || estSuivantDe(eListeDeDeclarations);
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
 		break;
 	case eDeclarations:
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
 		break;
 	case eDeclarationsPrime:
-		return uniteCourante.UL == VIRG || estSuivantDe(eDeclarationsPrime);
+		return uniteCourante.UL == VIRG ;
 		break;
 	case eDeclaration:
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
 		break;
 	case eDeclarationPrime:
-		return uniteCourante.UL == VIRG || estSuivantDe(production);
+		return uniteCourante.UL == VIRG ;
 		break;
 	case eDeclarationSeconde:
 		return uniteCourante.UL == CROOUV ;
 		break;
 	case eListeParametres:
-		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR || estSuivantDe(eListeParametres);
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR ;
 		break;
 		//outidrarine finishes
 
@@ -854,7 +859,7 @@ bool Syntaxique::estSuivantDe(Production production) {
 		return uniteCourante.UL == VIRG || uniteCourante.UL == PTVRG;
 		break;
 	case eListeParametres:
-		return uniteCourante.UL == PAROUV;
+		return uniteCourante.UL == PARFERM;
 		break;
 		//outidrarine finishes
 	
