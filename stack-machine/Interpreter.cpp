@@ -9,9 +9,9 @@ Interpreter::Interpreter()
     ;
 }
 
-string Intrepreter::nextInst()
+void Intrepreter::exnextInstr() 
 {
-    return code[];
+    return code[1]; int myNr = std::stoi(myString);
 }
 
 void Interpreter::codeFile(string file)
