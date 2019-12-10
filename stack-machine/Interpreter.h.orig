@@ -1,10 +1,12 @@
 #pragma once
 
-#include <iostream>
+<<<<<<< HEAD
+=======
 #include <fstream>
 #include <sstream>
 #include <string>
 #include <vector>
+>>>>>>> 82d212ba7d233d22a8a3702204f9ea4c3af04688
 #include <string>
 #include "Memoire.h"
 using namespace std;
@@ -12,15 +14,21 @@ using namespace std;
 class Interpreter
 {
 private:
-	string inputFile; // File containing code
-	ifstream input; //peut être fichier, string dans la console..
+	string inputFile; // File contain code
+<<<<<<< HEAD
+=======
+	ifstream input;//peut être fichier,string dans la console..
 	std::vector<string> code;
 	ofstream output;
+>>>>>>> 82d212ba7d233d22a8a3702204f9ea4c3af04688
 	Memoire memoire;
 public:
 	string nextInstr(); // Returns next instruction
 	void exInstr(); // Execute next instruction
+<<<<<<< HEAD
+=======
 	void codeFile(); // open file containing code
+>>>>>>> 82d212ba7d233d22a8a3702204f9ea4c3af04688
 	Interpreter(); // Constructor
 };
 
