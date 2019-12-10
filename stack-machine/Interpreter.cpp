@@ -3,8 +3,20 @@
 using namespace std;
 
 
+//Constructeurs
+Interpreter::Interpreter()
+{
+    ;
+}
+
+void Intrepreter::exnextInstr() 
+{
+    return code[1]; int myNr = std::stoi(myString);
+}
+
 void Interpreter::codeFile(string file)
 {
+    ifstream input;
     input.open(file);
     string line;
 
@@ -17,8 +29,8 @@ void Interpreter::codeFile(string file)
         while (!input.eof())
         {
             getline(input, line);
-            code.push_back(line);
+            code.push_back(line);// premiere ligne est code[0]==string ; TO-DO:changement de type 
         }
-        input.close();
     }
+    input.close();
 }

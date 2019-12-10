@@ -12,15 +12,15 @@ using namespace std;
 class Interpreter
 {
 private:
-	string inputFile; // File containing code
-	ifstream input; //peut être fichier, string dans la console..
-	std::vector<string> code;
-	ofstream output;
+	
+	vector<string> code;
 	Memoire memoire;
+
 public:
-	string nextInstr(); // Returns next instruction
-	void exInstr(); // Execute next instruction
-	void codeFile(); // open file containing code
+
+	void exInstr(); // Execute instruction
+	void exnextInstr(); // Execute next instruction
+	void codeFile(string); // open file containing code
 	Interpreter(); // Constructor
 };
 
