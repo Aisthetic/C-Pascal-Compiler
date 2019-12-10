@@ -13,7 +13,7 @@ Memoire::Memoire(vector<string> code)
 
 bool Memoire::stackFull()
 {
-	if (sp >= memorySize) { return true; } 
+	if (sp >= MEMORYSIZE) { return true; } 
 	else { return false; }
 	
 }
@@ -34,6 +34,7 @@ void Memoire::empc(string value)
 	else {
 		cells[sp] = value;
 		sp++;
+		cout << "Done.\n";
 	}
 }
 
@@ -55,12 +56,16 @@ void Memoire::addi()
 		// Popping out first term
 		int t1 = stoi(cells[sp - 1]);
 		sp--;
+		cout << t1 << " + ";
 		// Popping out second term
-		int t2 = stoi(cells[sp - 2]);
+		int t2 = stoi(cells[int(sp - 1)]);
 		sp--;
+		cout << t2 << " = ";
 
 		// Stacking the addition
+		cout << t1 + t2 << ". ";
 		Memoire::empc(to_string(t1 + t2));
+		
 	}
 }
 
@@ -76,12 +81,16 @@ void Memoire::sous()
 		// Popping out first term
 		int t1 = stoi(cells[sp - 1]);
 		sp--;
+		cout << t1 << " - ";
 		// Popping out second term
-		int t2 = stoi(cells[sp - 2]);
+		int t2 = stoi(cells[sp - 1]);
 		sp--;
+		cout << t2 << " = ";
 
 		// Stacking the substraction
+		cout << t1 - t2 << ". ";
 		empc(to_string(t2 - t1));
+		
 	}
 }
 
@@ -101,6 +110,7 @@ void Memoire::dup()
 		sp++;
 		cells[sp] = value;
 		sp++;
+		cout << "Done.\n";
 	}
 }
 

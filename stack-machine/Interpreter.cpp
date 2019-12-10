@@ -23,7 +23,7 @@ void Interpreter::exInstr()
         // what to do when stopped
     }
     else { // Not a stoppign instruction
-        cout << currentInstruction;
+        cout << currentInstruction << ": ";
         if (currentInstruction == "ADD") {
             memoire->addi();
         } // Substraction

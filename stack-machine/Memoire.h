@@ -14,7 +14,7 @@ class Memoire
 private:
 
 	// Memory
-	array<string, memorySize> cells;
+	array<string, MEMORYSIZE> cells;
 
 	// Registers
 	int co = 0; // Adress of the current executed instruction

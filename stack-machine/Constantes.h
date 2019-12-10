@@ -1,3 +1,3 @@
 #pragma once
 
-const int memorySize = 4000000;
+const int MEMORYSIZE = 4000000;
