@@ -12,8 +12,6 @@ using namespace std;
 class Memoire
 {
 private:
-	// Constructor
-	Memoire(vector<string> code);
 
 	// Memory
 	array<string, memorySize> cells;
@@ -25,8 +23,12 @@ private:
 	int sp = 0; // Adress of the cell right after the summit of the stack
 
 public:
+	// Constructor
+	Memoire(vector<string> code);
+
 	// Utilities
-	bool isFull(); // Check if the stack is full
+	bool stackFull(); // Check if the stack is full
+	bool stackEmpty(); // Check if the stack is empty
 
 	// Instructions
 	void empc(string value);
@@ -58,5 +60,14 @@ public:
 	void dup();
 	void pop();
 	void stop();
+
+
+	// Getters
+	int getCo();
+	string getCell(int num);
+
+	// Setters
+	void incCo();
+	void setCo(int toSet);
 };
 

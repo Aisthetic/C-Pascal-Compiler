@@ -1,3 +1,3 @@
 #pragma once
 
-const long memorySize = 4e6;
+const int memorySize = 4000000;

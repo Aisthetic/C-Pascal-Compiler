@@ -2,10 +2,12 @@
 //
 
 #include <iostream>
+#include "Interpreter.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    Interpreter* interpreter = new Interpreter("p-code.txt");
+    interpreter->exInstr();
 }
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage

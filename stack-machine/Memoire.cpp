@@ -6,22 +6,28 @@ Memoire::Memoire(vector<string> code)
 	std::copy(code.begin(), code.end(), cells.begin());
 
 	// Changing registers accordingly
-	beg = code.max_size; //         has to add global variables handling !!!!!!!!!!
-	bel = code.max_size;
-	sp = code.max_size;
+	beg = code.size(); //         has to add global variables handling !!!!!!!!!!
+	bel = code.size();
+	sp = code.size()+1;
 }
 
-bool Memoire::isFull()
+bool Memoire::stackFull()
 {
 	if (sp >= memorySize) { return true; } 
 	else { return false; }
 	
 }
 
+bool Memoire::stackEmpty()
+{
+	if (sp <= beg + 1) { return true; }
+	else { return false; }
+}
+
 void Memoire::empc(string value)
 {
-	if (isFull()) {
-		cout << "Overflow de la pile !";
+	if (stackFull()) {
+		cout << "Overflow de la pile !\n";
 		//stop();    has to stop execution !!!!!!!!!
 		return;
 	}
@@ -39,7 +45,8 @@ void Memoire::depl(int adress)
 void Memoire::addi()
 {
 	if (sp <= beg + 2) {
-		cout << "Cellules insuffisantes dans la pile pour effectuer l'addition !";
+		cout << "sp =" << sp << "and beg = " << beg;
+		cout << "Cellules insuffisantes dans la pile pour effectuer l'addition !\n";
 	;}
 	else if (false) {
 		// has to Check if int or car ... should be int !!!!!!!!!!!
@@ -60,7 +67,7 @@ void Memoire::addi()
 void Memoire::sous()
 {
 	if (sp <= beg + 2) {
-		cout << "Cellules insuffisantes dans la pile pour effectuer la soustraction !";
+		cout << "Cellules insuffisantes dans la pile pour effectuer la soustraction !\n";
 	}
 	else if (false) {
 		// has to Check if int or car ... should be int !!!!!!!!!!!
@@ -81,7 +88,8 @@ void Memoire::sous()
 void Memoire::dup()
 {
 	if (sp <= beg + 1) {
-		cout << "Cellules insuffisantes dans la pile pour effectuer la duplication !";
+		cout << "sp =" << sp << "and beg = " << beg;
+		cout << "Cellules insuffisantes dans la pile pour effectuer la duplication !\n";
 	}
 	else {
 		// Popping out stack
@@ -94,4 +102,43 @@ void Memoire::dup()
 		cells[sp] = value;
 		sp++;
 	}
+}
+
+int Memoire::getCo()
+{
+	return co;
+}
+
+string Memoire::getCell(int num)
+{
+	return cells[num];
+}
+
+void Memoire::ecriv()
+{
+	if (stackEmpty()) {
+		cout << "Pile vide !";
+	}
+	else {
+		// Popping out stack
+		string value = cells[sp - 1];
+		sp--;
+
+		// Writing to console
+		cout << value;
+
+		// Stacking the value again
+		cells[sp] = value;
+		sp++;
+	}
+}
+
+void Memoire::incCo()
+{
+	co++;
+}
+
+void Memoire::setCo(int toSet)
+{
+	co = toSet;
 }

@@ -12,15 +12,13 @@ using namespace std;
 class Interpreter
 {
 private:
-	
 	vector<string> code;
-	Memoire memoire;
+	Memoire * memoire;
+	string currentInstruction;
 
 public:
-
 	void exInstr(); // Execute instruction
-	void exnextInstr(); // Execute next instruction
 	void codeFile(string); // open file containing code
-	Interpreter(); // Constructor
+	Interpreter(string file); // Constructor
 };
 
