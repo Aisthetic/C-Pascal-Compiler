@@ -3,14 +3,27 @@
 #include <iterator>
 #include "Hashage.h"
 #include "Constants.h"
+#include "ConsoleHandler.h"
+
 using namespace std;
 
-Lexical::Lexical()
+Lexical::Lexical(bool debug)
 {
-	cout << "Lexical debugging is enabled" << endl;
 	currentChar = '$';
 	initierMotsReserves();
-	logDebug = true;
+	enableDebug = true;
+	logDebug("Lexical debugging is enabled");
+}
+
+Lexical::Lexical(string file, bool debug = false, bool logTableIdentifs = false, bool logTableMotsRes = false)
+{
+	currentChar = '$';
+	if (enableDebug) {
+		cout << ("Lexical debugging is enabled") << endl;
+	}
+	initierMotsReserves();
+	setInput(file,logTableIdentifs,logTableMotsRes);
+	enableDebug = debug;
 }
 
 Lexical::~Lexical()
@@ -31,7 +44,7 @@ TUniteLexicale Lexical::uniteSuivante()
 		else
 			lireCar();
 	}
-	if (currentChar=='$')//in du traitement du fichier 
+	if (currentChar == '$')//in du traitement du fichier 
 	{
 		unite.UL = END;
 		return unite;
@@ -110,15 +123,15 @@ TUniteLexicale Lexical::uniteSuivante()
 		unite.UL = CONSTCAR;
 		unite.attribut = currentChar;//code ascii
 		lireCar();
-		
+
 		while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de caractère = fin de ligne ou un autre "'"
 		{
 			err = true;
 			input.ignore();
 		}
 		if (err) {
-		unite.UL = ERR;
-		unite.attribut = 1;//Caractère incorrect
+			unite.UL = ERR;
+			unite.attribut = 1;//Caractère incorrect
 		}
 		break;
 	case '=':
@@ -233,7 +246,7 @@ TUniteLexicale Lexical::uniteSuivante()
 					unite.UL = LIRE;
 				}
 			}
-			else if(motsReserves.existe(str) != -1)
+			else if (motsReserves.existe(str) != -1)
 			{
 				unite.UL = MOTCLE;
 				unite.attribut = motsReserves.existe(str);
@@ -252,7 +265,7 @@ TUniteLexicale Lexical::uniteSuivante()
 			unite.attribut = 0;//erreur: charactere non reconnu
 
 	}
-	
+
 	return unite;
 }
 
@@ -266,6 +279,7 @@ bool Lexical::estCaractere()
 	return ((currentChar >= 'A' && currentChar <= 'Z') || (currentChar >= 'a' && currentChar <= 'z'));
 
 }
+
 
 bool Lexical::estBlanc(char c)
 {
@@ -281,8 +295,7 @@ bool Lexical::lireCar()
 {
 	if (!input.is_open())//si l'input stream est ouvert
 		return false;
-	if(logDebug)
-		cout << "Current car : " << currentChar << endl;
+	logDebug("Current caracter : " + string(1,currentChar));
 	if (!input.eof())//reached end of line
 		return (bool)(input >> ::noskipws >> currentChar);
 	return false;
@@ -306,7 +319,7 @@ void Lexical::initierMotsReserves()
 
 void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 {
-	if (!logDebug)
+	if (!enableDebug)
 		return;
 	switch (unite.UL)
 	{
@@ -424,40 +437,85 @@ void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 	}
 }
 
-
 void Lexical::processAllFile()
 {
-	makeOutput();
+	setupOutput();
 	while (!input.eof()) {
 		auto unite = uniteSuivante();
 		output << endl << "UL: " << unite.UL << ", Attribut: " << unite.attribut;
 		lexemeToString(unite);
 	}
-	//pour des soucis de débuggage : 
-	identifiants.afficher();
-	motsReserves.afficher();
 }
 
-void Lexical::setInput(string file)
+void Lexical::setInput(string file, bool logTableIdentifs = false, bool logTableMotsRes = false)
 {
 	inputFilename = file;
 	input.open(file);
 	if (!input.good()) {
-		cout << "Erreur lors de l'ouverture du fichier " << file << endl;
+		logError("Erreur lors de l'ouverture du fichier " + file);
+	}
+	if (logTableIdentifs) {
+		cout << ("Reserved words table will be logged at " + TABLE_IDENTIF_OUTPUT_DIRECTORY) << endl;
+		setupIdentifsOutput();
+	}
+	if (logTableMotsRes) {
+		setupMotsResOutput();
+		cout << ("Reserved words table will be logged at " + TABLE_MOTS_RES_OUTPUT_DIRECTORY) << endl;
 	}
 	lireCar();
 }
 
-//Cree un fichier d'output
-void Lexical::makeOutput() {
+string Lexical::getInputFileNameWithoutExt()
+{
+	size_t lastindex = inputFilename.find_last_of(".");
+	return inputFilename.substr(0, lastindex);
+}
+
+
+//Cree un fichier d'output 
+void Lexical::setupOutput() {
 	if (!output.is_open())//si un input est déjà ouvert on passe au processing direct
 	{
-		output.open(LEXICAL_OUTPUT_DIRECTORY + "/" + inputFilename);
+		output.open(LEXICAL_OUTPUT_DIRECTORY + "/" + getInputFileNameWithoutExt() + ".lex");
 		if (!output.is_open()) {
-			cout << "Impossible d'ouvrir le fichier d'output";
+			logError("Impossible d'ouvrir le fichier d'output");
+			return;
+		}
+	}
+}
+
+void Lexical::setupIdentifsOutput()
+{
+	if (!identifOutput.is_open())//si un input est déjà ouvert on passe au processing direct
+	{
+		identifOutput.open(TABLE_IDENTIF_OUTPUT_DIRECTORY + "/" + getInputFileNameWithoutExt() + ".ident");
+		if (!identifOutput.is_open()) {
+			logError("Impossible d'ouvrir le fichier d'output de la table des identifs");
+			return;
+		}
+	}
+}
+
+void Lexical::setupMotsResOutput()
+{
+	if (!motsResOutput.is_open())//si un input est déjà ouvert on passe au processing direct
+	{
+		motsResOutput.open(TABLE_MOTS_RES_OUTPUT_DIRECTORY + "/" + getInputFileNameWithoutExt() + ".mrs");
+		if (!motsResOutput.is_open()) {
+			logError("Impossible d'ouvrir le fichier d'output de la table des identifs");
 			return;
 		}
 	}
 }
 
 
+void Lexical::logDebug(string message)
+{
+	if (enableDebug)
+		ConsoleHandler:: logDebug("[debug] " + message);
+}
+
+void Lexical::logError(string error)
+{
+	ConsoleHandler::logDebug("[error] " + error);
+}

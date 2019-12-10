@@ -8,7 +8,7 @@ class Syntaxique
 {
 public:
 	// Constructeurs - Destructeurs
-	Syntaxique(string inputFile);
+	Syntaxique(string inputFile, bool logIden,bool logMotRes);
 	Syntaxique(Lexical* lexical);
 	~Syntaxique();
 	
@@ -27,6 +27,8 @@ private:
 	void printErrors();
 	void xmlOpen(string caller); // Ecrit dans le fichier XML la balise ouvrante de la fonction caller
 	void xmlClose(string caller);  // De m�me pour la balise fermante$
+	void logError(string error);
+	void logDebug(string message);
 	void syntaxError(Production prod);
 	//void consommer();
 	void consommer(string expected);//consomme en vérifiant si ul==expected

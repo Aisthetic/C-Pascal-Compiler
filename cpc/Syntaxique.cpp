@@ -1,15 +1,16 @@
 #include "Syntaxique.h"
 #include "Lexical.h"
 #include "Constants.h"
+#include "ConsoleHandler.h"
 using namespace std;
 
 
 
 //Constructeurs
-Syntaxique::Syntaxique(string inputFile)
+Syntaxique::Syntaxique(string inputFile,bool logTableIden,bool logMotsRes)
 {
 	lexical = new Lexical();
-	lexical->setInput(inputFile);
+	lexical->setInput(inputFile,logTableIden,logMotsRes);
 	uniteCourante = { END,0 };
 }
 
@@ -27,7 +28,9 @@ Syntaxique::Syntaxique(Lexical* pLexical)
 void Syntaxique::startParsing()
 {
 	// Gestion du fichier XML
-	xmlFile.open(XML_DIRECTORY + "/"+ lexical->inputFilename +".xml");
+	xmlFile.open(XML_DIRECTORY + "/"+ lexical->getInputFileNameWithoutExt() +".xml");
+	if (!xmlFile.is_open())
+		logError("Couldn't open xml file");
 	uniteCourante = lexical->uniteSuivante();
 	programme();
 	if (uniteCourante.UL != END) {
@@ -954,6 +957,18 @@ bool Syntaxique::estSuivantDe(Production production) {
 void Syntaxique::syntaxError(Production prod) {
 
 }
+
+void Syntaxique::logDebug(string message)
+{
+	if (lexical->enableDebug)//ugly but doing fine
+		ConsoleHandler::logDebug("[debug] " + message);
+}
+
+void Syntaxique::logError(string error)
+{
+	ConsoleHandler::logDebug("[error] " + error);
+}
+
 
 //Destructeur
 Syntaxique::~Syntaxique()

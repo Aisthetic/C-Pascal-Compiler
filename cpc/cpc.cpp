@@ -22,8 +22,8 @@ int main(int argc, char* argv[])
 
 	for (auto file : files) {
 		cout << "Processing file : " << file << endl;
-		lexical->setInput(file);
-		lexical->makeOutput();//pour créer un fichier d'output
+		lexical->setInput(file,true,true);
+		lexical->setupOutput();//pour créer un fichier d'output
 		syntaxique->startParsing();
 		cout << "Syntaxic done for " << file;
 	}
