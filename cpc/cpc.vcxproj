@@ -168,6 +168,7 @@
     <ClInclude Include="LMotsRes.h" />
     <ClInclude Include="MotReserve.h" />
     <ClInclude Include="Syntaxique.h" />
+    <ClInclude Include="tableFormat.h" />
     <ClInclude Include="Utilities.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

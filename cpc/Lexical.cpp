@@ -7,8 +7,12 @@
 
 using namespace std;
 
-Lexical::Lexical(bool debug)
+Lexical::Lexical(bool debug):lexicalTable('-', '|', '+')
 {
+	lexicalTable.add("Unite lexicale");
+	lexicalTable.add("Lexeme");
+	lexicalTable.add("Attribut");
+	lexicalTable.endOfRow();
 	currentChar = '$';
 	initierMotsReserves();
 	enableDebug = true;
@@ -40,7 +44,14 @@ TUniteLexicale Lexical::uniteSuivante()
 	while (estBlanc(currentChar))
 	{
 		if (input.eof())//Reached end of file
+		{
 			currentChar = '$';
+			lexicalTable.setAlignment(2, TextTable::Alignment::RIGHT);
+			output<<lexicalTable;
+			identifOutput << identifiants.afficher();
+			motsResOutput << motsReserves.afficher();
+
+		}
 		else
 			lireCar();
 	}
@@ -265,7 +276,7 @@ TUniteLexicale Lexical::uniteSuivante()
 			unite.attribut = 0;//erreur: charactere non reconnu
 
 	}
-
+	printLexicalUnits(unite);
 	return unite;
 }
 
@@ -317,120 +328,120 @@ void Lexical::initierMotsReserves()
 	motsReserves.ajouter("lire");
 }
 
-void Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
+string Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 {
 	if (!enableDebug)
-		return;
+		return "";
 	switch (unite.UL)
 	{
 	case IDENT:
-		output << "\t lexeme: " << identifiants.pop(unite.attribut);
+		return identifiants.pop(unite.attribut);
 		break;
 	case CONST:
-		output << "\t lexeme: " << unite.attribut;
+		return to_string(unite.attribut);
 		break;
 	case MOTCLE:
-		output << "\t lexeme: " << motsReserves.pop(unite.attribut);
+		return motsReserves.pop(unite.attribut);
 		break;
 
 	case ENTIER:
-		output << "\t lexeme: " << "entier";
+		return "entier";
 		break;
 	case LIRE:
-		output << "\t lexeme: " << "lire";
+		return "lire";
 		break;
 	case ECRIRE:
-		output << "\t lexeme: " << "ecrire";
+		return "ecrire";
 		break;
 	case CAR:
-		output << "\t lexeme: " << "CAR";
+		return "CAR";
 		break;
 	case SI:
-		output << "\t lexeme: " << "SI";
+		return "SI";
 		break;
 	case SINON:
-		output << "\t lexeme: " << "SINON";
+		return "SINON";
 		break;
 	case ALORS:
-		output << "\t lexeme: " << "ALORS";
+		return "ALORS";
 		break;
 	case TANTQUE:
-		output << "\t lexeme: " << "TANTQUE";
+		return "TANTQUE";
 		break;
 	case FAIRE:
-		output << "\t lexeme: " << "FAIRE";
+		return "FAIRE";
 		break;
 	case RETOUR:
-		output << "\t lexeme: " << "RETOUR";
+		return "RETOUR";
 		break;
 	case MAIN:
-		output << "\t lexeme: " << "MAIN";
+		return "MAIN";
 		break;
 	case PTVRG:
-		output << "\t lexeme: " << ";";
+		return ";";
 		break;
 	case VIRG:
-		output << "\t lexeme: " << ",";
+		return ",";
 		break;
 	case ACCOUV:
-		output << "\t lexeme: " << "{";
+		return "{";
 		break;
 	case ACCFERM:
-		output << "\t lexeme: " << "}";
+		return "}";
 		break;
 	case PAROUV:
-		output << "\t lexeme: " << "(";
+		return "(";
 		break;
 	case PARFERM:
-		output << "\t lexeme: " << ")";
+		return ")";
 		break;
 	case CROOUV:
-		output << "\t lexeme: " << "[";
+		return "[";
 		break;
 	case CROFER:
-		output << "\t lexeme: " << "]";
+		return "]";
 		break;
 	case ET:
-		output << "\t lexeme: " << "&";
+		return "&";
 		break;
 	case OU:
-		output << "\t lexeme: " << "|";
+		return "|";
 		break;
 	case ADD:
-		output << "\t lexeme: " << "+";
+		return "+";
 		break;
 	case SOUS:
-		output << "\t lexeme: " << "-";
+		return "-";
 		break;
 	case MUL:
-		output << "\t lexeme: " << "*";
+		return "*";
 		break;
 	case DIV:
-		output << "\t lexeme: " << "/";
+		return "/";
 		break;
 	case INFEGAL:
-		output << "\t lexeme: " << "<=";
+		return "<=";
 		break;
 	case INF:
-		output << "\t lexeme: " << "<";
+		return "<";
 		break;
 	case EGAL:
-		output << "\t lexeme: " << "=";
+		return "=";
 		break;
 	case NONEGAL:
-		output << "\t lexeme: " << "!=";
+		return "!=";
 		break;
 	case NON:
-		output << "\t lexeme: " << "!";
+		return "!";
 		break;
 	case SUPEGAL:
-		output << "\t lexeme: " << ">=";
+		return ">=";
 		break;
 	case SUP:
-		output << "\t lexeme: " << ">";
+		return ">";
 		break;
 	case ERR:
-		output << "\t lexeme: " << "ERR";
+		return "ERR";
 		break;
 	default:
 		break;
@@ -446,7 +457,13 @@ void Lexical::processAllFile()
 		lexemeToString(unite);
 	}
 }
-
+void Lexical::printLexicalUnits(TUniteLexicale unite)
+{
+	lexicalTable.add(to_string(unite.UL));
+	lexicalTable.add(lexemeToString(unite));
+	lexicalTable.add(to_string(unite.attribut));
+	lexicalTable.endOfRow();
+}
 void Lexical::setInput(string file, bool logTableIdentifs = false, bool logTableMotsRes = false)
 {
 	inputFilename = file;

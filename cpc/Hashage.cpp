@@ -5,8 +5,11 @@
 #include "Utilities.h"
 using namespace std;
 
-Hashage::Hashage()
+Hashage::Hashage():formattedTable('-', '|', '+')
 {
+	formattedTable.add("Index");
+	formattedTable.add("Content");
+	formattedTable.endOfRow();
 	for (int i = 0; i < TABLESIZE; i++)
 	{
 		HashTable[i] = new node;
@@ -53,25 +56,19 @@ int Hashage::nombreDesNoeuds(int index)
 	}
 	return count;
 }
-void Hashage::afficher()
+TextTable Hashage::afficher()
 {
 	int number;
 	for (int i = 0; i < TABLESIZE; i++)
 	{
 		number = nombreDesNoeuds(i);
-		cout << "\nindice = " << i << endl;
 
-		if (number > 1)
+		if (number >= 1)
 		{
 			afficherNoeuds(i);
-			cout << "\t\tnombre des noeuds = " << number << endl;
-		}
-		else {
-			cout << "\t\t" << HashTable[i]->data << endl;
-			cout << "\t\tnombre des noeuds = " << number << endl;
 		}
 	}
-	cout << "numero des collisions: " << collisions << endl;
+	return formattedTable;
 }
 void Hashage::afficherNoeuds(int index)
 {
@@ -85,7 +82,9 @@ void Hashage::afficherNoeuds(int index)
 	{
 		while (Ptr != NULL)
 		{
-			cout << "\t\t" << Ptr->data << endl;
+			formattedTable.add(to_string(index));
+			formattedTable.add(Ptr->data);
+			formattedTable.endOfRow();
 			Ptr = Ptr->next;
 		}
 
