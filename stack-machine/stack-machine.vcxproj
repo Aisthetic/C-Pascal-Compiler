@@ -149,12 +149,14 @@
   <ItemGroup>
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="Memoire.cpp" />
+    <ClCompile Include="Process.cpp" />
     <ClCompile Include="stack-machine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constantes.h" />
     <ClInclude Include="Interpreter.h" />
     <ClInclude Include="Memoire.h" />
+    <ClInclude Include="Process.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

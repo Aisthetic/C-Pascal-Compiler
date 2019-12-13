@@ -11,6 +11,9 @@ Interpreter::Interpreter(string file)
 
     // Initialising memory with the code
     memoire = new Memoire(code);
+
+    // Initialising process
+    process = new Process(memoire);
 }
 
 void Interpreter::exInstr()
@@ -25,24 +28,24 @@ void Interpreter::exInstr()
     else { // Not a stoppign instruction
         cout << currentInstruction << ": ";
         if (currentInstruction == "ADD") {
-            memoire->addi();
+            process->addi();
         } // Substraction
         else if (currentInstruction == "SOUS") {
-            memoire->sous();
+            process->sous();
         } // Stacking constant
         else if (currentInstruction.substr(0, 4) == "EMPC") { // TO-DO: check if generated code is absolutely correct
-            memoire->empc(currentInstruction.substr(5));
+            process->empc(currentInstruction.substr(5));
         } // Writing to console
         else if (currentInstruction == "ECRIV") {
-            memoire->ecriv();
+            process->ecriv();
         } // Duplicate
         else if (currentInstruction == "DUP") {
-            memoire->dup();
+            process->dup();
         }
         else {
             cout << "Instructions non reconnue !";
         }
-        memoire->incCo(); // has to change since function call doesnt increment co but changes it completely
+        memoire->incCo(); // has to change since functions call doesnt increment co but changes it completely 
         exInstr();
     }
 }
