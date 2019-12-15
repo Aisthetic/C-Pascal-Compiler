@@ -8,7 +8,7 @@ Memoire::Memoire(vector<string> code)
 	// Changing registers accordingly
 	beg = code.size(); //         has to add global variables handling !!!!!!!!!!
 	bel = code.size();
-	sp = code.size()+1;
+	sp = code.size() + 1;
 }
 
 bool Memoire::stackFull()
@@ -67,6 +67,16 @@ void Memoire::decSp()
 void Memoire::setCo(int toSet)
 {
 	co = toSet;
+}
+
+void Memoire::setBel(int toSet)
+{
+	bel = toSet;
+}
+
+void Memoire::setSp(int toSet)
+{
+	sp = toSet;
 }
 
 void Memoire::setCell(int num, string value)

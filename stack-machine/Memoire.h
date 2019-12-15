@@ -42,6 +42,8 @@ public:
 	void incSp();
 	void decSp();
 	void setCo(int toSet);
+	void setBel(int toSet);
+	void setSp(int toSet);
 	void setCell(int num, string value);
 };
 

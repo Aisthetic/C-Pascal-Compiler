@@ -234,6 +234,13 @@ void Process::non()
 	}
 }
 
+void Process::lire()
+{
+	string toRead;
+	cin >> toRead;
+	empc(toRead);
+}
+
 
 void Process::dup()
 {
@@ -272,5 +279,71 @@ void Process::ecriv()
 		// Stacking the value again
 		empc(value);
 	}
+}
+
+void Process::saut(int address)
+{
+	memoire->setCo(address);
+}
+
+void Process::sivrai(int adress)
+{
+	if (memoire->getSp() <= memoire->getBeg() + 1) {
+		cout << "Cellules insuffisantes dans la pile pour verifier si vrai !\n";
+	}
+	else {
+		// Popping out first term
+		int t1 = stoi(dep());
+
+		if (!t1) {
+			saut(adress);
+		}
+		else {
+			memoire->incCo();
+		}
+	}
+}
+
+void Process::sifaux(int adress)
+{
+	if (memoire->getSp() <= memoire->getBeg() + 1) {
+		cout << "Cellules insuffisantes dans la pile pour verifier si faux !\n";
+	}
+	else {
+		// Popping out first term
+		int t1 = stoi(dep());
+
+		if (t1) {
+			saut(adress);
+		}
+		else {
+			memoire->incCo();
+		}
+	}
+}
+
+void Process::appel(int adress)
+{
+	empc(to_string(memoire->getCo() + 1));
+	saut(adress);
+}
+
+void Process::retour()
+{
+	int address;
+	address = stoi(dep());
+	saut(address);
+}
+
+void Process::entree()
+{
+	empc(to_string(memoire->getBel()));
+	memoire->setBel(memoire->getSp());
+}
+
+void Process::sortie()
+{
+	memoire->setSp(memoire->getBeg());
+	memoire->setBel(stoi(dep()));
 }
 
