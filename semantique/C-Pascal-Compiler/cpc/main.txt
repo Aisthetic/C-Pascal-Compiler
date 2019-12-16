@@ -1,0 +1,18 @@
+entier t[10], entier a;   
+f(entier a, entier b)     
+entier c, entier k;  	 
+{				
+k = a + b;     	    
+retour k; 			
+}					
+
+main()  				
+entier d;
+{
+  a = lire();  	
+  tantque(0 < a) faire {  
+	d = f(d, 2 * a);	
+	ecrire(d + 1);  	
+	a = a - 1;
+  } 
+}
