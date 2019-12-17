@@ -24,12 +24,6 @@
     <ClCompile Include="Lexical.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LMotsRes.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MotReserve.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Syntaxique.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,12 +42,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Utilities.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="LMotsRes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MotReserve.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Constants.h">

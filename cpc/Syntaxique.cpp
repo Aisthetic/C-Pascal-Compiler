@@ -2,15 +2,16 @@
 #include "Lexical.h"
 #include "Constants.h"
 #include "ConsoleHandler.h"
+#include <algorithm>
 using namespace std;
 
 
 
 //Constructeurs
-Syntaxique::Syntaxique(string inputFile,bool logTableIden,bool logMotsRes)
+Syntaxique::Syntaxique(string inputFile, bool logTableIden, bool logMotsRes)
 {
 	lexical = new Lexical();
-	lexical->setInput(inputFile,logTableIden,logMotsRes);
+	lexical->setInput(inputFile, logTableIden, logMotsRes);
 	uniteCourante = { END,0 };
 }
 
@@ -28,9 +29,9 @@ Syntaxique::Syntaxique(Lexical* pLexical)
 void Syntaxique::startParsing()
 {
 	// Gestion du fichier XML
-	xmlFile.open(XML_DIRECTORY + "/"+ lexical->getInputFileNameWithoutExt() +".xml");
+	xmlFile.open(XML_DIRECTORY + "/" + lexical->getInputFileNameWithoutExt() + ".xml");
 	if (!xmlFile.is_open())
-		logError("Couldn't open xml file");
+		logError("Couldn't open xml file, check if xml dir is already created.");
 	uniteCourante = lexical->uniteSuivante();
 	programme();
 	if (uniteCourante.UL != END) {
@@ -85,12 +86,12 @@ void Syntaxique::programme() {
 void Syntaxique::listeDeFonctions()
 {
 	xmlOpen("listeDeFonctions");
-	if (estPremierDe(eListeDeFonctions)&&uniteCourante.UL!=MAIN)
+	if (estPremierDe(eListeDeFonctions) && uniteCourante.UL != MAIN)
 	{
 		fonction();
 		listeDeFonctions();
 	}
-	else if (uniteCourante.UL== MAIN) // TODO: mettre une production pour le main seul ?
+	else if (uniteCourante.UL == MAIN) // TODO: mettre une production pour le main seul ?
 	{
 		xmlOpen("main");
 		uniteCourante = lexical->uniteSuivante();
@@ -166,13 +167,13 @@ void Syntaxique::declarations()
 void Syntaxique::declarationsPrime()
 {
 	xmlOpen("declarationsPrime");
-	if(estPremierDe(eDeclarationsPrime))
+	if (estPremierDe(eDeclarationsPrime))
 	{
 		consommer("virg");
 		declaration();
 		declarationsPrime();
 	}
-	else if(estSuivantDe(eDeclarationsPrime)){
+	else if (estSuivantDe(eDeclarationsPrime)) {
 		//silence is golden
 	}
 	else {
@@ -287,7 +288,7 @@ void Syntaxique::parametre()
 		consommer("TYPE");
 		identif();
 	}
-	
+
 	else { syntaxError(eParametre); }
 	xmlClose("parametre");
 }
@@ -303,7 +304,9 @@ void Syntaxique::listeInstructions()
 	{
 		//silence is golden
 	}
-	else { syntaxError(eListeInstructions); }
+	else { 
+		syntaxError(eListeInstructions);
+	}
 	xmlClose("listeInstructions");
 }
 
@@ -356,7 +359,7 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		consommer("PointVirg");
 	}
 	else { return syntaxError(eInstruction); }
-	
+
 	xmlClose("instruction");//retard dair open hna
 }
 
@@ -367,7 +370,7 @@ void Syntaxique::instructionPrime()
 		consommer("EGAL");
 		instructionTriple();
 	}
-	else if (uniteCourante.UL==CROFER) {
+	else if (uniteCourante.UL == CROFER) {
 		consommer("croOuv");
 		expression();
 		consommer("croFerm");
@@ -386,7 +389,7 @@ void Syntaxique::instructionSeconde()
 		consommer("{");
 		listeInstructions();
 		consommer("}");
-	} 
+	}
 	else if (estSuivantDe(eInstructionSeconde))
 	{
 		//silence is golden
@@ -414,7 +417,7 @@ void Syntaxique::expression()
 	if (estPremierDe(eExpressionLogique)) {
 		expressionLogique();
 		expressionPrime();
-	} 
+	}
 	else { syntaxError(eExpression); }
 	xmlClose("expression");
 }
@@ -434,7 +437,7 @@ void Syntaxique::expressionPrime()
 	xmlClose("expressionPrime");
 }
 
-void Syntaxique::expressionLogique(){
+void Syntaxique::expressionLogique() {
 	xmlOpen("expressionLogique");
 	if (estPremierDe(eExpressionSimple)) {
 		expressionSimple();
@@ -446,7 +449,7 @@ void Syntaxique::expressionLogique(){
 	xmlClose("expressionLogique");
 }
 
-void Syntaxique::expressionLogiquePrime(){
+void Syntaxique::expressionLogiquePrime() {
 	xmlOpen("expressionLogiquePrime");
 	if (estPremierDe(eComparaison)) {
 		comparaison();
@@ -462,14 +465,14 @@ void Syntaxique::expressionLogiquePrime(){
 	xmlClose("expressionLogiquePrime");
 }
 
-void Syntaxique::expressionSimple(){
+void Syntaxique::expressionSimple() {
 	xmlOpen("expressionSimple");
 	if (estPremierDe(eTerme)) {
 		terme();
 		expressionSimplePrime();
 	}
-	else if(uniteCourante.UL == SOUS ){
-        consommer("sous"); 
+	else if (uniteCourante.UL == SOUS) {
+		consommer("sous");
 		terme();
 		expressionSimplePrime();
 	}
@@ -479,14 +482,14 @@ void Syntaxique::expressionSimple(){
 	xmlClose("expressionSimple");
 }
 
-void Syntaxique::expressionSimplePrime(){
+void Syntaxique::expressionSimplePrime() {
 	xmlOpen("expressionSimplePrime");
 	if (uniteCourante.UL == ADD) {
 		consommer("add");
 		terme();
 		expressionSimplePrime();
 	}
-	else if(uniteCourante.UL == SOUS ) {
+	else if (uniteCourante.UL == SOUS) {
 		consommer("sous");
 		terme();
 		expressionSimplePrime();
@@ -500,7 +503,7 @@ void Syntaxique::expressionSimplePrime(){
 	xmlClose("expressionSimplePrime");
 }
 
-void Syntaxique::terme(){
+void Syntaxique::terme() {
 	xmlOpen("terme");
 	if (estPremierDe(eTermePrioritaire)) {
 		termePrioritaire();
@@ -511,14 +514,14 @@ void Syntaxique::terme(){
 	}
 	xmlClose("terme");
 }
-void Syntaxique::termePrime(){
+void Syntaxique::termePrime() {
 	xmlOpen("termePrime");
 	if (uniteCourante.UL == MUL) {
 		consommer("mul");
 		facteur();
 		termePrime();
 	}
-	else if (uniteCourante.UL == DIV ) {
+	else if (uniteCourante.UL == DIV) {
 		consommer("div");
 		facteur();
 		termePrime();
@@ -532,13 +535,13 @@ void Syntaxique::termePrime(){
 	xmlClose("termePrime");
 }
 
-void Syntaxique::termePrioritaire(){
+void Syntaxique::termePrioritaire() {
 	xmlOpen("termePrioritaire");
 	if (uniteCourante.UL == NON) {
 		consommer("non");
 		facteur();
 	}
-	else if (estPremierDe(eFacteur) ) {
+	else if (estPremierDe(eFacteur)) {
 		facteur();
 	}
 	else {
@@ -547,16 +550,16 @@ void Syntaxique::termePrioritaire(){
 	xmlClose("termePrioritaire");
 }
 
-void Syntaxique::facteur(){//URGENT TODO: Remake
+void Syntaxique::facteur() {//URGENT TODO: Remake
 	xmlOpen("facteur");
 	if (estPremierDe(eIdentificateur)) {
 		identif();
 		facteurPrime();
 	}
-	else if(estPremierDe(eCte)){
+	else if (estPremierDe(eCte)) {
 		cte();
 	}
-	else if (uniteCourante.UL == PAROUV ) {
+	else if (uniteCourante.UL == PAROUV) {
 		consommer("parOuv");
 		expression();
 		if (uniteCourante.UL == PARFERM)
@@ -564,8 +567,8 @@ void Syntaxique::facteur(){//URGENT TODO: Remake
 		else
 			syntaxError(eFacteur);//à revoir
 	}
-	else if(uniteCourante.UL == QUOTE){
-        consommer("Quote"); 
+	else if (uniteCourante.UL == QUOTE) {
+		consommer("Quote");
 		if (uniteCourante.UL == CAR) {
 			consommer("car");
 		}
@@ -577,18 +580,18 @@ void Syntaxique::facteur(){//URGENT TODO: Remake
 	}
 	xmlClose("facteur");
 }
-	
-void Syntaxique::facteurPrime(){
+
+void Syntaxique::facteurPrime() {
 	xmlOpen("facteurPrime");
 	if (uniteCourante.UL == CROOUV) {
 		consommer("CorOuv");
 		expression();
-		consommer("croOuv"); 
+		consommer("croOuv");
 	}
-	else if (uniteCourante.UL == PAROUV ) {
+	else if (uniteCourante.UL == PAROUV) {
 		consommer("ParOuv");
 		parametresEffectifs();
-		consommer("parFerm"); 
+		consommer("parFerm");
 	}
 	else if (estSuivantDe(eFacteurPrime)) {
 		//doz 7yd
@@ -599,10 +602,10 @@ void Syntaxique::facteurPrime(){
 	xmlClose("facteurPrime");
 }
 
-void Syntaxique::parametresEffectifs(){
+void Syntaxique::parametresEffectifs() {
 	xmlOpen("parametresEffectifs");
 	if (estPremierDe(eExpressions)) {
-		expressions(); 
+		expressions();
 	}
 	else if (estSuivantDe(eParametresEffectifs)) {
 		//doz 7yd
@@ -616,7 +619,7 @@ void Syntaxique::parametresEffectifs(){
 void Syntaxique::expressions()
 {
 	xmlOpen("expressions");
-	if(estPremierDe(eExpression)){
+	if (estPremierDe(eExpression)) {
 		expression();
 		expressionsPrime();
 	}
@@ -637,8 +640,8 @@ void Syntaxique::expressionsPrime()
 	else if (estSuivantDe(eExpressionsPrime)) {
 		//doz 7yd
 	}
-	else { 
-		syntaxError(eExpressionsPrime); 
+	else {
+		syntaxError(eExpressionsPrime);
 	}
 	xmlClose("expressionsPrime");
 }
@@ -695,19 +698,190 @@ void Syntaxique::cte()
 //}
 
 void Syntaxique::consommer(string expected) {
-	bool expectedCorrect = false;//true si on trouve ce qu'il fallait consommé
-	if (uniteCourante.UL == IDENT) {
-		// TODO: handle errors correctly
-		//return uniteCourante.attribut == lexical->identifiants.existe(expected); 
+	string message = lexical->inputFilename + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()) + ": error : expected ";
+	auto tempMessage = message;
+	//Gestion des erreurs
+	if (expected == "parouv" || expected == "ParOuv") {
+		if (uniteCourante.UL != PAROUV)
+			message += " ')' ";
+	}
+	else if (expected == "const") {
+		if (uniteCourante.UL != CONST)
+			message += " const ";
+	}
+	else if (expected == "identif") {
+		if (uniteCourante.UL != IDENT)
+			message += " ident ";
+	}
+	else if (expected == "OpComp") {
+		if (uniteCourante.UL != SUP && uniteCourante.UL != INF && uniteCourante.UL != EGALEGAL && uniteCourante.UL != SUPEGAL && uniteCourante.UL != INFEGAL )
+			message += " comparaison operator ";
+	}
+	else if (expected == "OpLogique") {
+		if (uniteCourante.UL != OU && uniteCourante.UL != ET)
+			message += " logical operator ";
+	}
+	else if (expected == "VIRG") {
+		if (uniteCourante.UL != VIRG)
+			message += " ',' ";
+	}
+	else if (expected == "parferm") {
+		if (uniteCourante.UL != PARFERM)
+			message += " ')' ";
+	}
+	else if (expected == "parFerm") {
+		if (uniteCourante.UL != PARFERM)
+			message += " const ";
+	}
+	else if (expected == "croOuv") {
+		if (uniteCourante.UL != CROOUV)
+			message += " '[' ";
+	}
+	else if (expected == "quote") {
+		if (uniteCourante.UL != QUOTE)
+			message += " quote ";
+	}
+	else if (expected == "car") {
+		if (uniteCourante.UL != CAR)
+			message += " car ";
+	}
+	else if (expected == "Quote") {
+		if (uniteCourante.UL != QUOTE)
+			message += " quote ";
+	}
+	else if (expected == "non") {
+		if (uniteCourante.UL != NON)
+			message += " ! ";
+	}
+	else if (expected == "div") {
+		if (uniteCourante.UL != DIV)
+			message += " div ";
+	}
+	else if (expected == "mul") {
+		if (uniteCourante.UL != MUL)
+			message += " mul ";
+	}
+	else if (expected == "sous") {
+		if (uniteCourante.UL != SOUS)
+			message += " sous ";
+	}
+	else if (expected == "add") {
+		if (uniteCourante.UL != ADD)
+			message += " add ";
+	}
+	else if (expected == "lire") {
+		if (uniteCourante.UL != LIRE)
+			message += " lire ";
+	}
+	else if (expected == "}") {
+		if (uniteCourante.UL != ACCFERM)
+			message += " '}' ";
+	}
+	else if (expected == "{") {
+		if (uniteCourante.UL != ACCOUV)
+			message += " '{' ";
+	}
+	else if (expected == "sinon") {
+		if (uniteCourante.UL != SINON)
+			message += " sinon ";
+	}
+	else if (expected == "egal") {
+		if (uniteCourante.UL != EGAL)
+			message += " '=' ";
+	}
+	else if (expected == "croFerm") {
+		if (uniteCourante.UL != CROFER)
+			message += " ']' ";
+	}
+	else if (expected == "croOuv") {
+		if (uniteCourante.UL != CROOUV)
+			message += " '[' ";
+	}
+	else if (expected == "EGAL") {
+		if (uniteCourante.UL != EGAL)
+			message += " = ";
+	}
+	else if (expected == "PointVirg" || expected == "PTVIRG") {
+	if (uniteCourante.UL != PTVRG)
+		message += " ';' ";
+	}
+	else if (expected == "ecrire") {
+	if (uniteCourante.UL != ECRIRE)
+		message += " ecrire ";
+	}
+	else if (expected == "faire") {
+	if (uniteCourante.UL != FAIRE)
+		message += " faire  ";
+	}
+	else if (expected == "TANQUE") {
+	if (uniteCourante.UL != TANTQUE)
+		message += " tantque ";
+	}
+	else if (expected == "ACCFERM") {
+	if (uniteCourante.UL != ACCFERM)
+		message += " '}' ";
+	}
+	else if (expected == "ACCOUV" || expected == "accOuv") {
+	if (uniteCourante.UL != ACCOUV)
+		message += " '{' ";
+	}
+	else if (expected == "alors") {
+	if (uniteCourante.UL != ALORS)
+		message += " alors ";
+	}
+	else if (expected == "si") {
+	if (uniteCourante.UL != SI)
+		message += " si ";
+	}
+	else if (expected == "PointVirg") {
+	if (uniteCourante.UL != PTVRG)
+		message += " ';' ";
+	}
+	else if (expected == "retour") {
+	if (uniteCourante.UL != RETOUR)
+		message += " retour ";
+	}
+	else if (expected == "PointVirg") {
+	if (uniteCourante.UL != PTVRG)
+		message += " ';' ";
+	} 
+	else if (expected == "TYPE") {
+	if (uniteCourante.UL != ENTIER &&  uniteCourante.UL != CAR)
+		message += " type ";
+	}
+	else if (expected == "virg") {
+	if (uniteCourante.UL != VIRG)
+		message += " ',' ";
+	}
+	else if (expected == "CROVR") {
+	if (uniteCourante.UL != CROOUV)
+		message += " '[' ";
+	}
+	else if (expected == "CROFER") {
+	if (uniteCourante.UL != CROFER)
+		message += " ']' ";
+	}
+	else if (expected == "IDENT") {
+	if (uniteCourante.UL != IDENT)
+		message += " ident ";
+	}
+	else if (expected == "Ident") {
+	if (uniteCourante.UL != IDENT)
+		message += " ident ";
 	}
 	
-	//Xml pour les terminaux
-	xmlFile << expected << " "; //espace pour éviter de concatener deux terminaux consécutifs
-
-	uniteCourante = lexical->uniteSuivante();
+	if (message != tempMessage)
+		logError(message);
+	else {
+		//Xml pour les terminaux
+		ConsoleHandler::logDebug("Syntaxique","Consumed " + expected + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()));
+		xmlFile << expected << " "; //espace pour éviter de concatener deux terminaux consécutifs
+		uniteCourante = lexical->uniteSuivante();
+	}
+	
 }
 //checks if the caracter is premier de l'unite en param
-bool Syntaxique::estPremierDe(Production production) { 
+bool Syntaxique::estPremierDe(Production production) {
 	switch (production)//TODO: eExpressionPrime
 	{
 		//outidrarine starts
@@ -727,19 +901,19 @@ bool Syntaxique::estPremierDe(Production production) {
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
 		break;
 	case eDeclarationsPrime:
-		return uniteCourante.UL == VIRG ;
+		return uniteCourante.UL == VIRG;
 		break;
 	case eDeclaration:
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
 		break;
 	case eDeclarationPrime:
-		return uniteCourante.UL == VIRG ;
+		return uniteCourante.UL == VIRG;
 		break;
 	case eDeclarationSeconde:
-		return uniteCourante.UL == CROOUV ;
+		return uniteCourante.UL == CROOUV;
 		break;
 	case eListeParametres:
-		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR ;
+		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
 		break;
 		//outidrarine finishes
 
@@ -751,22 +925,24 @@ bool Syntaxique::estPremierDe(Production production) {
 		return estPremierDe(eComparaison) == true || estSuivantDe(production);;
 		break;
 	case eExpressionSimple:
-		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE || uniteCourante.UL == NON || uniteCourante.UL == SOUS || uniteCourante.UL==IDENT;
-		break;	
+		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE
+			|| uniteCourante.UL == NON || uniteCourante.UL == SOUS || uniteCourante.UL == IDENT;
+		break;
 	case eExpressionSimplePrime:
 		return uniteCourante.UL == ADD || uniteCourante.UL == SOUS || estSuivantDe(production);
-		break;	
+		break;
 	case eTerme:
-		return estPremierDe(eFacteur) ;
+		return estPremierDe(eFacteur);
 		break;
 	case eTermePrime:
 		return uniteCourante.UL == MUL || uniteCourante.UL == DIV || estSuivantDe(production);
 		break;
 	case eTermePrioritaire:
-		return estPremierDe(eTerme) || uniteCourante.UL==NON;
+		return estPremierDe(eTerme) || uniteCourante.UL == NON;
 		break;
 	case eFacteur:
-		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE ||uniteCourante.UL==IDENT;
+		return uniteCourante.UL == CONST || uniteCourante.UL == CONSTCAR || uniteCourante.UL == PAROUV || uniteCourante.UL == QUOTE
+			|| uniteCourante.UL == IDENT;
 		break;
 	case eFacteurPrime:
 		return uniteCourante.UL == PAROUV || uniteCourante.UL == CROOUV || estSuivantDe(production);
@@ -795,32 +971,33 @@ bool Syntaxique::estPremierDe(Production production) {
 		return estPremierDe(eExpressionSimple);
 	case eExpressionPrime:
 		return uniteCourante.UL == ET || uniteCourante.UL == OU || estSuivantDe(production);
-	//end zac
+		//end zac
 
-	// start testoxe
-	case eParametres :
+		// start testoxe
+	case eParametres:
 		return uniteCourante.attribut == ENTIER || uniteCourante.UL == CAR || estSuivantDe(eParametres);
 		break;
-	case eParametresPrime :
+	case eParametresPrime:
 		return uniteCourante.UL == VIRG;
 		break;
-	case eParametre : 
+	case eParametre:
 		return uniteCourante.UL == ENTIER || uniteCourante.UL == CAR;
 		break;
-	case eListeInstructions :
-		return estSuivantDe(eListeInstructions) || estSuivantDe(eExpression) || estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE || uniteCourante.UL == MOTCLE;
+	case eListeInstructions:
+		return estSuivantDe(eListeInstructions) || estSuivantDe(eExpression) || estPremierDe(eExpression) || uniteCourante.UL == IDENT
+			|| uniteCourante.UL == RETOUR || uniteCourante.UL == SI || uniteCourante.UL == TANTQUE || uniteCourante.UL == MOTCLE;
 		break;
-	case eInstruction :
-		return estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == MOTCLE 
-			|| uniteCourante.UL == SI || uniteCourante.UL == TANTQUE || uniteCourante.UL == LIRE || uniteCourante.UL == ECRIRE ;
+	case eInstruction:
+		return estPremierDe(eExpression) || uniteCourante.UL == IDENT || uniteCourante.UL == RETOUR || uniteCourante.UL == MOTCLE
+			|| uniteCourante.UL == SI || uniteCourante.UL == TANTQUE || uniteCourante.UL == LIRE || uniteCourante.UL == ECRIRE;
 		break;
-	case eInstructionPrime :
+	case eInstructionPrime:
 		return uniteCourante.UL == EGAL || uniteCourante.UL == CROOUV;
 		break;
-	case eInstructionSeconde :
+	case eInstructionSeconde:
 		return uniteCourante.UL == SINON || estSuivantDe(production);
 		break;
-	case eInstructionTriple :
+	case eInstructionTriple:
 		return estPremierDe(eExpression) || uniteCourante.UL == LIRE;
 		break;
 
@@ -841,7 +1018,7 @@ bool Syntaxique::estSuivantDe(Production production) {
 		return uniteCourante.UL == END;
 		break;
 	case eFonction:
-		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN ;
+		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN;
 		break;
 	case eListeDeDeclarations:
 		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN;
@@ -865,10 +1042,10 @@ bool Syntaxique::estSuivantDe(Production production) {
 		return uniteCourante.UL == PARFERM;
 		break;
 		//outidrarine finishes
-	
+
 		//souhail starts
 	case eExpressionLogique:
-		return estSuivantDe(eExpression) == true || uniteCourante.UL == ET || uniteCourante.UL == OU ;
+		return estSuivantDe(eExpression) == true || uniteCourante.UL == ET || uniteCourante.UL == OU;
 		break;
 	case eExpressionLogiquePrime:
 		return estSuivantDe(eExpressionLogique) == true;
@@ -878,7 +1055,7 @@ bool Syntaxique::estSuivantDe(Production production) {
 		break;
 	case eExpressionSimplePrime:
 		return estSuivantDe(eExpressionSimple) == true;
-		break;	
+		break;
 	case eTerme:
 		return estSuivantDe(eExpressionSimple) == true || uniteCourante.UL == ADD || uniteCourante.UL == SOUS;
 		break;
@@ -886,7 +1063,7 @@ bool Syntaxique::estSuivantDe(Production production) {
 		return estSuivantDe(eTerme) == true;
 		break;
 	case eTermePrioritaire:
-		return estSuivantDe(eTerme) == true ||  uniteCourante.UL == MUL || uniteCourante.UL == DIV;
+		return estSuivantDe(eTerme) == true || uniteCourante.UL == MUL || uniteCourante.UL == DIV;
 		break;
 	case eFacteur:
 		return estSuivantDe(eTermePrioritaire) == true;
@@ -899,7 +1076,7 @@ bool Syntaxique::estSuivantDe(Production production) {
 		break;
 		//souhail finishes
 	//begin zac
-	case eExpressions: 
+	case eExpressions:
 		return uniteCourante.UL == PARFERM;
 		break;
 	case eExpressionsPrime:
@@ -912,61 +1089,182 @@ bool Syntaxique::estSuivantDe(Production production) {
 			|| uniteCourante.UL == PAROUV || uniteCourante.UL == NON || uniteCourante.UL == SOUS;
 	case eIdentificateur:
 		return estPremierDe(eFacteur) || estSuivantDe(eFacteur) || estPremierDe(eInstructionPrime)
-			|| estSuivantDe(eParametre) || estSuivantDe(eDeclarationSeconde) || uniteCourante.UL == PAROUV ;
+			|| estSuivantDe(eParametre) || estSuivantDe(eDeclarationSeconde) || uniteCourante.UL == PAROUV;
 	case eCte:
 		return estSuivantDe(eFacteur);
 		//end zac
 
 		//start testoxe
-	case eParametres :
+	case eParametres:
 		return uniteCourante.UL == PARFERM;
 		break;
-	case eParametresPrime :
+	case eParametresPrime:
 		return uniteCourante.UL == PARFERM;
 		break;
-	case eParametre :
+	case eParametre:
 		return uniteCourante.UL == VIRG || uniteCourante.UL == PARFERM;
 		break;
-	case eListeInstructions :
+	case eListeInstructions:
 		return uniteCourante.UL == ACCFERM;
 		break;
-	case eInstruction :
+	case eInstruction:
 		return uniteCourante.UL == PTVRG;
 		break;
-	case eInstructionPrime :
+	case eInstructionPrime:
 		return uniteCourante.UL == PTVRG;
 		break;
-	case eInstructionSeconde :
+	case eInstructionSeconde:
 		return uniteCourante.UL == PTVRG;
 		break;
-	case eInstructionTriple :
+	case eInstructionTriple:
 		return uniteCourante.UL == PTVRG;
 		break;
 	case eExpression:
-		return uniteCourante.UL == VIRG || uniteCourante.UL == ALORS || uniteCourante.UL == FAIRE || uniteCourante.UL == CROFER || uniteCourante.UL == ACCFERM || uniteCourante.UL == PTVRG || uniteCourante.UL == PARFERM;
+		return uniteCourante.UL == VIRG || uniteCourante.UL == ALORS || uniteCourante.UL == FAIRE || uniteCourante.UL == CROFER
+			|| uniteCourante.UL == ACCFERM || uniteCourante.UL == PTVRG || uniteCourante.UL == PARFERM;
 	case eExpressionPrime:
-		return uniteCourante.UL == VIRG || uniteCourante.UL == ALORS || uniteCourante.UL == FAIRE || uniteCourante.UL == CROFER || uniteCourante.UL == ACCFERM || uniteCourante.UL == PTVRG || uniteCourante.UL == PARFERM;
+		return uniteCourante.UL == VIRG || uniteCourante.UL == ALORS || uniteCourante.UL == FAIRE || uniteCourante.UL == CROFER
+			|| uniteCourante.UL == ACCFERM || uniteCourante.UL == PTVRG || uniteCourante.UL == PARFERM;
 	default:
-		throw new exception("Production non reconnue");
+		logError("Production non reconnue");
 		break;
 	}
 }
+/*Erreurs:
+fonctions
 
-
-
+*/
 void Syntaxique::syntaxError(Production prod) {
-
+	string message = lexical->inputFilename + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()) + ": error : expected ";
+	switch (prod)
+	{
+	case eProgramme:
+		message += " entier or car ";
+		break;
+	case eListeDeFonctions:
+		message += " ident or main ";
+		break;
+	case eFonction:
+		message += " ident ";
+		break;
+	case eListeDeDeclarations:
+		message += " entier or car ";
+		break;
+	case eDeclarations:
+		message += " entier or car ";
+		break;
+	case eDeclarationsPrime:
+		message += " ',' ";
+		break;
+	case eDeclaration:
+		message += " entier or car ";
+		break;
+	case eDeclarationPrime:
+		message += " ident ";
+		break;
+	case eDeclarationSeconde:
+		message += " '[' ";
+			break;
+	case eListeParametres:
+		message += " entier or car ";
+		break;
+	case eExpressionLogique:
+		message += " ident or '(' or '!' or car or '!' or '-' ";
+		break;
+	case eExpressionLogiquePrime:
+		message += " logic operator ";
+		break;
+	case eExpressionSimple:
+		message += " '-' or '!' or const or '(' ";
+		break;
+	case eExpressionSimplePrime:
+		message += " '-' or '+' ";
+		break;
+	case eTerme:
+		message += " '!' or const or '(' ";
+		break;
+	case eTermePrime:
+		message += " '*' or '/' ";
+		break;
+	case eTermePrioritaire:
+		message += " '!'  or ident or '('";
+		break;
+	case eFacteur:
+		message += " const or '(' ";
+		break;
+	case eFacteurPrime:
+		message += " '[' or '(' ";
+		break;
+	case eParametresEffectifs:
+		message += " '*' or '/' ";
+		break;
+	case eExpressions:
+		message += " '-' or '!' or const or '(' ";
+		break;
+	case eExpressionsPrime:
+		message += " ',' ";
+		break;
+	case eOperateurLogique:
+		message += " ident or main ";
+		break;
+	case eComparaison:
+		message += " ident or main ";
+		break;
+	case eIdentificateur:
+		message += " logic operator ";
+		break;
+	case eCte:
+		message += " const ";
+		break;
+	case eParametres:
+		message += " entier or car ";
+		break;
+	case eParametresPrime:
+		message += " ',' ";
+		break;
+	case eParametre:
+		message += " entier or car ";
+		break;
+	case eListeInstructions:
+		message += " '-' or '!' or const or '(' or retour or si or tantque or ecrire or lire";
+		break;
+	case eInstruction:
+		message += " '-' or '!' or const or '(' or retour or si or tantque or ecrire or lire";
+		break;
+	case eInstructionPrime:
+		message += " '=' or '[' ";
+		break;
+	case eInstructionSeconde:
+		message += " 'sinon' ";
+		break;
+	case eInstructionTriple:
+		message += " '-' or '!' or const or '(' or retour or si or tantque or ecrire or lire";
+		break;
+	case eExpression:
+		message += " '-' or '!' or const or '(' ";
+		break;
+	case eExpressionPrime:
+		message += " '-' or '&' or '|' ";
+		break;
+	case eEnd:
+			return;
+	default:
+		logError("Erreur de production " + to_string(prod) + " non gérée par le compilateur");
+		break;
+	}
+	message += " .";
+	logError(message);
 }
 
 void Syntaxique::logDebug(string message)
 {
 	if (lexical->enableDebug)//ugly but doing fine
-		ConsoleHandler::logDebug("[debug] " + message);
+		ConsoleHandler::logDebug("Syntaxique" , message);
 }
 
 void Syntaxique::logError(string error)
 {
-	ConsoleHandler::logDebug("[error] " + error);
+	ConsoleHandler::logError("Syntaxique",error);
 }
 
 

@@ -24,7 +24,7 @@ The different color codes are
 14  YELLOW
 15  WHITE
 */
-void ConsoleHandler::logDebug(string message)
+void ConsoleHandler::logDebug(string caller,string message)
 {
 	if (message == "\n")
 		return;
@@ -43,7 +43,7 @@ void ConsoleHandler::logDebug(string message)
 	 */
 	SetConsoleTextAttribute(h, 10);
 
-	cout << message << endl;
+	cout << "[" << caller << "]" << message << endl;
 
 	/*
 	 * Restore the original colors
@@ -51,7 +51,7 @@ void ConsoleHandler::logDebug(string message)
 	SetConsoleTextAttribute(h, wOldColorAttrs);
 }
 
-void ConsoleHandler::logError(string message)
+void ConsoleHandler::logError(string caller, string message)
 {
 	if (message == "\n" || message == "")
 		return;
@@ -70,7 +70,7 @@ void ConsoleHandler::logError(string message)
 	 */
 	SetConsoleTextAttribute(h, 12);
 
-	cout << message << endl;
+	cout << "[" << caller  << "]" << message << endl;
 
 	/*
 	 * Restore the original colors

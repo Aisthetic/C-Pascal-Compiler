@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <unordered_map>
+using namespace std;
 typedef enum
 {
 	PTVRG, // ;
@@ -100,3 +102,13 @@ typedef struct TUniteLexicale
 	TUnite UL;
 	int attribut;
 } TUniteLexicale;
+
+
+//Regroupe les données d'une production
+template <int N,int M> struct ProductionData {
+	Production prod;
+	string name;
+	Production premiers[N];
+	Production suivants[M];
+};
+

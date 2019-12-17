@@ -1,4 +1,4 @@
-#include "Lexical.h"
+ï»¿#include "Lexical.h"
 #include <vector>
 #include <iterator>
 #include "Hashage.h"
@@ -9,6 +9,7 @@ using namespace std;
 
 Lexical::Lexical(bool debug):lexicalTable('-', '|', '+')
 {
+	//Initializing members
 	lexicalTable.add("Unite lexicale");
 	lexicalTable.add("Lexeme");
 	lexicalTable.add("Attribut");
@@ -16,6 +17,8 @@ Lexical::Lexical(bool debug):lexicalTable('-', '|', '+')
 	currentChar = '$';
 	initierMotsReserves();
 	enableDebug = true;
+	line = 1; col = 0;
+	//Debugging
 	logDebug("Lexical debugging is enabled");
 }
 
@@ -28,6 +31,7 @@ Lexical::Lexical(string file, bool debug = false, bool logTableIdentifs = false,
 	initierMotsReserves();
 	setInput(file,logTableIdentifs,logTableMotsRes);
 	enableDebug = debug;
+	line = 1; col = 0;
 }
 
 Lexical::~Lexical()
@@ -60,7 +64,7 @@ TUniteLexicale Lexical::uniteSuivante()
 		unite.UL = END;
 		return unite;
 	}
-	//Déclaration utilisée dans le switch
+	//DÃ©claration utilisÃ©e dans le switch
 	bool err = false;//case '\''
 	switch (currentChar) {
 	case ';':
@@ -129,20 +133,20 @@ TUniteLexicale Lexical::uniteSuivante()
 			unite.UL = INF;
 		}
 		break;
-	case '\''://Constante caractère
+	case '\''://Constante caractÃ¨re
 		lireCar();//On lit le contenu de la constante
 		unite.UL = CONSTCAR;
 		unite.attribut = currentChar;//code ascii
 		lireCar();
 
-		while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de caractère = fin de ligne ou un autre "'"
+		while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de caractÃ¨re = fin de ligne ou un autre "'"
 		{
 			err = true;
 			input.ignore();
 		}
 		if (err) {
 			unite.UL = ERR;
-			unite.attribut = 1;//Caractère incorrect
+			unite.attribut = 1;//CaractÃ¨re incorrect
 		}
 		break;
 	case '=':
@@ -306,9 +310,16 @@ bool Lexical::lireCar()
 {
 	if (!input.is_open())//si l'input stream est ouvert
 		return false;
-	logDebug("Current caracter : " + string(1,currentChar));
-	if (!input.eof())//reached end of line
-		return (bool)(input >> ::noskipws >> currentChar);
+	if (!input.eof()) {
+		auto result = (bool)(input >> ::noskipws >> currentChar);
+		col++;//incrementing number of columns as we just read a caracter
+		logDebug("Current caracter "  + (currentChar == '\n' ? "EndOfLine": string(1,currentChar)) + " at Ln " + to_string(line) + ",Col " + to_string(col));//to print â†“ instead of nothing
+		if (currentChar == '\n') {
+			line++;
+			col = 0;
+		}
+		return result;
+	}
 	return false;
 
 }
@@ -335,13 +346,13 @@ string Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 	switch (unite.UL)
 	{
 	case IDENT:
-		return identifiants.pop(unite.attribut);
+		return identifiants.get(unite.attribut);
 		break;
 	case CONST:
 		return to_string(unite.attribut);
 		break;
 	case MOTCLE:
-		return motsReserves.pop(unite.attribut);
+		return motsReserves.get(unite.attribut);
 		break;
 
 	case ENTIER:
@@ -452,9 +463,9 @@ void Lexical::processAllFile()
 {
 	setupOutput();
 	while (!input.eof()) {
-		auto unite = uniteSuivante();
+		TUniteLexicale unite = uniteSuivante();
 		output << endl << "UL: " << unite.UL << ", Attribut: " << unite.attribut;
-		lexemeToString(unite);
+		lexemeToString(unite);//TODO: review this warning as a team
 	}
 }
 void Lexical::printLexicalUnits(TUniteLexicale unite)
@@ -491,7 +502,7 @@ string Lexical::getInputFileNameWithoutExt()
 
 //Cree un fichier d'output 
 void Lexical::setupOutput() {
-	if (!output.is_open())//si un input est déjà ouvert on passe au processing direct
+	if (!output.is_open())//si un input est dÃ©jÃ  ouvert on passe au processing direct
 	{
 		output.open(LEXICAL_OUTPUT_DIRECTORY + "/" + getInputFileNameWithoutExt() + ".lex");
 		if (!output.is_open()) {
@@ -503,7 +514,7 @@ void Lexical::setupOutput() {
 
 void Lexical::setupIdentifsOutput()
 {
-	if (!identifOutput.is_open())//si un input est déjà ouvert on passe au processing direct
+	if (!identifOutput.is_open())//si un input est dÃ©jÃ  ouvert on passe au processing direct
 	{
 		identifOutput.open(TABLE_IDENTIF_OUTPUT_DIRECTORY + "/" + getInputFileNameWithoutExt() + ".ident");
 		if (!identifOutput.is_open()) {
@@ -515,24 +526,34 @@ void Lexical::setupIdentifsOutput()
 
 void Lexical::setupMotsResOutput()
 {
-	if (!motsResOutput.is_open())//si un input est déjà ouvert on passe au processing direct
+	if (!motsResOutput.is_open())//si un input est dÃ©jÃ  ouvert on passe au processing direct
 	{
 		motsResOutput.open(TABLE_MOTS_RES_OUTPUT_DIRECTORY + "/" + getInputFileNameWithoutExt() + ".mrs");
 		if (!motsResOutput.is_open()) {
-			logError("Impossible d'ouvrir le fichier d'output de la table des identifs");
+			logError("Impossible d'ouvrir le fichier d'output de la table des mots rÃ©servÃ©s");
 			return;
 		}
 	}
+}
+
+int Lexical::getLine()
+{
+	return line;
+}
+
+int Lexical::getColumn()
+{
+	return col;
 }
 
 
 void Lexical::logDebug(string message)
 {
 	if (enableDebug)
-		ConsoleHandler:: logDebug("[debug] " + message);
+		ConsoleHandler:: logDebug("Lexical" , message);
 }
 
 void Lexical::logError(string error)
 {
-	ConsoleHandler::logDebug("[error] " + error);
+	ConsoleHandler::logDebug("Lexical" , error);
 }

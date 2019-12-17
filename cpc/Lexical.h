@@ -16,6 +16,8 @@ private:
 	Hashage motsReserves; //contenaire des mots reserve
 	Hashage identifiants; //table des identifiants //todo getter
 	TextTable lexicalTable;
+	int line,col;//position reached in the file
+
 	//streams
 	ifstream input;//peut être fichier,string dans la console..etc
 	ofstream output;//lexical output stream
@@ -43,6 +45,8 @@ public:
 	void setupOutput();//pour ouvrir l'output en cas de besoin
 	void setupIdentifsOutput();
 	void setupMotsResOutput();
+	int getLine();//returns the current line
+	int getColumn();//retuens the current colmn 
 	//getters & setters
 	void setInput(string file, bool logTableIdentifs, bool logTableMotsRes );
 	string getInputFileNameWithoutExt();

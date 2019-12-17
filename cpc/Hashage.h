@@ -43,7 +43,7 @@ public:
 
 	int existe(string info); // prends une chaine de caractère et retourne son indice,  elle retourne -1 si elle n'existe pas dans la table
 
-	string pop(int i); //retourne la chaine de caracatère qui existe dans la tête d'un noeud
+	string get(int i); //retourne la chaine de caracatère qui existe dans la tête d'un noeud
 
 
 };

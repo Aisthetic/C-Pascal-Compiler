@@ -199,7 +199,7 @@ int Hashage::existe(string info)
 
 	}
 }
-string Hashage::pop(int i)
+string Hashage::get(int i)
 {
 	return HashTable[i]->data;
 }
