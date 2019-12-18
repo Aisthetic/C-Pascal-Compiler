@@ -1,5 +1,6 @@
 #pragma once
 #include "Lexical.h"
+#include "Semantique.h"
 #include "Utilities.h"
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,7 @@ public:
 private:
 	// Attributs	
 	Lexical* lexical;
+	Semantique Analyseursemantique; /// SOUHAIL
 	TUniteLexicale uniteCourante;
 	vector<string> errors;
 	ofstream xmlFile;
@@ -52,19 +54,20 @@ private:
 	void listeInstructions();
 	void instruction();
 	void instructionPrime();
-	void instructionTriple();
+	void instructionPrime(string); /// SOUHAIL
+	auto instructionTriple(); /// SOUHAIL
 	void instructionSeconde();
 	void expression();
 	void expressionPrime();
 	void expressionLogique();
 	void expressionLogiquePrime();
 	void expressionSimple();
-	void expressionSimplePrime();
-	void terme();
+	auto expressionSimplePrime(); /// SOUHAIL
+	auto terme(); /// SOUHAIL
 	void termePrime();
 	void termePrioritaire();
-	void facteur();
-	void facteurPrime();
+	auto facteur(); /// SOUHAIL
+	void facteurPrime(); 
 	void parametresEffectifs();
 	void expressions();
 	void expressionsPrime();
