@@ -1,5 +1,6 @@
 #pragma once
 #include "Lexical.h"
+#include "Semantique.h"
 #include "Utilities.h"
 #include <iostream>
 #include <fstream>
@@ -19,6 +20,7 @@ public:
 private:
 	// Attributs	
 	Lexical* lexical;
+	Semantique* Analyseursemantique; /// SOUHAIL
 	TUniteLexicale uniteCourante;
 	vector<string> errors;
 	ofstream xmlFile;
@@ -32,7 +34,7 @@ private:
 	void logDebug(string message);
 	void syntaxError(Production prod);
 	//void consommer();
-	void consommer(string expected);//consomme en vérifiant si ul==expected
+	void consommer(TUnite expected);//consomme en vérifiant si ul==expected
 	bool estPremierDe(Production unite);
 	bool estSuivantDe(Production unite);
 	bool isMotCle(string mc); // voir si l'unite coutrante est mot cle egal au parametre entre 
@@ -53,19 +55,20 @@ private:
 	void listeInstructions();
 	void instruction();
 	void instructionPrime();
-	void instructionTriple();
+	void instructionPrime(string); /// SOUHAIL
+	string instructionTriple(); /// SOUHAIL
 	void instructionSeconde();
 	void expression();
 	void expressionPrime();
 	void expressionLogique();
 	void expressionLogiquePrime();
 	void expressionSimple();
-	void expressionSimplePrime();
-	void terme();
-	void termePrime();
-	void termePrioritaire();
-	void facteur();
-	void facteurPrime();
+	string expressionSimplePrime(); /// SOUHAIL
+	string terme(); /// SOUHAIL
+	string termePrime();
+	string termePrioritaire();
+	string facteur(); /// SOUHAIL
+	void facteurPrime(); 
 	void parametresEffectifs();
 	void expressions();
 	void expressionsPrime();

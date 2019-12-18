@@ -1,11 +1,14 @@
+
 #include "Syntaxique.h"
 #include "Lexical.h"
-#include "Constants.h"
-#include "ConsoleHandler.h"
-#include <algorithm>
+
 using namespace std;
 
-
+// variable globale
+vector<string> listeparam;
+string tmp;
+string expr;
+//
 
 //Constructeurs
 Syntaxique::Syntaxique(string inputFile, bool logTableIden, bool logMotsRes)
@@ -13,12 +16,14 @@ Syntaxique::Syntaxique(string inputFile, bool logTableIden, bool logMotsRes)
 	lexical = new Lexical();
 	lexical->setInput(inputFile, logTableIden, logMotsRes);
 	uniteCourante = { END,0 };
+	Analyseursemantique = new Semantique();   /// SOUHAIL
 }
 
 Syntaxique::Syntaxique(Lexical* pLexical)
 {
 	lexical = pLexical;
 	uniteCourante = { END,0 };
+	Analyseursemantique = new Semantique();   /// SOUHAIL
 }
 
 //Functions
@@ -34,6 +39,7 @@ void Syntaxique::startParsing()
 		logError("Couldn't open xml file, check if xml dir is already created.");
 	uniteCourante = lexical->uniteSuivante();
 	programme();
+	Analyseursemantique->ControlerTS(); //Souhail a revoir
 	if (uniteCourante.UL != END) {
 		syntaxError(eEnd);
 	}
@@ -65,7 +71,7 @@ void Syntaxique::end() {
 }
 
 void Syntaxique::printErrors() {
-
+	 
 }
 
 void Syntaxique::xmlOpen(string caller) {
@@ -117,15 +123,22 @@ void Syntaxique::listeDeFonctions()
 	}
 	xmlClose("listeDeFonctions");
 }
+
 void Syntaxique::fonction()
 {
 	xmlOpen("fonction");
 	if (estPremierDe(eIdentificateur))
 	{
+		if (uniteCourante.UL != IDENT)
+		{
+			Analyseursemantique->AjouterTS("val",lexical->identifiants.get(uniteCourante.attribut));  /// SOUHAIL
+			(Analyseursemantique->TS.end()-1)->estfct = true; /// SOUHAIL
+		}
 		consommer(IDENT);
 		consommer(PAROUV);
 		listeDeParametres();
-		consommer(PARFERM);
+		consommer(PAROUV);
+		Analyseursemantique->paramFonctTS();
 		listeDeDeclarations();
 		consommer(ACCOUV);
 		listeInstructions();
@@ -194,11 +207,14 @@ void Syntaxique::declaration()
 	xmlOpen("declaration");
 	if (uniteCourante.UL == ENTIER)
 	{
+		Analyseursemantique->AjouterTS("type", "entier");  /// SOUHAIL
 		consommer(ENTIER);
 		declarationPrime();
+
 	}
 	else if (uniteCourante.UL == CAR)
 	{
+		Analyseursemantique->AjouterTS("type", "car");  /// SOUHAIL
 		consommer(CAR);
 		declarationPrime();
 	}
@@ -214,6 +230,9 @@ void Syntaxique::declarationPrime()
 	xmlOpen("declarationPrime");
 	if (estPremierDe(eIdentificateur))
 	{
+		if (uniteCourante.UL != IDENT) {
+			Analyseursemantique->TS[Analyseursemantique->TS.back()].val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+		}
 		consommer(IDENT);
 		declarationSeconde();
 	}
@@ -229,6 +248,7 @@ void Syntaxique::declarationSeconde()
 	if (estPremierDe(eDeclarationSeconde))
 	{
 		consommer(CROOUV);
+		Analyseursemantique->TS[Analyseursemantique->TS.back()].nb = 1; /// SOUHAIL
 		expression();
 		consommer(CROFER);
 	}
@@ -291,8 +311,19 @@ void Syntaxique::parametresPrime()
 void Syntaxique::parametre()
 {
 	xmlOpen("parametre");
-	if (uniteCourante.UL==CAR) {
-		consommer(CAR);
+	if (estPremierDe(eParametre)) {
+		if (uniteCourante.UL == ENTIER ){
+			consommer(ENTIER);
+			Analyseursemantique->AjouterTS("type", "entier");  /// SOUHAIL
+		}
+		else if (uniteCourante.UL == CAR ){
+			consommer(CAR);
+			Analyseursemantique->AjouterTS("type", "car");  /// SOUHAIL
+		}
+		
+		if (uniteCourante.UL != IDENT) {
+			Analyseursemantique->TS[Analyseursemantique->TS.back()].val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+		}
 		identif();
 	}
 	else if(uniteCourante.UL == ENTIER)
@@ -324,10 +355,15 @@ void Syntaxique::listeInstructions()
 
 void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 {
+	string porteur;
 	xmlOpen("instruction");
 	if (estPremierDe(eIdentificateur)) {
+		if (uniteCourante.UL != IDENT) {
+			tmp = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+			porteur = Analyseursemantique->typeidentifTS(tmp); /// SOUHAIL
+		}
 		identif();
-		instructionPrime();
+		instructionPrime(porteur);
 		consommer(PTVRG);
 	}
 	else if (uniteCourante.UL == RETOUR)
@@ -393,6 +429,30 @@ void Syntaxique::instructionPrime()
 	xmlClose("instructionPrime");
 }
 
+void Syntaxique::instructionPrime(string instruprime) /// SOUHAIL
+{
+	xmlOpen("instructionPrime");
+	if (estPremierDe(eInstructionPrime)) {
+		consommer(EGAL);
+		string instrutriple = instructionTriple(); /// SOUHAIL
+		if (instrutriple != instruprime ) /// SOUHAIL
+			Analyseursemantique->logError("conflicting type");
+	}
+	else if (uniteCourante.UL == CROFER) {
+		consommer(CROOUV);
+		if (Analyseursemantique->VerifierTableau(tmp)== false) /// SOUHAIL
+			Analyseursemantique->logError("incompatible type: expected a table");
+		expression();
+		consommer(CROFER);
+		consommer(EGAL);
+		string instrutriple = instructionTriple(); /// SOUHAIL
+		if (instrutriple != instruprime) /// SOUHAIL
+			Analyseursemantique->logError("conflicting type");
+	}
+	else { syntaxError(eInstructionPrime); }
+	xmlClose("instructionPrime");
+}
+
 void Syntaxique::instructionSeconde()
 {
 	xmlOpen("instructionSeconde");
@@ -409,20 +469,24 @@ void Syntaxique::instructionSeconde()
 	else { syntaxError(eInstructionSeconde); }
 	xmlClose("instructionSeconde");
 }
-void Syntaxique::instructionTriple()
+
+string Syntaxique::instructionTriple()
 {
 	xmlOpen("instructionTriple");
 	if (uniteCourante.UL == LIRE) {
-		consommer(LIRE;
+		consommer(LIRE);
 		consommer(PAROUV);
 		consommer(PARFERM);
 	}
 	else if (estPremierDe(eExpression)) {
 		expression();
+		return expr;
 	}
 	else { syntaxError(eInstructionTriple); }
 	xmlClose("instructionTriple");
+	return string();
 }
+
 void Syntaxique::expression()
 {
 	xmlOpen("expression");
@@ -480,13 +544,17 @@ void Syntaxique::expressionLogiquePrime() {
 void Syntaxique::expressionSimple() {
 	xmlOpen("expressionSimple");
 	if (estPremierDe(eTerme)) {
-		terme();
-		expressionSimplePrime();
+		expr = terme();
+		string exprprime = expressionSimplePrime();
+		if (expr != exprprime) /// SOUHAIL
+			Analyseursemantique->logError("conflicting type");
 	}
 	else if (uniteCourante.UL == SOUS) {
-		consommer("sous");
-		terme();
-		expressionSimplePrime();
+		consommer(SOUS);
+		expr = terme();
+		string exprprime = expressionSimplePrime();
+		if (expr != exprprime) /// SOUHAIL
+			Analyseursemantique->logError("conflicting type");
 	}
 	else {
 		syntaxError(eExpression);
@@ -494,49 +562,70 @@ void Syntaxique::expressionSimple() {
 	xmlClose("expressionSimple");
 }
 
-void Syntaxique::expressionSimplePrime() {
+string Syntaxique::expressionSimplePrime() {
 	xmlOpen("expressionSimplePrime");
 	if (uniteCourante.UL == ADD) {
-		consommer("add");
-		terme();
+		consommer(ADD);
+		string trm = terme(); /// SOUHAIL
+		if (trm != "entier") /// SOUHAIL
+			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
 		expressionSimplePrime();
+		return trm;
 	}
 	else if (uniteCourante.UL == SOUS) {
-		consommer("sous");
-		terme();
+		consommer(SOUS);
+		string trm = terme(); /// SOUHAIL
+		if (trm != "entier") /// SOUHAIL
+			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
 		expressionSimplePrime();
+		return trm;
 	}
 	else if (estSuivantDe(eExpressionSimplePrime)) {
-		//doz 7yd
+		return expr;
+		//doz 7yd 
 	}
 	else {
 		syntaxError(eExpressionSimplePrime);
 	}
 	xmlClose("expressionSimplePrime");
+	return string();
 }
 
-void Syntaxique::terme() {
+string Syntaxique::terme() {
 	xmlOpen("terme");
 	if (estPremierDe(eTermePrioritaire)) {
-		termePrioritaire();
-		termePrime();
+		string trmprioritaire = termePrioritaire();
+		string trmprime = termePrime();
+		if (trmprime != trmprioritaire && trmprime != "" ) /// SOUHAIL
+			Analyseursemantique->logError("conflicting type");
+		return trmprioritaire;
 	}
 	else {
 		syntaxError(eTerme);
 	}
 	xmlClose("terme");
+	return string();
 }
-void Syntaxique::termePrime() {
+
+string Syntaxique::termePrime() {
 	xmlOpen("termePrime");
 	if (uniteCourante.UL == MUL) {
-		consommer("mul");
-		facteur();
+		consommer(MUL);
+		string fac;
+		fac = facteur();
 		termePrime();
+		if (fac != "entier") /// SOUHAIL
+			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
+		return fac;
 	}
 	else if (uniteCourante.UL == DIV) {
-		consommer("div");
-		facteur();
+		consommer(DIV);
+		string fac;
+		fac = facteur();
 		termePrime();
+		if (fac != "entier") /// SOUHAIL
+			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
+		return fac;
 	}
 	else if (estSuivantDe(eTermePrime)) {
 		//doz 7yd
@@ -545,65 +634,87 @@ void Syntaxique::termePrime() {
 		syntaxError(eTermePrime);
 	}
 	xmlClose("termePrime");
+	return string();
 }
 
-void Syntaxique::termePrioritaire() {
+string Syntaxique::termePrioritaire() {
 	xmlOpen("termePrioritaire");
 	if (uniteCourante.UL == NON) {
-		consommer("non");
-		facteur();
+		consommer(NON);
+		string fac;
+		fac = facteur();
+		return fac;
 	}
 	else if (estPremierDe(eFacteur)) {
-		facteur();
+		string fac;
+		fac = facteur();
+		return fac;
 	}
 	else {
 		syntaxError(eTermePrioritaire);
 	}
 	xmlClose("termePrioritaire");
+	return string();
 }
 
-void Syntaxique::facteur() {//URGENT TODO: Remake
+string Syntaxique::facteur() {//URGENT TODO: Remake
 	xmlOpen("facteur");
 	if (estPremierDe(eIdentificateur)) {
+		if (uniteCourante.UL != IDENT) {
+			tmp = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+			string fac = Analyseursemantique->typeidentifTS(tmp);
+			return fac;
+		}
 		identif();
 		facteurPrime();
 	}
 	else if (estPremierDe(eCte)) {
 		cte();
+		if (uniteCourante.UL == CONST) {
+			string fac = "entier";
+			return fac;
+		}
 	}
 	else if (uniteCourante.UL == PAROUV) {
-		consommer("parOuv");
+		consommer(PAROUV);
 		expression();
 		if (uniteCourante.UL == PARFERM)
-			consommer("parFerm");
+			consommer(PARFERM);
 		else
 			syntaxError(eFacteur);//à revoir
 	}
 	else if (uniteCourante.UL == QUOTE) {
-		consommer("Quote");
+		consommer(QUOTE);
 		if (uniteCourante.UL == CAR) {
-			consommer("car");
+			consommer(CAR);
+			string fac = "car";
+			return fac;
 		}
 		else syntaxError(eCaractere);
-		consommer("quote");
+		consommer(QUOTE);
 	}
 	else {
 		syntaxError(eFacteur);
 	}
 	xmlClose("facteur");
+	return string();
 }
 
 void Syntaxique::facteurPrime() {
 	xmlOpen("facteurPrime");
 	if (uniteCourante.UL == CROOUV) {
-		consommer("CorOuv");
+		consommer(CROOUV);
+		if (Analyseursemantique->VerifierTableau(tmp) == false) /// SOUHAIL
+			Analyseursemantique->logError("incompatible type: expected a table");
 		expression();
-		consommer("croOuv");
+		consommer(CROOUV);
 	}
 	else if (uniteCourante.UL == PAROUV) {
-		consommer("ParOuv");
+		consommer(PAROUV);
 		parametresEffectifs();
-		consommer("parFerm");
+		if (Analyseursemantique->VerifierFonction(tmp,listeparam) == false) /// SOUHAIL
+			Analyseursemantique->logError("incompatible type: declaration of function incompatible");
+		consommer(PARFERM);
 	}
 	else if (estSuivantDe(eFacteurPrime)) {
 		//doz 7yd
@@ -632,7 +743,7 @@ void Syntaxique::expressions()
 {
 	xmlOpen("expressions");
 	if (estPremierDe(eExpression)) {
-		expression();
+		expression(); listeparam.push_back(expr);
 		expressionsPrime();
 	}
 	else {
@@ -645,8 +756,8 @@ void Syntaxique::expressionsPrime()
 {
 	xmlOpen("expressionsPrime");
 	if (uniteCourante.UL == VIRG) {
-		consommer("VIRG");
-		expression();
+		consommer(VIRG);
+		expression(); listeparam.push_back(expr);
 		expressionPrime();
 	}
 	else if (estSuivantDe(eExpressionsPrime)) {
@@ -661,9 +772,11 @@ void Syntaxique::expressionsPrime()
 void Syntaxique::operateurLogique()
 {
 	xmlOpen("operateurLogique");
-	if (uniteCourante.UL == OU || uniteCourante.UL == ET) {
-		consommer("OpLogique");
+	if (uniteCourante.UL == OU) {
+		consommer(OU);
 	}
+	else if (uniteCourante.UL == ET)
+		consommer(ET);
 	else {
 		syntaxError(eOperateurLogique);
 	}
@@ -685,7 +798,7 @@ void Syntaxique::identif()
 {
 	xmlOpen("identif");
 	if (uniteCourante.UL == IDENT) {
-		consommer("identif");
+		consommer(IDENT);
 	}
 	else
 		syntaxError(eIdentificateur);
@@ -696,7 +809,7 @@ void Syntaxique::cte()
 {
 	xmlOpen("cte");
 	if (uniteCourante.UL == CONST) {
-		consommer("const");
+		consommer(CONST);
 	}
 	else
 		syntaxError(eCte);
@@ -705,182 +818,107 @@ void Syntaxique::cte()
 
 //Methods
 
-//void Syntaxique::consommer() {//n�cessaire pour savoir ce qu'on a consomm� (exemple lorsqu'on consomme le ;)
-//	uniteCourante = lexical->uniteSuivante();
-//}
+void Syntaxique::consommer(TUnite expected) {
+	if (uniteCourante.UL != expected)
+		;//Todo
+	else {
+		//Xml pour les terminaux
+		ConsoleHandler::logDebug("Syntaxique","Consumed " + to_string(expected) + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()));
+		xmlFile << expected << " "; //espace pour éviter de concatener deux terminaux consécutifs
+		uniteCourante = lexical->uniteSuivante();
+	}
+	
+}
 
-void Syntaxique::consommer(string expected) {
+void Syntaxique::syntaxError(Production prod) {
 	vector<string> expectedSymbols;
-	//Gestion des erreurs
-	if (expected == "parouv" || expected == "ParOuv") {
-		if (uniteCourante.UL != PAROUV)
-			expectedSymbols.push_back(" ')' ");
-	}
-	else if (expected == "const") {
-		if (uniteCourante.UL != CONST)
-			expectedSymbols.push_back( " const ");
-	}
-	else if (expected == "identif") {
-		if (uniteCourante.UL != IDENT)
-			expectedSymbols.push_back( " ident ");
-	}
-	else if (expected == "OpComp") {
-		if (uniteCourante.UL != SUP && uniteCourante.UL != INF && uniteCourante.UL != EGALEGAL && uniteCourante.UL != SUPEGAL && uniteCourante.UL != INFEGAL )
-			expectedSymbols.push_back( " comparaison operator ");
-	}
-	else if (expected == "OpLogique") {
-		if (uniteCourante.UL != OU && uniteCourante.UL != ET)
-			expectedSymbols.push_back( " logical operator ");
-	}
-	else if (expected == "VIRG") {
-		if (uniteCourante.UL != VIRG)
-			expectedSymbols.push_back( " ',' ");
-	}
-	else if (expected == "parferm") {
-		if (uniteCourante.UL != PARFERM)
-			expectedSymbols.push_back( " ')' ");
-	}
-	else if (expected == "parFerm") {
-		if (uniteCourante.UL != PARFERM)
-			expectedSymbols.push_back( " const ");
-	}
-	else if (expected == "croOuv") {
-		if (uniteCourante.UL != CROOUV)
-			expectedSymbols.push_back( " '[' ");
-	}
-	else if (expected == "quote") {
-		if (uniteCourante.UL != QUOTE)
-			expectedSymbols.push_back( " quote ");
-	}
-	else if (expected == "car") {
-		if (uniteCourante.UL != CAR)
-			expectedSymbols.push_back( " car ");
-	}
-	else if (expected == "Quote") {
-		if (uniteCourante.UL != QUOTE)
-			expectedSymbols.push_back( " quote ");
-	}
-	else if (expected == "non") {
-		if (uniteCourante.UL != NON)
-			expectedSymbols.push_back( " ! ");
-	}
-	else if (expected == "div") {
-		if (uniteCourante.UL != DIV)
-			expectedSymbols.push_back( " div ");
-	}
-	else if (expected == "mul") {
-		if (uniteCourante.UL != MUL)
-			expectedSymbols.push_back( " mul ");
-	}
-	else if (expected == "sous") {
-		if (uniteCourante.UL != SOUS)
-			expectedSymbols.push_back( " sous ");
-	}
-	else if (expected == "add") {
-		if (uniteCourante.UL != ADD)
-			expectedSymbols.push_back( " add ");
-	}
-	else if (expected == "lire") {
-		if (uniteCourante.UL != LIRE)
-			expectedSymbols.push_back( " lire ");
-	}
-	else if (expected == "}") {
-		if (uniteCourante.UL != ACCFERM)
-			expectedSymbols.push_back( " '}' ");
-	}
-	else if (expected == "{") {
-		if (uniteCourante.UL != ACCOUV)
-			expectedSymbols.push_back( " '{' ");
-	}
-	else if (expected == "sinon") {
-		if (uniteCourante.UL != SINON)
-			expectedSymbols.push_back( " sinon ");
-	}
-	else if (expected == "egal") {
-		if (uniteCourante.UL != EGAL)
-			expectedSymbols.push_back( " '=' ");
-	}
-	else if (expected == "croFerm") {
-		if (uniteCourante.UL != CROFER)
-			expectedSymbols.push_back( " ']' ");
-	}
-	else if (expected == "croOuv") {
-		if (uniteCourante.UL != CROOUV)
-			expectedSymbols.push_back( " '[' ");
-	}
-	else if (expected == "EGAL") {
-		if (uniteCourante.UL != EGAL)
-			expectedSymbols.push_back( " = ");
-	}
-	else if (expected == "PointVirg" || expected == "PTVIRG") {
-	if (uniteCourante.UL != PTVRG)
-		expectedSymbols.push_back( " ';' ");
-	}
-	else if (expected == "ecrire") {
-	if (uniteCourante.UL != ECRIRE)
-		expectedSymbols.push_back( " ecrire ");
-	}
-	else if (expected == "faire") {
-	if (uniteCourante.UL != FAIRE)
-		expectedSymbols.push_back( " faire  ");
-	}
-	else if (expected == "TANQUE") {
-	if (uniteCourante.UL != TANTQUE)
-		expectedSymbols.push_back( " tantque ");
-	}
-	else if (expected == "ACCFERM") {
-	if (uniteCourante.UL != ACCFERM)
-		expectedSymbols.push_back( " '}' ");
-	}
-	else if (expected == "ACCOUV" || expected == "accOuv") {
-	if (uniteCourante.UL != ACCOUV)
-		expectedSymbols.push_back( " '{' ");
-	}
-	else if (expected == "alors") {
-	if (uniteCourante.UL != ALORS)
-		expectedSymbols.push_back( " alors ");
-	}
-	else if (expected == "si") {
-	if (uniteCourante.UL != SI)
-		expectedSymbols.push_back( " si ");
-	}
-	else if (expected == "PointVirg") {
-	if (uniteCourante.UL != PTVRG)
-		expectedSymbols.push_back( " ';' ");
-	}
-	else if (expected == "retour") {
-	if (uniteCourante.UL != RETOUR)
-		expectedSymbols.push_back( " retour ");
-	}
-	else if (expected == "PointVirg") {
-	if (uniteCourante.UL != PTVRG)
-		expectedSymbols.push_back( " ';' ");
-	} 
-	else if (expected == "TYPE") {
-	if (uniteCourante.UL != ENTIER &&  uniteCourante.UL != CAR)
-		expectedSymbols.push_back( " type ");
-	}
-	else if (expected == "virg") {
-	if (uniteCourante.UL != VIRG)
-		expectedSymbols.push_back( " ',' ");
-	}
-	else if (expected == "CROVR") {
-	if (uniteCourante.UL != CROOUV)
-		expectedSymbols.push_back( " '[' ");
-	}
-	else if (expected == "CROFER") {
-	if (uniteCourante.UL != CROFER)
-		expectedSymbols.push_back( " ']' ");
-	}
-	else if (expected == "IDENT") {
-	if (uniteCourante.UL != IDENT)
-		expectedSymbols.push_back( " ident ");
-	}
-	else if (expected == "Ident") {
-	if (uniteCourante.UL != IDENT)
-		expectedSymbols.push_back( " ident ");
-	}
+	switch (prod)
+	{
+	case eProgramme:
+	case eListeDeFonctions:
+	case eListeDeDeclarations:
+	case eDeclaration:
+	case eDeclarations:
+	case eListeParametres:
+	case eParametres:
+	case eParametre:
+		//message += " type ";
+		break;
+	case eFonction:
+	case eDeclarationPrime:
+	case eOperateurLogique:
+	case eComparaison:
+		//message += " an indentificator ";
+		break;
+	case eListeInstructions:
+	case eInstruction:
+	case eExpressionPrime:
+	case eExpression:
+	case eInstructionTriple:
+	case eInstructionPrime:
+		//message += " an operator";
+		break;
+	case eDeclarationsPrime:
+		//message += " ',' ";
+		break;
+	case eDeclarationSeconde:
+		//message += " '[' ";
+			break;
+	case eExpressionLogique:
+		//message += " logic expression ";
+		break;
+	case eExpressionLogiquePrime:
+		//message += " logic operator ";
+		break;
+	case eExpressionSimple:
+		//message += " constant ";
+		break;
+	case eExpressionSimplePrime:
+		//message += " arithmetic operator ";
+		break;
+	case eTerme:
+		//message += " constant ";
+		break;
+	case eTermePrime:
+		//message += " '*' or '/' ";
+		break;
+	case eTermePrioritaire:
+		//message += " '!'  or ident or '('";
+		break;
+	case eFacteur:
+		message += " const or '(' ";
+		break;
+	case eFacteurPrime:
+		message += " '[' or '(' ";
+		break;
+	case eParametresEffectifs:
+		message += " '*' or '/' ";
+		break;
+	case eExpressions:
+		message += " '-' or '!' or const or '(' ";
+		break;
+	case eExpressionsPrime:
+		message += " ',' ";
+		break;
 
+	case eIdentificateur:
+		message += " logic operator ";
+		break;
+	case eCte:
+		message += " const ";
+		break;
+	case eParametresPrime:
+		message += " ',' ";
+		break;
+	case eInstructionSeconde:
+		message += " 'sinon' ";
+		break;
+	case eEnd:
+			return;
+	default://Is it necessary to handle all errors ? 
+		//logError("Erreur de production " + to_string(prod) + " non gérée par le compilateur.");
+		break;
+	}
 	int line = lexical->getLine();
 	int col = lexical->getColumn();
 
@@ -889,21 +927,15 @@ void Syntaxique::consommer(string expected) {
 		if (itr != syntaxErrors.end())//We already have some errors at this position
 		{
 			//Appending to existing errors
-			itr->second.insert(itr->second.end(),expectedSymbols.begin(), expectedSymbols.end());
+			itr->second.insert(itr->second.end(), expectedSymbols.begin(), expectedSymbols.end());
 		}
 		else {
 			//We add it to the errors map (tree)
-			syntaxErrors.insert(pair< pair<int, int>,vector<string> > (pair<int, int>(line, col), expectedSymbols));
+			syntaxErrors.insert(pair< pair<int, int>, vector<string> >(pair<int, int>(line, col), expectedSymbols));
 		}
 	}
-	else {
-		//Xml pour les terminaux
-		ConsoleHandler::logDebug("Syntaxique","Consumed " + expected + " at Ln" + to_string(line) + ",Col " + to_string(col));
-		xmlFile << expected << " "; //espace pour éviter de concatener deux terminaux consécutifs
-		uniteCourante = lexical->uniteSuivante();
-	}
-	
 }
+
 //checks if the caracter is premier de l'unite en param
 bool Syntaxique::estPremierDe(Production production) {
 	switch (production)//TODO: eExpressionPrime
@@ -1155,99 +1187,6 @@ bool Syntaxique::estSuivantDe(Production production) {
 		break;
 	}
 	return false;
-}
-
-void Syntaxique::syntaxError(Production prod) {
-	string message = lexical->inputFilename + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()) + ": error : expected ";
-	switch (prod)
-	{
-	case eProgramme:
-	case eListeDeFonctions:
-	case eListeDeDeclarations:
-	case eDeclaration:
-	case eDeclarations:
-	case eListeParametres:
-	case eParametres:
-	case eParametre:
-		message += " type ";
-		break;
-	case eFonction:
-	case eDeclarationPrime:
-	case eOperateurLogique:
-	case eComparaison:
-		message += " an indentificator ";
-		break;
-	case eListeInstructions:
-	case eInstruction:
-	case eExpressionPrime:
-	case eExpression:
-	case eInstructionTriple:
-	case eInstructionPrime:
-		message += " an operator";
-		break;
-	case eDeclarationsPrime:
-		message += " ',' ";
-		break;
-	case eDeclarationSeconde:
-		message += " '[' ";
-			break;
-	case eExpressionLogique:
-		message += " logic expression ";
-		break;
-	case eExpressionLogiquePrime:
-		message += " logic operator ";
-		break;
-	case eExpressionSimple:
-		message += " constant ";
-		break;
-	case eExpressionSimplePrime:
-		message += " arithmetic operator ";
-		break;
-	case eTerme:
-		message += " constant ";
-		break;
-	case eTermePrime:
-		message += " '*' or '/' ";
-		break;
-	case eTermePrioritaire:
-		message += " '!'  or ident or '('";
-		break;
-	case eFacteur:
-		message += " const or '(' ";
-		break;
-	case eFacteurPrime:
-		message += " '[' or '(' ";
-		break;
-	case eParametresEffectifs:
-		message += " '*' or '/' ";
-		break;
-	case eExpressions:
-		message += " '-' or '!' or const or '(' ";
-		break;
-	case eExpressionsPrime:
-		message += " ',' ";
-		break;
-
-	case eIdentificateur:
-		message += " logic operator ";
-		break;
-	case eCte:
-		message += " const ";
-		break;
-	case eParametresPrime:
-		message += " ',' ";
-		break;
-	case eInstructionSeconde:
-		message += " 'sinon' ";
-		break;
-	case eEnd:
-			return;
-	default:
-		logError("Erreur de production " + to_string(prod) + " non gérée par le compilateur");
-		break;
-	}
-	message += " .";
-	syntaxErrors.insert(pair<string, pair<int, int>>(message, pair<int, int>(lexical->getLine(), lexical->getColumn())));
 }
 
 void Syntaxique::logDebug(string message)
