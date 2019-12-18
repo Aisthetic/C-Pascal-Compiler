@@ -54,6 +54,13 @@ bool Syntaxique::isMotCle(string mc)
 }
 
 void Syntaxique::end() {
+	//Logging the errors : We're trying to be precise and avoid printing too much errors
+	//First, we check if there's multiple errors targeting the same Ln&Col
+	for (auto const& element : syntaxErrors) {
+		/*auto line = element.second.first;
+		auto col = element.second.second;*/
+	}
+	//Writing XML file
 	xmlFile.flush();
 }
 
@@ -95,13 +102,13 @@ void Syntaxique::listeDeFonctions()
 	{
 		xmlOpen("main");
 		uniteCourante = lexical->uniteSuivante();
-		consommer("parOuv");
+		consommer(PAROUV);
 		listeDeParametres();
-		consommer("parFerm");
+		consommer(PARFERM);
 		listeDeDeclarations();
-		consommer("accOuv");
+		consommer(ACCOUV);
 		listeInstructions();
-		consommer("accFerm");
+		consommer(ACCFERM);
 		xmlClose("main");
 	}
 	else
@@ -115,14 +122,14 @@ void Syntaxique::fonction()
 	xmlOpen("fonction");
 	if (estPremierDe(eIdentificateur))
 	{
-		consommer("Ident");
-		consommer("parOuv");
+		consommer(IDENT);
+		consommer(PAROUV);
 		listeDeParametres();
-		consommer("parFerm");
+		consommer(PARFERM);
 		listeDeDeclarations();
-		consommer("accOuv");
+		consommer(ACCOUV);
 		listeInstructions();
-		consommer("accFerm");
+		consommer(ACCFERM);
 	}
 	else
 	{
@@ -137,7 +144,7 @@ void Syntaxique::listeDeDeclarations()
 	if (estPremierDe(eListeDeDeclarations))
 	{
 		declarations();
-		consommer("PTVIRG");
+		consommer(PTVRG);
 	}
 	else if (estSuivantDe(eListeDeDeclarations))
 	{
@@ -169,7 +176,7 @@ void Syntaxique::declarationsPrime()
 	xmlOpen("declarationsPrime");
 	if (estPremierDe(eDeclarationsPrime))
 	{
-		consommer("virg");
+		consommer(VIRG);
 		declaration();
 		declarationsPrime();
 	}
@@ -187,12 +194,12 @@ void Syntaxique::declaration()
 	xmlOpen("declaration");
 	if (uniteCourante.UL == ENTIER)
 	{
-		consommer("Entier");
+		consommer(ENTIER);
 		declarationPrime();
 	}
 	else if (uniteCourante.UL == CAR)
 	{
-		consommer("Car");
+		consommer(CAR);
 		declarationPrime();
 	}
 	else
@@ -207,7 +214,7 @@ void Syntaxique::declarationPrime()
 	xmlOpen("declarationPrime");
 	if (estPremierDe(eIdentificateur))
 	{
-		consommer("IDENT");
+		consommer(IDENT);
 		declarationSeconde();
 	}
 	else {
@@ -221,9 +228,9 @@ void Syntaxique::declarationSeconde()
 	xmlOpen("declarationSeconde");
 	if (estPremierDe(eDeclarationSeconde))
 	{
-		consommer("CROVR");
+		consommer(CROOUV);
 		expression();
-		consommer("OCROFER");
+		consommer(CROFER);
 	}
 	else if (estSuivantDe(eDeclarationSeconde))
 	{
@@ -269,7 +276,7 @@ void Syntaxique::parametresPrime()
 {
 	xmlOpen("parametresPrime");
 	if (estPremierDe(eParametresPrime)) {
-		consommer("virg");
+		consommer(VIRG);
 		parametre();
 		parametresPrime();
 	}
@@ -284,11 +291,16 @@ void Syntaxique::parametresPrime()
 void Syntaxique::parametre()
 {
 	xmlOpen("parametre");
-	if (estPremierDe(eParametre)) {
-		consommer("TYPE");
+	if (uniteCourante.UL==CAR) {
+		consommer(CAR);
 		identif();
 	}
+	else if(uniteCourante.UL == ENTIER)
+	{
+		consommer(ENTIER);
+		identif();
 
+	}
 	else { syntaxError(eParametre); }
 	xmlClose("parametre");
 }
@@ -316,47 +328,47 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	if (estPremierDe(eIdentificateur)) {
 		identif();
 		instructionPrime();
-		consommer("PointVirg");
+		consommer(PTVRG);
 	}
 	else if (uniteCourante.UL == RETOUR)
 	{
-		consommer("retour");
+		consommer(RETOUR);
 		expression();
-		consommer("PointVirg");
+		consommer(PTVRG);
 	}
 	else if (uniteCourante.UL == SI)
 	{
-		consommer("si");
+		consommer(SI);
 		expression();
 		if (uniteCourante.UL == ALORS) {
-			consommer("alors");
-			consommer("ACCOUV");
+			consommer(ALORS);
+			consommer(ACCOUV);
 			listeInstructions();
-			consommer("ACCFERM");
+			consommer(ACCFERM);
 			instructionSeconde();
 		}
 		else { return syntaxError(eInstruction); }
 	}
 	else if (uniteCourante.UL == TANTQUE)
 	{
-		consommer("TANQUE");
-		consommer("parOuv");
+		consommer(TANTQUE);
+		consommer(PAROUV);
 		expression();
-		consommer("parFerm");
+		consommer(PARFERM);
 		if (uniteCourante.UL == FAIRE) {
-			consommer("faire");
-			consommer("accOuv");
+			consommer(FAIRE);
+			consommer(ACCOUV);
 			listeInstructions();
-			consommer("accFerm");
+			consommer(ACCFERM);
 		}
 		else { return syntaxError(eInstruction); }
 	}
 	else if (uniteCourante.UL == ECRIRE) {
-		consommer("ecrire");
-		consommer("parOuv");
+		consommer(ECRIRE);
+		consommer(PAROUV);
 		expression();
-		consommer("parFerm");
-		consommer("PointVirg");
+		consommer(PARFERM);
+		consommer(PTVRG);
 	}
 	else { return syntaxError(eInstruction); }
 
@@ -367,14 +379,14 @@ void Syntaxique::instructionPrime()
 {
 	xmlOpen("instructionPrime");
 	if (estPremierDe(eInstructionPrime)) {
-		consommer("EGAL");
+		consommer(EGAL);
 		instructionTriple();
 	}
 	else if (uniteCourante.UL == CROFER) {
-		consommer("croOuv");
+		consommer(CROOUV);
 		expression();
-		consommer("croFerm");
-		consommer("egal");
+		consommer(CROFER);
+		consommer(EGAL);
 		instructionTriple();
 	}
 	else { syntaxError(eInstructionPrime); }
@@ -384,11 +396,11 @@ void Syntaxique::instructionPrime()
 void Syntaxique::instructionSeconde()
 {
 	xmlOpen("instructionSeconde");
-	if (isMotCle("sinon")) {
-		consommer("sinon");
-		consommer("{");
+	if (uniteCourante.UL == SINON) {
+		consommer(SINON);
+		consommer(ACCOUV);
 		listeInstructions();
-		consommer("}");
+		consommer(ACCFERM);
 	}
 	else if (estSuivantDe(eInstructionSeconde))
 	{
@@ -401,9 +413,9 @@ void Syntaxique::instructionTriple()
 {
 	xmlOpen("instructionTriple");
 	if (uniteCourante.UL == LIRE) {
-		consommer("lire");
-		consommer("parOuv");
-		consommer("parFerm");
+		consommer(LIRE;
+		consommer(PAROUV);
+		consommer(PARFERM);
 	}
 	else if (estPremierDe(eExpression)) {
 		expression();
@@ -698,183 +710,195 @@ void Syntaxique::cte()
 //}
 
 void Syntaxique::consommer(string expected) {
-	string message = lexical->inputFilename + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()) + ": error : expected ";
-	auto tempMessage = message;
+	vector<string> expectedSymbols;
 	//Gestion des erreurs
 	if (expected == "parouv" || expected == "ParOuv") {
 		if (uniteCourante.UL != PAROUV)
-			message += " ')' ";
+			expectedSymbols.push_back(" ')' ");
 	}
 	else if (expected == "const") {
 		if (uniteCourante.UL != CONST)
-			message += " const ";
+			expectedSymbols.push_back( " const ");
 	}
 	else if (expected == "identif") {
 		if (uniteCourante.UL != IDENT)
-			message += " ident ";
+			expectedSymbols.push_back( " ident ");
 	}
 	else if (expected == "OpComp") {
 		if (uniteCourante.UL != SUP && uniteCourante.UL != INF && uniteCourante.UL != EGALEGAL && uniteCourante.UL != SUPEGAL && uniteCourante.UL != INFEGAL )
-			message += " comparaison operator ";
+			expectedSymbols.push_back( " comparaison operator ");
 	}
 	else if (expected == "OpLogique") {
 		if (uniteCourante.UL != OU && uniteCourante.UL != ET)
-			message += " logical operator ";
+			expectedSymbols.push_back( " logical operator ");
 	}
 	else if (expected == "VIRG") {
 		if (uniteCourante.UL != VIRG)
-			message += " ',' ";
+			expectedSymbols.push_back( " ',' ");
 	}
 	else if (expected == "parferm") {
 		if (uniteCourante.UL != PARFERM)
-			message += " ')' ";
+			expectedSymbols.push_back( " ')' ");
 	}
 	else if (expected == "parFerm") {
 		if (uniteCourante.UL != PARFERM)
-			message += " const ";
+			expectedSymbols.push_back( " const ");
 	}
 	else if (expected == "croOuv") {
 		if (uniteCourante.UL != CROOUV)
-			message += " '[' ";
+			expectedSymbols.push_back( " '[' ");
 	}
 	else if (expected == "quote") {
 		if (uniteCourante.UL != QUOTE)
-			message += " quote ";
+			expectedSymbols.push_back( " quote ");
 	}
 	else if (expected == "car") {
 		if (uniteCourante.UL != CAR)
-			message += " car ";
+			expectedSymbols.push_back( " car ");
 	}
 	else if (expected == "Quote") {
 		if (uniteCourante.UL != QUOTE)
-			message += " quote ";
+			expectedSymbols.push_back( " quote ");
 	}
 	else if (expected == "non") {
 		if (uniteCourante.UL != NON)
-			message += " ! ";
+			expectedSymbols.push_back( " ! ");
 	}
 	else if (expected == "div") {
 		if (uniteCourante.UL != DIV)
-			message += " div ";
+			expectedSymbols.push_back( " div ");
 	}
 	else if (expected == "mul") {
 		if (uniteCourante.UL != MUL)
-			message += " mul ";
+			expectedSymbols.push_back( " mul ");
 	}
 	else if (expected == "sous") {
 		if (uniteCourante.UL != SOUS)
-			message += " sous ";
+			expectedSymbols.push_back( " sous ");
 	}
 	else if (expected == "add") {
 		if (uniteCourante.UL != ADD)
-			message += " add ";
+			expectedSymbols.push_back( " add ");
 	}
 	else if (expected == "lire") {
 		if (uniteCourante.UL != LIRE)
-			message += " lire ";
+			expectedSymbols.push_back( " lire ");
 	}
 	else if (expected == "}") {
 		if (uniteCourante.UL != ACCFERM)
-			message += " '}' ";
+			expectedSymbols.push_back( " '}' ");
 	}
 	else if (expected == "{") {
 		if (uniteCourante.UL != ACCOUV)
-			message += " '{' ";
+			expectedSymbols.push_back( " '{' ");
 	}
 	else if (expected == "sinon") {
 		if (uniteCourante.UL != SINON)
-			message += " sinon ";
+			expectedSymbols.push_back( " sinon ");
 	}
 	else if (expected == "egal") {
 		if (uniteCourante.UL != EGAL)
-			message += " '=' ";
+			expectedSymbols.push_back( " '=' ");
 	}
 	else if (expected == "croFerm") {
 		if (uniteCourante.UL != CROFER)
-			message += " ']' ";
+			expectedSymbols.push_back( " ']' ");
 	}
 	else if (expected == "croOuv") {
 		if (uniteCourante.UL != CROOUV)
-			message += " '[' ";
+			expectedSymbols.push_back( " '[' ");
 	}
 	else if (expected == "EGAL") {
 		if (uniteCourante.UL != EGAL)
-			message += " = ";
+			expectedSymbols.push_back( " = ");
 	}
 	else if (expected == "PointVirg" || expected == "PTVIRG") {
 	if (uniteCourante.UL != PTVRG)
-		message += " ';' ";
+		expectedSymbols.push_back( " ';' ");
 	}
 	else if (expected == "ecrire") {
 	if (uniteCourante.UL != ECRIRE)
-		message += " ecrire ";
+		expectedSymbols.push_back( " ecrire ");
 	}
 	else if (expected == "faire") {
 	if (uniteCourante.UL != FAIRE)
-		message += " faire  ";
+		expectedSymbols.push_back( " faire  ");
 	}
 	else if (expected == "TANQUE") {
 	if (uniteCourante.UL != TANTQUE)
-		message += " tantque ";
+		expectedSymbols.push_back( " tantque ");
 	}
 	else if (expected == "ACCFERM") {
 	if (uniteCourante.UL != ACCFERM)
-		message += " '}' ";
+		expectedSymbols.push_back( " '}' ");
 	}
 	else if (expected == "ACCOUV" || expected == "accOuv") {
 	if (uniteCourante.UL != ACCOUV)
-		message += " '{' ";
+		expectedSymbols.push_back( " '{' ");
 	}
 	else if (expected == "alors") {
 	if (uniteCourante.UL != ALORS)
-		message += " alors ";
+		expectedSymbols.push_back( " alors ");
 	}
 	else if (expected == "si") {
 	if (uniteCourante.UL != SI)
-		message += " si ";
+		expectedSymbols.push_back( " si ");
 	}
 	else if (expected == "PointVirg") {
 	if (uniteCourante.UL != PTVRG)
-		message += " ';' ";
+		expectedSymbols.push_back( " ';' ");
 	}
 	else if (expected == "retour") {
 	if (uniteCourante.UL != RETOUR)
-		message += " retour ";
+		expectedSymbols.push_back( " retour ");
 	}
 	else if (expected == "PointVirg") {
 	if (uniteCourante.UL != PTVRG)
-		message += " ';' ";
+		expectedSymbols.push_back( " ';' ");
 	} 
 	else if (expected == "TYPE") {
 	if (uniteCourante.UL != ENTIER &&  uniteCourante.UL != CAR)
-		message += " type ";
+		expectedSymbols.push_back( " type ");
 	}
 	else if (expected == "virg") {
 	if (uniteCourante.UL != VIRG)
-		message += " ',' ";
+		expectedSymbols.push_back( " ',' ");
 	}
 	else if (expected == "CROVR") {
 	if (uniteCourante.UL != CROOUV)
-		message += " '[' ";
+		expectedSymbols.push_back( " '[' ");
 	}
 	else if (expected == "CROFER") {
 	if (uniteCourante.UL != CROFER)
-		message += " ']' ";
+		expectedSymbols.push_back( " ']' ");
 	}
 	else if (expected == "IDENT") {
 	if (uniteCourante.UL != IDENT)
-		message += " ident ";
+		expectedSymbols.push_back( " ident ");
 	}
 	else if (expected == "Ident") {
 	if (uniteCourante.UL != IDENT)
-		message += " ident ";
+		expectedSymbols.push_back( " ident ");
 	}
-	
-	if (message != tempMessage)
-		logError(message);
+
+	int line = lexical->getLine();
+	int col = lexical->getColumn();
+
+	if (expectedSymbols.begin() != expectedSymbols.end()) {//If we found some errors
+		auto itr = syntaxErrors.find(pair<int, int>(line, col));
+		if (itr != syntaxErrors.end())//We already have some errors at this position
+		{
+			//Appending to existing errors
+			itr->second.insert(itr->second.end(),expectedSymbols.begin(), expectedSymbols.end());
+		}
+		else {
+			//We add it to the errors map (tree)
+			syntaxErrors.insert(pair< pair<int, int>,vector<string> > (pair<int, int>(line, col), expectedSymbols));
+		}
+	}
 	else {
 		//Xml pour les terminaux
-		ConsoleHandler::logDebug("Syntaxique","Consumed " + expected + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()));
+		ConsoleHandler::logDebug("Syntaxique","Consumed " + expected + " at Ln" + to_string(line) + ",Col " + to_string(col));
 		xmlFile << expected << " "; //espace pour éviter de concatener deux terminaux consécutifs
 		uniteCourante = lexical->uniteSuivante();
 	}
@@ -1005,6 +1029,7 @@ bool Syntaxique::estPremierDe(Production production) {
 		cout << "Production non reconnue" << endl;
 		break;
 	}
+	return false;
 }
 
 bool Syntaxique::estSuivantDe(Production production) {
@@ -1129,59 +1154,57 @@ bool Syntaxique::estSuivantDe(Production production) {
 		logError("Production non reconnue");
 		break;
 	}
+	return false;
 }
-/*Erreurs:
-fonctions
 
-*/
 void Syntaxique::syntaxError(Production prod) {
 	string message = lexical->inputFilename + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()) + ": error : expected ";
 	switch (prod)
 	{
 	case eProgramme:
-		message += " entier or car ";
-		break;
 	case eListeDeFonctions:
-		message += " ident or main ";
+	case eListeDeDeclarations:
+	case eDeclaration:
+	case eDeclarations:
+	case eListeParametres:
+	case eParametres:
+	case eParametre:
+		message += " type ";
 		break;
 	case eFonction:
-		message += " ident ";
+	case eDeclarationPrime:
+	case eOperateurLogique:
+	case eComparaison:
+		message += " an indentificator ";
 		break;
-	case eListeDeDeclarations:
-		message += " entier or car ";
-		break;
-	case eDeclarations:
-		message += " entier or car ";
+	case eListeInstructions:
+	case eInstruction:
+	case eExpressionPrime:
+	case eExpression:
+	case eInstructionTriple:
+	case eInstructionPrime:
+		message += " an operator";
 		break;
 	case eDeclarationsPrime:
 		message += " ',' ";
 		break;
-	case eDeclaration:
-		message += " entier or car ";
-		break;
-	case eDeclarationPrime:
-		message += " ident ";
-		break;
 	case eDeclarationSeconde:
 		message += " '[' ";
 			break;
-	case eListeParametres:
-		message += " entier or car ";
-		break;
 	case eExpressionLogique:
-		message += " ident or '(' or '!' or car or '!' or '-' ";
+		message += " logic expression ";
 		break;
 	case eExpressionLogiquePrime:
 		message += " logic operator ";
 		break;
 	case eExpressionSimple:
-		message += " '-' or '!' or const or '(' ";
+		message += " constant ";
 		break;
 	case eExpressionSimplePrime:
-		message += " '-' or '+' ";
+		message += " arithmetic operator ";
 		break;
 	case eTerme:
-		message += " '!' or const or '(' ";
+		message += " constant ";
 		break;
 	case eTermePrime:
 		message += " '*' or '/' ";
@@ -1204,47 +1227,18 @@ void Syntaxique::syntaxError(Production prod) {
 	case eExpressionsPrime:
 		message += " ',' ";
 		break;
-	case eOperateurLogique:
-		message += " ident or main ";
-		break;
-	case eComparaison:
-		message += " ident or main ";
-		break;
+
 	case eIdentificateur:
 		message += " logic operator ";
 		break;
 	case eCte:
 		message += " const ";
 		break;
-	case eParametres:
-		message += " entier or car ";
-		break;
 	case eParametresPrime:
 		message += " ',' ";
 		break;
-	case eParametre:
-		message += " entier or car ";
-		break;
-	case eListeInstructions:
-		message += " '-' or '!' or const or '(' or retour or si or tantque or ecrire or lire";
-		break;
-	case eInstruction:
-		message += " '-' or '!' or const or '(' or retour or si or tantque or ecrire or lire";
-		break;
-	case eInstructionPrime:
-		message += " '=' or '[' ";
-		break;
 	case eInstructionSeconde:
 		message += " 'sinon' ";
-		break;
-	case eInstructionTriple:
-		message += " '-' or '!' or const or '(' or retour or si or tantque or ecrire or lire";
-		break;
-	case eExpression:
-		message += " '-' or '!' or const or '(' ";
-		break;
-	case eExpressionPrime:
-		message += " '-' or '&' or '|' ";
 		break;
 	case eEnd:
 			return;
@@ -1253,7 +1247,7 @@ void Syntaxique::syntaxError(Production prod) {
 		break;
 	}
 	message += " .";
-	logError(message);
+	syntaxErrors.insert(pair<string, pair<int, int>>(message, pair<int, int>(lexical->getLine(), lexical->getColumn())));
 }
 
 void Syntaxique::logDebug(string message)

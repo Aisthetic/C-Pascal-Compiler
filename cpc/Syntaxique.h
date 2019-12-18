@@ -3,6 +3,7 @@
 #include "Utilities.h"
 #include <iostream>
 #include <fstream>
+#include <map>
 
 class Syntaxique
 {
@@ -21,7 +22,7 @@ private:
 	TUniteLexicale uniteCourante;
 	vector<string> errors;
 	ofstream xmlFile;
-
+	map <pair<int, int>, vector<string>> syntaxErrors;//Un arbre d'erreurs de la forme <<Ln,Col>,vecteur des symbols attendus>
 	// Methodes
 	void end();
 	void printErrors();
