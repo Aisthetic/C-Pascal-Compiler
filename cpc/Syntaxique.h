@@ -55,18 +55,18 @@ private:
 	void instruction();
 	void instructionPrime();
 	void instructionPrime(string); /// SOUHAIL
-	auto instructionTriple(); /// SOUHAIL
+	string instructionTriple(); /// SOUHAIL
 	void instructionSeconde();
 	void expression();
 	void expressionPrime();
 	void expressionLogique();
 	void expressionLogiquePrime();
 	void expressionSimple();
-	auto expressionSimplePrime(); /// SOUHAIL
-	auto terme(); /// SOUHAIL
-	void termePrime();
-	void termePrioritaire();
-	auto facteur(); /// SOUHAIL
+	string expressionSimplePrime(); /// SOUHAIL
+	string terme(); /// SOUHAIL
+	string termePrime();
+	string termePrioritaire();
+	string facteur(); /// SOUHAIL
 	void facteurPrime(); 
 	void parametresEffectifs();
 	void expressions();

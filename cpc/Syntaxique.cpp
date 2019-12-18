@@ -456,7 +456,7 @@ void Syntaxique::instructionSeconde()
 	xmlClose("instructionSeconde");
 }
 
-auto Syntaxique::instructionTriple()
+string Syntaxique::instructionTriple()
 {
 	xmlOpen("instructionTriple");
 	if (uniteCourante.UL == LIRE) {
@@ -470,6 +470,7 @@ auto Syntaxique::instructionTriple()
 	}
 	else { syntaxError(eInstructionTriple); }
 	xmlClose("instructionTriple");
+	return string();
 }
 
 void Syntaxique::expression()
@@ -547,7 +548,7 @@ void Syntaxique::expressionSimple() {
 	xmlClose("expressionSimple");
 }
 
-auto Syntaxique::expressionSimplePrime() {
+string Syntaxique::expressionSimplePrime() {
 	xmlOpen("expressionSimplePrime");
 	if (uniteCourante.UL == ADD) {
 		consommer("add");
@@ -573,14 +574,15 @@ auto Syntaxique::expressionSimplePrime() {
 		syntaxError(eExpressionSimplePrime);
 	}
 	xmlClose("expressionSimplePrime");
+	return string();
 }
 
-auto Syntaxique::terme() {
+string Syntaxique::terme() {
 	xmlOpen("terme");
 	if (estPremierDe(eTermePrioritaire)) {
 		string trmprioritaire = termePrioritaire();
 		string trmprime = termePrime();
-		if (trmprime != trmprioritaire && trmprime != NULL ) /// SOUHAIL
+		if (trmprime != trmprioritaire && trmprime != "" ) /// SOUHAIL
 			Analyseursemantique.logError("conflicting type");
 		return trmprioritaire;
 	}
@@ -588,9 +590,10 @@ auto Syntaxique::terme() {
 		syntaxError(eTerme);
 	}
 	xmlClose("terme");
+	return string();
 }
 
-auto Syntaxique::termePrime() {
+string Syntaxique::termePrime() {
 	xmlOpen("termePrime");
 	if (uniteCourante.UL == MUL) {
 		consommer("mul");
@@ -617,9 +620,10 @@ auto Syntaxique::termePrime() {
 		syntaxError(eTermePrime);
 	}
 	xmlClose("termePrime");
+	return string();
 }
 
-auto Syntaxique::termePrioritaire() {
+string Syntaxique::termePrioritaire() {
 	xmlOpen("termePrioritaire");
 	if (uniteCourante.UL == NON) {
 		consommer("non");
@@ -636,9 +640,10 @@ auto Syntaxique::termePrioritaire() {
 		syntaxError(eTermePrioritaire);
 	}
 	xmlClose("termePrioritaire");
+	return string();
 }
 
-auto Syntaxique::facteur() {//URGENT TODO: Remake
+string Syntaxique::facteur() {//URGENT TODO: Remake
 	xmlOpen("facteur");
 	if (estPremierDe(eIdentificateur)) {
 		if (uniteCourante.UL != IDENT) {
@@ -678,6 +683,7 @@ auto Syntaxique::facteur() {//URGENT TODO: Remake
 		syntaxError(eFacteur);
 	}
 	xmlClose("facteur");
+	return string();
 }
 
 void Syntaxique::facteurPrime() {
