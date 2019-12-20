@@ -6,9 +6,9 @@ Memoire::Memoire(vector<string> code)
 	std::copy(code.begin(), code.end(), cells.begin());
 
 	// Changing registers accordingly
-	beg = code.size(); //         has to add global variables handling !!!!!!!!!!
-	bel = code.size();
-	sp = code.size() + 1;
+	beg = (int)code.size(); //         has to add global variables handling !!!!!!!!!!
+	bel =(int) code.size();
+	sp = (int)code.size() + 1;
 }
 
 bool Memoire::stackFull()

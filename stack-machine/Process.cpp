@@ -16,7 +16,7 @@ void Process::empc(string value)
 	else {
 		memoire->setCell(memoire->getSp(), value);
 		memoire->incSp();
-		cout << "Empilement de " << value << ".\n";
+		cout << "Empilement de " << value << " dans la cellule: " << memoire->getSp() << ".\n";
 	}
 }
 
@@ -69,7 +69,7 @@ void Process::sous()
 
 		// Stacking the substraction
 		cout << t1 - t2 << ". ";
-		empc(to_string(t2 - t1));
+		empc(to_string(t1 - t2));
 
 	}
 }
@@ -117,7 +117,7 @@ void Process::div()
 
 		// Stacking the div
 		cout << t1 / t2 << ". ";
-		empc(to_string(t2 / t1));
+		empc(to_string(t1 / t2));
 
 	}
 }
@@ -258,10 +258,16 @@ void Process::dup()
 	}
 }
 
+void Process::pop()
+{
+	memoire->decSp();
+}
+
 string Process::dep()
 {
-	return memoire->getCell(memoire->getSp() - 1);
+	string cell = memoire->getCell(memoire->getSp() - 1);
 	memoire->decSp();
+	return cell;
 }
 
 void Process::ecriv()
@@ -275,9 +281,6 @@ void Process::ecriv()
 
 		// Writing to console
 		cout << value << ".\n";
-
-		// Stacking the value again
-		empc(value);
 	}
 }
 
