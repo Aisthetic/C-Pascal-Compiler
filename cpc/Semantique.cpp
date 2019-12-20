@@ -19,13 +19,14 @@ Semantique::~Semantique()
 
 //methodes
 
-void Semantique::AjouterTS(string cas,string current)
+void Semantique::AjouterTS(string cas,string current,int ite_varlocalglobal)
 {
 	variable var;
 	if (cas=="type")
 		var.type = current;
 	if (cas=="val")
 		var.val = current;
+	var.local_global = ite_varlocalglobal;
 	TS.push_back(var);
 }
 
@@ -53,7 +54,7 @@ void Semantique::ControlerTS()
 			cout << "  -- La Valeur = " << TS[i].val << " n'est pas declare " << endl;
 
 		for (int j = i + 1; j < TS.size(); j++) {
-			if (TS[i].val == TS[j].val && TS[i].estfct == TS[j].estfct && TS[i].param == TS[j].param && TS[i].local_global == TS[j].local_global)
+			if (TS[i].val == TS[j].val  && TS[i].estfct == TS[j].estfct && TS[i].param == TS[j].param && TS[i].local_global == TS[j].local_global)
 				cout << "  -- La Valeur = " << TS[i].val << " est repetee " << endl;
 		}
 	}

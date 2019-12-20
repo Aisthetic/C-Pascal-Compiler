@@ -28,7 +28,7 @@ public:
 	~Semantique();
 
 	//methodes
-	void AjouterTS(string nom,string dans_quelle_cas_var_on_ajoute); // crée une variable et l'ajout au TS
+	void AjouterTS(string nom,string dans_quelle_cas_var_on_ajoute,int); // crée une variable et l'ajout au TS
 	string typeidentifTS (string); // retourne le type de l'identif a partir TS
 	void AfficherTS();  // affiche le contenu de TS
 	void ControlerTS(); // controle TS vers la fin du l'analyse pour en sortir les variables non déclarer

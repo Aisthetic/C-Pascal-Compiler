@@ -8,6 +8,7 @@ using namespace std;
 vector<string> listeparam;
 string tmp;
 string expr;
+int ite_varlocalglobal;
 //
 
 //Constructeurs
@@ -87,6 +88,7 @@ void Syntaxique::programme() {
 	xmlOpen("programme");
 	if (estPremierDe(eListeDeDeclarations)) {
 		listeDeDeclarations();
+		ite_varlocalglobal++;
 		listeDeFonctions();
 
 	}
@@ -115,6 +117,7 @@ void Syntaxique::listeDeFonctions()
 		consommer(ACCOUV);
 		listeInstructions();
 		consommer(ACCFERM);
+		ite_varlocalglobal++; 
 		xmlClose("main");
 	}
 	else
@@ -129,7 +132,7 @@ void Syntaxique::fonction()
 	xmlOpen("fonction");
 	if (estPremierDe(eIdentificateur))
 	{
-		Analyseursemantique->AjouterTS("val",lexical->identifiants.get(uniteCourante.attribut));  /// SOUHAIL
+		Analyseursemantique->AjouterTS("val",lexical->identifiants.get(uniteCourante.attribut),ite_varlocalglobal);  /// SOUHAIL
 		(Analyseursemantique->TS.end()-1)->estfct = true; /// SOUHAIL
 		consommer(IDENT);
 		consommer(PAROUV);
@@ -140,6 +143,7 @@ void Syntaxique::fonction()
 		consommer(ACCOUV);
 		listeInstructions();
 		consommer(ACCFERM);
+		ite_varlocalglobal++;
 	}
 	else
 	{
@@ -204,14 +208,14 @@ void Syntaxique::declaration()
 	xmlOpen("declaration");
 	if (uniteCourante.UL == ENTIER)
 	{
-		Analyseursemantique->AjouterTS("type", "entier");  /// SOUHAIL
+		Analyseursemantique->AjouterTS("type", "entier", ite_varlocalglobal);  /// SOUHAIL
 		consommer(ENTIER);
 		declarationPrime();
 
 	}
 	else if (uniteCourante.UL == CAR)
 	{
-		Analyseursemantique->AjouterTS("type", "car");  /// SOUHAIL
+		Analyseursemantique->AjouterTS("type", "car", ite_varlocalglobal);  /// SOUHAIL
 		consommer(CAR);
 		declarationPrime();
 	}
@@ -309,11 +313,11 @@ void Syntaxique::parametre()
 	if (estPremierDe(eParametre)) {
 		if (uniteCourante.UL == ENTIER ){
 			consommer(ENTIER);
-			Analyseursemantique->AjouterTS("type", "entier");  /// SOUHAIL
+			Analyseursemantique->AjouterTS("type", "entier", ite_varlocalglobal);  /// SOUHAIL
 		}
 		else if (uniteCourante.UL == CAR ){
 			consommer(CAR);
-			Analyseursemantique->AjouterTS("type", "car");  /// SOUHAIL
+			Analyseursemantique->AjouterTS("type", "car", ite_varlocalglobal);  /// SOUHAIL
 		}
 		
 		if (uniteCourante.UL == IDENT) {
@@ -428,8 +432,8 @@ void Syntaxique::instructionPrime(string instruprime) /// SOUHAIL
 	if (estPremierDe(eInstructionPrime)) {
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); /// SOUHAIL
-		if (instrutriple != instruprime ) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type");
+		if (instrutriple != instruprime) /// SOUHAIL
+			Analyseursemantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
 	}
 	else if (uniteCourante.UL == CROFER) {
 		consommer(CROOUV);
@@ -440,7 +444,7 @@ void Syntaxique::instructionPrime(string instruprime) /// SOUHAIL
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); /// SOUHAIL
 		if (instrutriple != instruprime) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type");
+			Analyseursemantique->logError("conflicting type "+ instrutriple+" differe de "+instruprime);
 	}
 	else { syntaxError(eInstructionPrime); }
 	xmlClose("instructionPrime");
@@ -540,14 +544,14 @@ void Syntaxique::expressionSimple() {
 		expr = terme();
 		string exprprime = expressionSimplePrime();
 		if (expr != exprprime) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type");
+			Analyseursemantique->logError("conflicting type " + exprprime + " differe de " + expr);
 	}
 	else if (uniteCourante.UL == SOUS) {
 		consommer(SOUS);
 		expr = terme();
 		string exprprime = expressionSimplePrime();
 		if (expr != exprprime) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type");
+			Analyseursemantique->logError("conflicting type " + exprprime + " differe de " + expr);
 	}
 	else {
 		syntaxError(eExpression);
