@@ -227,9 +227,7 @@ void Syntaxique::declarationPrime()
 	xmlOpen("declarationPrime");
 	if (estPremierDe(eIdentificateur))
 	{
-		if (uniteCourante.UL != IDENT) {
-			(*Analyseursemantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
-		}
+		(*Analyseursemantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
 		consommer(IDENT);
 		declarationSeconde();
 	}
@@ -318,7 +316,7 @@ void Syntaxique::parametre()
 			Analyseursemantique->AjouterTS("type", "car");  /// SOUHAIL
 		}
 		
-		if (uniteCourante.UL != IDENT) {
+		if (uniteCourante.UL == IDENT) {
 			(*Analyseursemantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
 		}
 		identif();
@@ -355,10 +353,8 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	string porteur;
 	xmlOpen("instruction");
 	if (estPremierDe(eIdentificateur)) {
-		if (uniteCourante.UL != IDENT) {
-			tmp = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
-			porteur = Analyseursemantique->typeidentifTS(tmp); /// SOUHAIL
-		}
+		tmp = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+		porteur = Analyseursemantique->typeidentifTS(tmp); /// SOUHAIL
 		identif();
 		instructionPrime(porteur);
 		consommer(PTVRG);
@@ -655,11 +651,9 @@ string Syntaxique::termePrioritaire() {
 string Syntaxique::facteur() {//URGENT TODO: Remake
 	xmlOpen("facteur");
 	if (estPremierDe(eIdentificateur)) {
-		if (uniteCourante.UL != IDENT) {
-			tmp = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
-			string fac = Analyseursemantique->typeidentifTS(tmp);
-			return fac;
-		}
+		tmp = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+		string fac = Analyseursemantique->typeidentifTS(tmp);
+		return fac;
 		identif();
 		facteurPrime();
 	}

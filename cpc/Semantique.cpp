@@ -40,20 +40,21 @@ void Semantique::AfficherTS()
 {
 	cout << "- Le tableau des Symboles contient : " << endl;
 	for (int i = 0; i < TS.size(); i++) {
-		cout << "  -- La Valeur = " << TS[i].val << " de type =" << TS[i].type << endl;
+		cout << "  -- La Valeur = " << TS[i].val << " , est-elle une fonction = " << TS[i].estfct <<", de type = " << TS[i].type << endl;
 	}
 }
 
 void Semantique::ControlerTS()
 {
-	cout << "- Le tableau de Symboles contient des erreurs :";
+	AfficherTS();
+	cout << "- Le tableau de Symboles contient des erreurs :\n";
 	for (int i = 0; i < TS.size(); i++) {
-		if (TS[i].type != "entier" || TS[i].type != "car")
-			cout << "  -- La Valeur =" << TS[i].val << " n'est pas declare " << endl;
+		if (TS[i].type != "entier" && TS[i].type != "car" && TS[i].estfct != true )
+			cout << "  -- La Valeur = " << TS[i].val << " n'est pas declare " << endl;
 
 		for (int j = i + 1; j < TS.size(); j++) {
 			if (TS[i].val == TS[j].val && TS[i].estfct == TS[j].estfct && TS[i].param == TS[j].param && TS[i].local_global == TS[j].local_global)
-				cout << "  -- La Valeur =" << TS[i].val << " est repetee " << endl;
+				cout << "  -- La Valeur = " << TS[i].val << " est repetee " << endl;
 		}
 	}
 }
