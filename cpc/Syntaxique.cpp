@@ -129,15 +129,12 @@ void Syntaxique::fonction()
 	xmlOpen("fonction");
 	if (estPremierDe(eIdentificateur))
 	{
-		if (uniteCourante.UL != IDENT)
-		{
-			Analyseursemantique->AjouterTS("val",lexical->identifiants.get(uniteCourante.attribut));  /// SOUHAIL
-			(Analyseursemantique->TS.end()-1)->estfct = true; /// SOUHAIL
-		}
+		Analyseursemantique->AjouterTS("val",lexical->identifiants.get(uniteCourante.attribut));  /// SOUHAIL
+		(Analyseursemantique->TS.end()-1)->estfct = true; /// SOUHAIL
 		consommer(IDENT);
 		consommer(PAROUV);
 		listeDeParametres();
-		consommer(PAROUV);
+		consommer(PARFERM);
 		Analyseursemantique->paramFonctTS();
 		listeDeDeclarations();
 		consommer(ACCOUV);
@@ -611,8 +608,7 @@ string Syntaxique::termePrime() {
 	xmlOpen("termePrime");
 	if (uniteCourante.UL == MUL) {
 		consommer(MUL);
-		string fac;
-		fac = facteur();
+		string fac = facteur();
 		termePrime();
 		if (fac != "entier") /// SOUHAIL
 			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
@@ -620,8 +616,7 @@ string Syntaxique::termePrime() {
 	}
 	else if (uniteCourante.UL == DIV) {
 		consommer(DIV);
-		string fac;
-		fac = facteur();
+		string fac = facteur();
 		termePrime();
 		if (fac != "entier") /// SOUHAIL
 			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
@@ -786,9 +781,18 @@ void Syntaxique::operateurLogique()
 void Syntaxique::comparaison()
 {
 	xmlOpen("comparaison");
-	if (uniteCourante.UL == SUP || uniteCourante.UL == INFEGAL || uniteCourante.UL == SUPEGAL
-		|| uniteCourante.UL == INF || uniteCourante.UL == EGAL || uniteCourante.UL == EGALEGAL)
-		consommer("OpComp");
+	if (uniteCourante.UL == SUP)
+		consommer(SUP);
+	if (uniteCourante.UL == INFEGAL)
+		consommer(INFEGAL);
+	if (uniteCourante.UL == SUPEGAL)
+		consommer(SUPEGAL);
+	if (uniteCourante.UL == INF) 
+		consommer(INF);
+	if (uniteCourante.UL == EGAL) 
+		consommer(EGAL);
+	if (uniteCourante.UL == EGALEGAL)
+		consommer(EGALEGAL);
 	else
 		syntaxError(eComparaison);
 	xmlClose("comparaison");
@@ -831,109 +835,109 @@ void Syntaxique::consommer(TUnite expected) {
 }
 
 void Syntaxique::syntaxError(Production prod) {
-	vector<string> expectedSymbols;
-	switch (prod)
-	{
-	case eProgramme:
-	case eListeDeFonctions:
-	case eListeDeDeclarations:
-	case eDeclaration:
-	case eDeclarations:
-	case eListeParametres:
-	case eParametres:
-	case eParametre:
-		//message += " type ";
-		break;
-	case eFonction:
-	case eDeclarationPrime:
-	case eOperateurLogique:
-	case eComparaison:
-		//message += " an indentificator ";
-		break;
-	case eListeInstructions:
-	case eInstruction:
-	case eExpressionPrime:
-	case eExpression:
-	case eInstructionTriple:
-	case eInstructionPrime:
-		//message += " an operator";
-		break;
-	case eDeclarationsPrime:
-		//message += " ',' ";
-		break;
-	case eDeclarationSeconde:
-		//message += " '[' ";
-			break;
-	case eExpressionLogique:
-		//message += " logic expression ";
-		break;
-	case eExpressionLogiquePrime:
-		//message += " logic operator ";
-		break;
-	case eExpressionSimple:
-		//message += " constant ";
-		break;
-	case eExpressionSimplePrime:
-		//message += " arithmetic operator ";
-		break;
-	case eTerme:
-		//message += " constant ";
-		break;
-	case eTermePrime:
-		//message += " '*' or '/' ";
-		break;
-	case eTermePrioritaire:
-		//message += " '!'  or ident or '('";
-		break;
-	case eFacteur:
-		message += " const or '(' ";
-		break;
-	case eFacteurPrime:
-		message += " '[' or '(' ";
-		break;
-	case eParametresEffectifs:
-		message += " '*' or '/' ";
-		break;
-	case eExpressions:
-		message += " '-' or '!' or const or '(' ";
-		break;
-	case eExpressionsPrime:
-		message += " ',' ";
-		break;
+	//vector<string> expectedSymbols;
+	//switch (prod)
+	//{
+	//case eProgramme:
+	//case eListeDeFonctions:
+	//case eListeDeDeclarations:
+	//case eDeclaration:
+	//case eDeclarations:
+	//case eListeParametres:
+	//case eParametres:
+	//case eParametre:
+	//	//message += " type ";
+	//	break;
+	//case eFonction:
+	//case eDeclarationPrime:
+	//case eOperateurLogique:
+	//case eComparaison:
+	//	//message += " an indentificator ";
+	//	break;
+	//case eListeInstructions:
+	//case eInstruction:
+	//case eExpressionPrime:
+	//case eExpression:
+	//case eInstructionTriple:
+	//case eInstructionPrime:
+	//	//message += " an operator";
+	//	break;
+	//case eDeclarationsPrime:
+	//	//message += " ',' ";
+	//	break;
+	//case eDeclarationSeconde:
+	//	//message += " '[' ";
+	//		break;
+	//case eExpressionLogique:
+	//	//message += " logic expression ";
+	//	break;
+	//case eExpressionLogiquePrime:
+	//	//message += " logic operator ";
+	//	break;
+	//case eExpressionSimple:
+	//	//message += " constant ";
+	//	break;
+	//case eExpressionSimplePrime:
+	//	//message += " arithmetic operator ";
+	//	break;
+	//case eTerme:
+	//	//message += " constant ";
+	//	break;
+	//case eTermePrime:
+	//	//message += " '*' or '/' ";
+	//	break;
+	//case eTermePrioritaire:
+	//	//message += " '!'  or ident or '('";
+	//	break;
+	//case eFacteur:
+	//	message += " const or '(' ";
+	//	break;
+	//case eFacteurPrime:
+	//	message += " '[' or '(' ";
+	//	break;
+	//case eParametresEffectifs:
+	//	message += " '*' or '/' ";
+	//	break;
+	//case eExpressions:
+	//	message += " '-' or '!' or const or '(' ";
+	//	break;
+	//case eExpressionsPrime:
+	//	message += " ',' ";
+	//	break;
 
-	case eIdentificateur:
-		message += " logic operator ";
-		break;
-	case eCte:
-		message += " const ";
-		break;
-	case eParametresPrime:
-		message += " ',' ";
-		break;
-	case eInstructionSeconde:
-		message += " 'sinon' ";
-		break;
-	case eEnd:
-			return;
-	default://Is it necessary to handle all errors ? 
-		//logError("Erreur de production " + to_string(prod) + " non gérée par le compilateur.");
-		break;
-	}
-	int line = lexical->getLine();
-	int col = lexical->getColumn();
+	//case eIdentificateur:
+	//	message += " logic operator ";
+	//	break;
+	//case eCte:
+	//	message += " const ";
+	//	break;
+	//case eParametresPrime:
+	//	message += " ',' ";
+	//	break;
+	//case eInstructionSeconde:
+	//	message += " 'sinon' ";
+	//	break;
+	//case eEnd:
+	//		return;
+	//default://Is it necessary to handle all errors ? 
+	//	//logError("Erreur de production " + to_string(prod) + " non gérée par le compilateur.");
+	//	break;
+	//}
+	//int line = lexical->getLine();
+	//int col = lexical->getColumn();
 
-	if (expectedSymbols.begin() != expectedSymbols.end()) {//If we found some errors
-		auto itr = syntaxErrors.find(pair<int, int>(line, col));
-		if (itr != syntaxErrors.end())//We already have some errors at this position
-		{
-			//Appending to existing errors
-			itr->second.insert(itr->second.end(), expectedSymbols.begin(), expectedSymbols.end());
-		}
-		else {
-			//We add it to the errors map (tree)
-			syntaxErrors.insert(pair< pair<int, int>, vector<string> >(pair<int, int>(line, col), expectedSymbols));
-		}
-	}
+	//if (expectedSymbols.begin() != expectedSymbols.end()) {//If we found some errors
+	//	auto itr = syntaxErrors.find(pair<int, int>(line, col));
+	//	if (itr != syntaxErrors.end())//We already have some errors at this position
+	//	{
+	//		//Appending to existing errors
+	//		itr->second.insert(itr->second.end(), expectedSymbols.begin(), expectedSymbols.end());
+	//	}
+	//	else {
+	//		//We add it to the errors map (tree)
+	//		syntaxErrors.insert(pair< pair<int, int>, vector<string> >(pair<int, int>(line, col), expectedSymbols));
+	//	}
+	//}
 }
 
 //checks if the caracter is premier de l'unite en param

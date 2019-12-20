@@ -1,8 +1,8 @@
-entier t[10], entier a
+entier t[10], entier a;
 f(entier a, entier b)     
 entier c, entier k;  	 
 {				
-k = a  b;     	    
+k = a + b;     	    
 retour k; 			
 }					
 

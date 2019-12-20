@@ -33,7 +33,7 @@ private:
 	void logError(string error);
 	void logDebug(string message);
 	void syntaxError(Production prod);
-	//void consommer();
+	void consommer();
 	void consommer(TUnite expected);//consomme en vérifiant si ul==expected
 	bool estPremierDe(Production unite);
 	bool estSuivantDe(Production unite);
