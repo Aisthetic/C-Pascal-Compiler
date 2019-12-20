@@ -78,7 +78,7 @@ void Semantique::paramFonctTS()
 {
 	vector<string> listeparam;
 	int i;
-	for (i = TS.end(); TS[i].estfct != true; i--) {
+	for (i = TS.size(); TS[i].estfct != true; i--) {
 		listeparam.insert(listeparam.begin(),TS[i].type);
 	}
 	TS[i].param = listeparam;

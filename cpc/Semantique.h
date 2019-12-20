@@ -10,14 +10,14 @@
 #include <algorithm>
 using namespace std;
 
-typedef struct variable
+typedef struct variable // structure pour stocker les infos d'une variable
 {
-	string val;
+	string val; 
 	string type;
-	int nb = 0;
+	int nb = 0; // differencie entre tableau et var smple
 	int local_global; /// indiquer si l'identif est local ou global
-	bool estfct=false;
-	vector<string> param;
+	bool estfct=false; // differencie entre fct et var smple
+	vector<string> param; //stocke les parameteres de la fct
 } variable;
 
 class Semantique
@@ -28,15 +28,15 @@ public:
 	~Semantique();
 
 	//methodes
-	void AjouterTS(string,string);
-	string typeidentifTS (string);
-	void AfficherTS();
-	void ControlerTS();
-	bool VerifierTableau(string);
-	bool VerifierFonction(string, vector<string>);
-	void paramFonctTS();
-	void logError(string error);
+	void AjouterTS(string nom,string dans_quelle_cas_var_on_ajoute); // crée une variable et l'ajout au TS
+	string typeidentifTS (string); // retourne le type de l'identif a partir TS
+	void AfficherTS();  // affiche le contenu de TS
+	void ControlerTS(); // controle TS vers la fin du l'analyse pour en sortir les variables non déclarer
+	bool VerifierTableau(string); // verifie si l'identif est un tableau en TS
+	bool VerifierFonction(string, vector<string>); // verifier si l'identif est une fct en TS
+	void paramFonctTS();		  // identifie des identifiants comme etant des parametres d'une fct 
+	void logError(string error); // afficher les erreurs du semantique
 
 //private:
-	vector<variable> TS;
+	vector<variable> TS; /// tableau des variables
 };

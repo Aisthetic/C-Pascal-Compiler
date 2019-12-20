@@ -231,7 +231,7 @@ void Syntaxique::declarationPrime()
 	if (estPremierDe(eIdentificateur))
 	{
 		if (uniteCourante.UL != IDENT) {
-			Analyseursemantique->TS[Analyseursemantique->TS.back()].val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+			(*Analyseursemantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
 		}
 		consommer(IDENT);
 		declarationSeconde();
@@ -248,7 +248,7 @@ void Syntaxique::declarationSeconde()
 	if (estPremierDe(eDeclarationSeconde))
 	{
 		consommer(CROOUV);
-		Analyseursemantique->TS[Analyseursemantique->TS.back()].nb = 1; /// SOUHAIL
+		(*Analyseursemantique).TS.back().nb = 1; /// SOUHAIL
 		expression();
 		consommer(CROFER);
 	}
@@ -322,7 +322,7 @@ void Syntaxique::parametre()
 		}
 		
 		if (uniteCourante.UL != IDENT) {
-			Analyseursemantique->TS[Analyseursemantique->TS.back()].val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+			(*Analyseursemantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
 		}
 		identif();
 	}
