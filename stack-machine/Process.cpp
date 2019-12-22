@@ -153,7 +153,7 @@ void Process::mod()
 
 		// Stacking the mod
 		cout << t1 % t2 << ". ";
-		emp(to_string(t2 % t1));
+		emp(to_string(t1 % t2));
 
 		// Next instruction
 		memoire->incCo();
@@ -163,7 +163,8 @@ void Process::mod()
 void Process::egal()
 {
 	if (memoire->getSp() <= memoire->getBeg() + 2) {
-		cout << "Cellules insuffisantes dans la pile pour verifier l'égalité !\n";
+		cout << "Cellules insuffisantes dans la pile pour verifier l'egalite !\n";
+		exit(0);
 	}
 	else {
 		// Popping out first term

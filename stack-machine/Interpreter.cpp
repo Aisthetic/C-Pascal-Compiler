@@ -21,6 +21,8 @@ Interpreter::Interpreter(string file)
 	cin >> answer;
 	if (answer.substr(0, 1) == "y" || answer.substr(0, 1) == "o") {
 		debugMode = true;
+		string test;
+		getline(cin, test);
 	}
 	clearConsole();
 }
@@ -157,8 +159,8 @@ void Interpreter::exInstr()
 			cout << "\n\n";
 			string test;
 			drawStack();
-			getline(cin, test);
 			cin.clear();
+			getline(cin, test);
 			clearConsole();
 			exInstr();
 		}
