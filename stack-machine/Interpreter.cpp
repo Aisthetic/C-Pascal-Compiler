@@ -14,6 +14,48 @@ Interpreter::Interpreter(string file)
 
     // Initialising process
     process = new Process(memoire);
+
+	// Debug mode
+	string answer;
+	cout << "Lancer avec le mode debug (oui/yes) ? ";
+	cin >> answer;
+	if (answer.substr(0, 1) == "y" || answer.substr(0, 1) == "o") {
+		debugMode = true;
+	}
+	clearConsole();
+}
+
+void Interpreter::drawCell(int num, string value)
+{
+	cout << "|--|-------------------------|" << "\n";
+	cout << "|";
+	if (num < 10) { cout << "0" << num; }
+	else { cout << num; }
+	cout << "| ";
+	cout << value;
+	int remainingSpace = 24 - value.length();
+	cout << string(remainingSpace, ' ');
+	cout << "|\n";
+}
+
+void Interpreter::endDrawing()
+{
+	cout << "|--|-------------------------|" << "\n";
+}
+
+void Interpreter::drawStack()
+{
+	int i = memoire->getSp() - 1;
+	while (memoire->getStCellNum(i + 1) >= 0) {
+		drawCell(memoire->getStCellNum(i + 1), memoire->getCell(i));
+		i--;
+	}
+	endDrawing();
+}
+
+void Interpreter::clearConsole()
+{
+	cout << "\033[2J\033[1;1H";
 }
 
 void Interpreter::exInstr()
@@ -111,8 +153,18 @@ void Interpreter::exInstr()
         else {
             cout << "Instruction non reconnue !";
         }
-        memoire->incCo(); // has to change since functions call doesnt increment co but changes it completely 
-        exInstr();
+		if (debugMode) {
+			cout << "\n\n";
+			string test;
+			drawStack();
+			getline(cin, test);
+			cin.clear();
+			clearConsole();
+			exInstr();
+		}
+		else {
+			exInstr();
+		}
     }
 }
 

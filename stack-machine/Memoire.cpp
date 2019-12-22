@@ -49,6 +49,11 @@ string Memoire::getCell(int num)
 	return cells[num];
 }
 
+int Memoire::getStCellNum(int cell)
+{
+	return cell - beg - varGloNum - 2;
+}
+
 void Memoire::incCo()
 {
 	co++;
@@ -62,6 +67,11 @@ void Memoire::incSp()
 void Memoire::decSp()
 {
 	sp--;
+}
+
+void Memoire::incVarGloNum()
+{
+	varGloNum++;
 }
 
 void Memoire::setCo(int toSet)

@@ -22,6 +22,9 @@ private:
 	int bel = 0; // Adress of the local memory of a function
 	int sp = 0; // Adress of the cell right after the summit of the stack
 
+	// Global variables
+	int varGloNum = 0;
+
 public:
 	// Constructor
 	Memoire(vector<string> code);
@@ -36,11 +39,13 @@ public:
 	int getBel();
 	int getSp();
 	string getCell(int num);
+	int getStCellNum(int cell);
 
 	// Setters
 	void incCo();
 	void incSp();
 	void decSp();
+	void incVarGloNum();
 	void setCo(int toSet);
 	void setBel(int toSet);
 	void setSp(int toSet);

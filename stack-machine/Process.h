@@ -44,5 +44,6 @@ public:
 	void stop();
 
 	string dep();
+	void emp(string value);
 };
 
