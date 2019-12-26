@@ -3,28 +3,30 @@
 #include "Lexical.h"
 
 using namespace std;
-
 // variable globale
 vector<string> listeparam;
 string tmp;
 string expr;
+string fct_tmp;
 int ite_varlocalglobal;
 //
 
 //Constructeurs
 Syntaxique::Syntaxique(string inputFile, bool logTableIden, bool logMotsRes)
 {
+	//generator = new ObjectCodeGenerator();
 	lexical = new Lexical();
 	lexical->setInput(inputFile, logTableIden, logMotsRes);
 	uniteCourante = { END,0 };
-	Analyseursemantique = new Semantique();   /// SOUHAIL
+	semantique = new Semantique();  
 }
 
 Syntaxique::Syntaxique(Lexical* pLexical)
 {
+	//generator = new ObjectCodeGenerator();
 	lexical = pLexical;
 	uniteCourante = { END,0 };
-	Analyseursemantique = new Semantique();   /// SOUHAIL
+	semantique = new Semantique(); 
 }
 
 //Functions
@@ -34,13 +36,16 @@ Syntaxique::Syntaxique(Lexical* pLexical)
 /// </summary>
 void Syntaxique::startParsing()
 {
+	//Initialisation du generateur de code
+	//generator = new ObjectCodeGenerator(lexical->getInputFileNameWithoutExt());
 	// Gestion du fichier XML
 	xmlFile.open(XML_DIRECTORY + "/" + lexical->getInputFileNameWithoutExt() + ".xml");
 	if (!xmlFile.is_open())
 		logError("Couldn't open xml file, check if xml dir is already created.");
+
 	uniteCourante = lexical->uniteSuivante();
 	programme();
-	Analyseursemantique->ControlerTS(); //Souhail a revoir
+	semantique->ControlerTS(); //Souhail a revoir
 	if (uniteCourante.UL != END) {
 		syntaxError(eEnd);
 	}
@@ -64,8 +69,12 @@ void Syntaxique::end() {
 	//Logging the errors : We're trying to be precise and avoid printing too much errors
 	//First, we check if there's multiple errors targeting the same Ln&Col
 	for (auto const& element : syntaxErrors) {
-		/*auto line = element.second.first;
-		auto col = element.second.second;*/
+		auto line = element.first.first;
+		auto col = element.first.second;
+		string message =  lexical->inputFilename + ":" + "at Ln " + to_string(line) + ", Col "+ to_string(col) +  ": expected ";
+		for (auto const& symbol : element.second)
+			message += symbol + " ";
+		logError(message);
 	}
 	//Writing XML file
 	xmlFile.flush();
@@ -90,7 +99,6 @@ void Syntaxique::programme() {
 		listeDeDeclarations();
 		ite_varlocalglobal++;
 		listeDeFonctions();
-
 	}
 	else {
 		syntaxError(eProgramme);
@@ -117,7 +125,6 @@ void Syntaxique::listeDeFonctions()
 		consommer(ACCOUV);
 		listeInstructions();
 		consommer(ACCFERM);
-		ite_varlocalglobal++; 
 		xmlClose("main");
 	}
 	else
@@ -132,13 +139,13 @@ void Syntaxique::fonction()
 	xmlOpen("fonction");
 	if (estPremierDe(eIdentificateur))
 	{
-		Analyseursemantique->AjouterTS("val",lexical->identifiants.get(uniteCourante.attribut),ite_varlocalglobal);  /// SOUHAIL
-		(Analyseursemantique->TS.end()-1)->estfct = true; /// SOUHAIL
+		semantique->AjouterTS("val", lexical->identifiants.get(uniteCourante.attribut), ite_varlocalglobal);  /// SOUHAIL
+		(semantique->TS.end() - 1)->type = "fct"; /// SOUHAIL
 		consommer(IDENT);
 		consommer(PAROUV);
 		listeDeParametres();
 		consommer(PARFERM);
-		Analyseursemantique->paramFonctTS();
+		semantique->paramFonctTS();
 		listeDeDeclarations();
 		consommer(ACCOUV);
 		listeInstructions();
@@ -208,14 +215,14 @@ void Syntaxique::declaration()
 	xmlOpen("declaration");
 	if (uniteCourante.UL == ENTIER)
 	{
-		Analyseursemantique->AjouterTS("type", "entier", ite_varlocalglobal);  /// SOUHAIL
+		semantique->AjouterTS("type", "entier", ite_varlocalglobal);  /// SOUHAIL
 		consommer(ENTIER);
 		declarationPrime();
 
 	}
 	else if (uniteCourante.UL == CAR)
 	{
-		Analyseursemantique->AjouterTS("type", "car", ite_varlocalglobal);  /// SOUHAIL
+		semantique->AjouterTS("type", "car", ite_varlocalglobal);  /// SOUHAIL
 		consommer(CAR);
 		declarationPrime();
 	}
@@ -231,7 +238,7 @@ void Syntaxique::declarationPrime()
 	xmlOpen("declarationPrime");
 	if (estPremierDe(eIdentificateur))
 	{
-		(*Analyseursemantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+		(*semantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
 		consommer(IDENT);
 		declarationSeconde();
 	}
@@ -247,7 +254,7 @@ void Syntaxique::declarationSeconde()
 	if (estPremierDe(eDeclarationSeconde))
 	{
 		consommer(CROOUV);
-		(*Analyseursemantique).TS.back().nb = 1; /// SOUHAIL
+		(*semantique).TS.back().nb = 1; 
 		expression();
 		consommer(CROFER);
 	}
@@ -311,21 +318,21 @@ void Syntaxique::parametre()
 {
 	xmlOpen("parametre");
 	if (estPremierDe(eParametre)) {
-		if (uniteCourante.UL == ENTIER ){
+		if (uniteCourante.UL == ENTIER) {
 			consommer(ENTIER);
-			Analyseursemantique->AjouterTS("type", "entier", ite_varlocalglobal);  /// SOUHAIL
+			semantique->AjouterTS("type", "entier", ite_varlocalglobal);  /// SOUHAIL
 		}
-		else if (uniteCourante.UL == CAR ){
+		else if (uniteCourante.UL == CAR) {
 			consommer(CAR);
-			Analyseursemantique->AjouterTS("type", "car", ite_varlocalglobal);  /// SOUHAIL
+			semantique->AjouterTS("type", "car", ite_varlocalglobal);  /// SOUHAIL
 		}
-		
+
 		if (uniteCourante.UL == IDENT) {
-			(*Analyseursemantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
+			(*semantique).TS.back().val = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
 		}
 		identif();
 	}
-	else if(uniteCourante.UL == ENTIER)
+	else if (uniteCourante.UL == ENTIER)
 	{
 		consommer(ENTIER);
 		identif();
@@ -357,8 +364,8 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	string porteur;
 	xmlOpen("instruction");
 	if (estPremierDe(eIdentificateur)) {
-		tmp = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
-		porteur = Analyseursemantique->typeidentifTS(tmp); /// SOUHAIL
+		tmp = lexical->identifiants.get(uniteCourante.attribut); 
+		porteur = semantique->typeidentifTS(tmp); 
 		identif();
 		instructionPrime(porteur);
 		consommer(PTVRG);
@@ -432,19 +439,19 @@ void Syntaxique::instructionPrime(string instruprime) /// SOUHAIL
 	if (estPremierDe(eInstructionPrime)) {
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); /// SOUHAIL
-		if (instrutriple != instruprime) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
+		if (instrutriple != instruprime && instrutriple !="fct" ) /// SOUHAIL
+			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
 	}
 	else if (uniteCourante.UL == CROFER) {
 		consommer(CROOUV);
-		if (Analyseursemantique->VerifierTableau(tmp)== false) /// SOUHAIL
-			Analyseursemantique->logError("incompatible type: expected a table");
+		if (semantique->VerifierTableau(tmp) == false) /// SOUHAIL
+			semantique->logError("incompatible type: expected a table");
 		expression();
 		consommer(CROFER);
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); /// SOUHAIL
-		if (instrutriple != instruprime) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type "+ instrutriple+" differe de "+instruprime);
+		if (instrutriple != instruprime && instrutriple != "fct" ) /// SOUHAIL
+			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
 	}
 	else { syntaxError(eInstructionPrime); }
 	xmlClose("instructionPrime");
@@ -469,19 +476,22 @@ void Syntaxique::instructionSeconde()
 
 string Syntaxique::instructionTriple()
 {
+	int i = 0;
 	xmlOpen("instructionTriple");
 	if (uniteCourante.UL == LIRE) {
 		consommer(LIRE);
 		consommer(PAROUV);
-		consommer(PARFERM);
+		consommer(PARFERM); 
+		i++;
 	}
 	else if (estPremierDe(eExpression)) {
 		expression();
-		return expr;
+		i++;
 	}
 	else { syntaxError(eInstructionTriple); }
 	xmlClose("instructionTriple");
-	return string();
+	if (i != 0) return expr;
+		else return string();
 }
 
 void Syntaxique::expression()
@@ -543,15 +553,16 @@ void Syntaxique::expressionSimple() {
 	if (estPremierDe(eTerme)) {
 		expr = terme();
 		string exprprime = expressionSimplePrime();
-		if (expr != exprprime) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type " + exprprime + " differe de " + expr);
+		if (expr != exprprime) //Verification de type
+			semantique->logError("conflicting type");
 	}
 	else if (uniteCourante.UL == SOUS) {
 		consommer(SOUS);
 		expr = terme();
 		string exprprime = expressionSimplePrime();
-		if (expr != exprprime) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type " + exprprime + " differe de " + expr);
+		if (expr != exprprime) 
+			semantique->logError("conflicting type");
+
 	}
 	else {
 		syntaxError(eExpression);
@@ -560,67 +571,67 @@ void Syntaxique::expressionSimple() {
 }
 
 string Syntaxique::expressionSimplePrime() {
+	int i = 0; string trm="";
 	xmlOpen("expressionSimplePrime");
 	if (uniteCourante.UL == ADD) {
 		consommer(ADD);
-		string trm = terme(); /// SOUHAIL
+		trm = terme(); /// SOUHAIL
 		if (trm != "entier") /// SOUHAIL
-			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
+			semantique->logError("conflicting type : expected type 'entier' ");
 		expressionSimplePrime();
-		return trm;
 	}
 	else if (uniteCourante.UL == SOUS) {
 		consommer(SOUS);
-		string trm = terme(); /// SOUHAIL
+		trm = terme(); /// SOUHAIL
 		if (trm != "entier") /// SOUHAIL
-			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
+			semantique->logError("conflicting type : expected type 'entier' ");
 		expressionSimplePrime();
-		return trm;
 	}
 	else if (estSuivantDe(eExpressionSimplePrime)) {
-		return expr;
+		i++;
 		//doz 7yd 
 	}
 	else {
 		syntaxError(eExpressionSimplePrime);
 	}
 	xmlClose("expressionSimplePrime");
-	return string();
+	if (i != 0) return expr;
+	else return trm;
 }
 
 string Syntaxique::terme() {
 	xmlOpen("terme");
+	string trmprioritaire = "";
 	if (estPremierDe(eTermePrioritaire)) {
-		string trmprioritaire = termePrioritaire();
+		trmprioritaire = termePrioritaire();
 		string trmprime = termePrime();
-		if (trmprime != trmprioritaire && trmprime != "" ) /// SOUHAIL
-			Analyseursemantique->logError("conflicting type");
-		return trmprioritaire;
+		if (trmprime != trmprioritaire && trmprime != "") /// SOUHAIL
+			semantique->logError("conflicting type");
+		
 	}
 	else {
 		syntaxError(eTerme);
 	}
 	xmlClose("terme");
-	return string();
+	return trmprioritaire;
 }
 
 string Syntaxique::termePrime() {
 	xmlOpen("termePrime");
+	string fac = "";
 	if (uniteCourante.UL == MUL) {
 		consommer(MUL);
-		string fac = facteur();
+		fac = facteur();
 		termePrime();
 		if (fac != "entier") /// SOUHAIL
-			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
-		return fac;
+			semantique->logError("conflicting type : expected type 'entier' ");
 	}
 	else if (uniteCourante.UL == DIV) {
 		consommer(DIV);
-		string fac = facteur();
+		fac = facteur();
 		termePrime();
 		if (fac != "entier") /// SOUHAIL
-			Analyseursemantique->logError("conflicting type : expected type 'entier' ");
-		return fac;
+			semantique->logError("conflicting type : expected type 'entier' ");
 	}
 	else if (estSuivantDe(eTermePrime)) {
 		//doz 7yd
@@ -629,44 +640,42 @@ string Syntaxique::termePrime() {
 		syntaxError(eTermePrime);
 	}
 	xmlClose("termePrime");
-	return string();
+	return fac;
 }
 
 string Syntaxique::termePrioritaire() {
 	xmlOpen("termePrioritaire");
+	string fac="";
 	if (uniteCourante.UL == NON) {
 		consommer(NON);
-		string fac;
 		fac = facteur();
-		return fac;
 	}
 	else if (estPremierDe(eFacteur)) {
-		string fac;
 		fac = facteur();
-		return fac;
 	}
 	else {
 		syntaxError(eTermePrioritaire);
 	}
 	xmlClose("termePrioritaire");
-	return string();
+	return fac;
 }
 
 string Syntaxique::facteur() {//URGENT TODO: Remake
 	xmlOpen("facteur");
+	string fac = "";
 	if (estPremierDe(eIdentificateur)) {
 		tmp = lexical->identifiants.get(uniteCourante.attribut); /// SOUHAIL
-		string fac = Analyseursemantique->typeidentifTS(tmp);
-		return fac;
+		if (semantique->typeidentifTS(tmp) == "fct" )
+			fct_tmp = tmp; /// SOUHAIL
+		fac = semantique->typeidentifTS(tmp);
 		identif();
 		facteurPrime();
 	}
 	else if (estPremierDe(eCte)) {
-		cte();
 		if (uniteCourante.UL == CONST) {
-			string fac = "entier";
-			return fac;
+			fac = "entier";
 		}
+		cte();
 	}
 	else if (uniteCourante.UL == PAROUV) {
 		consommer(PAROUV);
@@ -680,8 +689,7 @@ string Syntaxique::facteur() {//URGENT TODO: Remake
 		consommer(QUOTE);
 		if (uniteCourante.UL == CAR) {
 			consommer(CAR);
-			string fac = "car";
-			return fac;
+			fac = "car";
 		}
 		else syntaxError(eCaractere);
 		consommer(QUOTE);
@@ -690,23 +698,23 @@ string Syntaxique::facteur() {//URGENT TODO: Remake
 		syntaxError(eFacteur);
 	}
 	xmlClose("facteur");
-	return string();
+	return fac;
 }
 
 void Syntaxique::facteurPrime() {
 	xmlOpen("facteurPrime");
 	if (uniteCourante.UL == CROOUV) {
 		consommer(CROOUV);
-		if (Analyseursemantique->VerifierTableau(tmp) == false) /// SOUHAIL
-			Analyseursemantique->logError("incompatible type: expected a table");
+		if (semantique->VerifierTableau(tmp) == false) /// SOUHAIL
+			semantique->logError("incompatible type: expected a table");
 		expression();
 		consommer(CROOUV);
 	}
 	else if (uniteCourante.UL == PAROUV) {
 		consommer(PAROUV);
 		parametresEffectifs();
-		if (Analyseursemantique->VerifierFonction(tmp,listeparam) == false) /// SOUHAIL
-			Analyseursemantique->logError("incompatible type: declaration of function incompatible");
+		if (semantique->VerifierFonction(fct_tmp, listeparam) == false) /// SOUHAIL
+			semantique->logError("incompatible type: declaration of function incompatible");
 		consommer(PARFERM);
 	}
 	else if (estSuivantDe(eFacteurPrime)) {
@@ -781,15 +789,15 @@ void Syntaxique::comparaison()
 	xmlOpen("comparaison");
 	if (uniteCourante.UL == SUP)
 		consommer(SUP);
-	if (uniteCourante.UL == INFEGAL)
+	else if (uniteCourante.UL == INFEGAL)
 		consommer(INFEGAL);
-	if (uniteCourante.UL == SUPEGAL)
+	else if (uniteCourante.UL == SUPEGAL)
 		consommer(SUPEGAL);
-	if (uniteCourante.UL == INF) 
+	else if (uniteCourante.UL == INF) 
 		consommer(INF);
-	if (uniteCourante.UL == EGAL) 
+	else if (uniteCourante.UL == EGAL) 
 		consommer(EGAL);
-	if (uniteCourante.UL == EGALEGAL)
+	else if (uniteCourante.UL == EGALEGAL)
 		consommer(EGALEGAL);
 	else
 		syntaxError(eComparaison);
@@ -812,6 +820,7 @@ void Syntaxique::cte()
 	xmlOpen("cte");
 	if (uniteCourante.UL == CONST) {
 		consommer(CONST);
+		//generator->empc(uniteCourante.attribut);
 	}
 	else
 		syntaxError(eCte);
@@ -822,10 +831,25 @@ void Syntaxique::cte()
 
 void Syntaxique::consommer(TUnite expected) {
 	if (uniteCourante.UL != expected)
-		;//Todo
+	{
+		int line = lexical->getLine();
+		int col = lexical->getColumn();
+
+		auto itr = syntaxErrors.find(pair<int, int>(line, col));
+		if (itr != syntaxErrors.end())//We already have some errors at this position
+		{
+			//Appending to existing errors
+			itr->second.push_back(lexical->lexemeToString(uniteCourante));
+		}
+		else {
+			//We add it to the errors map (tree)
+			syntaxErrors.insert(pair< pair<int, int>, vector<string> >(pair<int, int>(line, col), vector<string>{lexical->lexemeToString(TUniteLexicale{ expected,0 })}));
+		}
+
+	}
 	else {
 		//Xml pour les terminaux
-		ConsoleHandler::logDebug("Syntaxique","Consumed " + to_string(expected) + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()));
+		ConsoleHandler::logDebug("Syntaxique", "Consumed " + lexical->lexemeToString(uniteCourante) + " at Ln" + to_string(lexical->getLine()) + ",Col " + to_string(lexical->getColumn()));
 		xmlFile << expected << " "; //espace pour éviter de concatener deux terminaux consécutifs
 		uniteCourante = lexical->uniteSuivante();
 	}
@@ -833,109 +857,115 @@ void Syntaxique::consommer(TUnite expected) {
 }
 
 void Syntaxique::syntaxError(Production prod) {
-	//vector<string> expectedSymbols;
-	//switch (prod)
-	//{
-	//case eProgramme:
-	//case eListeDeFonctions:
-	//case eListeDeDeclarations:
-	//case eDeclaration:
-	//case eDeclarations:
-	//case eListeParametres:
-	//case eParametres:
-	//case eParametre:
-	//	//message += " type ";
-	//	break;
-	//case eFonction:
-	//case eDeclarationPrime:
-	//case eOperateurLogique:
-	//case eComparaison:
-	//	//message += " an indentificator ";
-	//	break;
-	//case eListeInstructions:
-	//case eInstruction:
-	//case eExpressionPrime:
-	//case eExpression:
-	//case eInstructionTriple:
-	//case eInstructionPrime:
-	//	//message += " an operator";
-	//	break;
-	//case eDeclarationsPrime:
-	//	//message += " ',' ";
-	//	break;
-	//case eDeclarationSeconde:
-	//	//message += " '[' ";
-	//		break;
-	//case eExpressionLogique:
-	//	//message += " logic expression ";
-	//	break;
-	//case eExpressionLogiquePrime:
-	//	//message += " logic operator ";
-	//	break;
-	//case eExpressionSimple:
-	//	//message += " constant ";
-	//	break;
-	//case eExpressionSimplePrime:
-	//	//message += " arithmetic operator ";
-	//	break;
-	//case eTerme:
-	//	//message += " constant ";
-	//	break;
-	//case eTermePrime:
-	//	//message += " '*' or '/' ";
-	//	break;
-	//case eTermePrioritaire:
-	//	//message += " '!'  or ident or '('";
-	//	break;
-	//case eFacteur:
-	//	message += " const or '(' ";
-	//	break;
-	//case eFacteurPrime:
-	//	message += " '[' or '(' ";
-	//	break;
-	//case eParametresEffectifs:
-	//	message += " '*' or '/' ";
-	//	break;
-	//case eExpressions:
-	//	message += " '-' or '!' or const or '(' ";
-	//	break;
-	//case eExpressionsPrime:
-	//	message += " ',' ";
-	//	break;
+	vector<string> expectedSymbols;
+	switch (prod)
+	{
+	case eProgramme:
+	case eListeDeFonctions:
+	case eListeDeDeclarations:
+	case eDeclaration:
+	case eDeclarations:
+	case eListeParametres:
+	case eParametres:
+	case eParametre:
+		expectedSymbols.push_back("type");
+		break;
+	case eFonction:
+	case eDeclarationPrime:
+	case eOperateurLogique:
+	case eComparaison:
+		expectedSymbols.push_back("logic operator");
+		break;
+	case eListeInstructions:
+	case eInstruction:
+	case eExpressionPrime:
+	case eExpression:
+	case eInstructionTriple:
+	case eInstructionPrime:
+		expectedSymbols.push_back("operator");
+		break;
+	case eDeclarationsPrime:
+		expectedSymbols.push_back(",");
+		break;
+	case eDeclarationSeconde:
+		expectedSymbols.push_back("[");
+			break;
+	case eExpressionLogique:
+		expectedSymbols.push_back("logic expression");
+		break;
+	case eExpressionLogiquePrime:
+		expectedSymbols.push_back("logic operator");
+		break;
+	case eExpressionSimple:
+		expectedSymbols.push_back("constant");
+		break;
+	case eExpressionSimplePrime:
+		expectedSymbols.push_back("arithmetic operator");
+		break;
+	case eTerme:
+		expectedSymbols.push_back("constant");
+		break;
+	case eTermePrime:
+		expectedSymbols.push_back("*"); expectedSymbols.push_back("/");
+		break;
+	case eTermePrioritaire:
+		expectedSymbols.push_back("!"); expectedSymbols.push_back("(");
+		break;
+	case eFacteur:
+		expectedSymbols.push_back("const");
+		expectedSymbols.push_back("(");
+		break;
+	case eFacteurPrime:
+		expectedSymbols.push_back("[");
+		expectedSymbols.push_back("(");
+		break;
+	case eParametresEffectifs:
+		expectedSymbols.push_back("*");
+		expectedSymbols.push_back("/");
+		break;
+	case eExpressions:
+		expectedSymbols.push_back("-"); 
+		expectedSymbols.push_back("!"); 
+		expectedSymbols.push_back("const");
+		expectedSymbols.push_back("(");
+		break;
+	case eExpressionsPrime:
+		expectedSymbols.push_back(",");
+		break;
 
-	//case eIdentificateur:
-	//	message += " logic operator ";
-	//	break;
-	//case eCte:
-	//	message += " const ";
-	//	break;
-	//case eParametresPrime:
-	//	message += " ',' ";
-	//	break;
-	//case eInstructionSeconde:
-	//	message += " 'sinon' ";
-	//	break;
-	//case eEnd:
-	//		return;
-	//default://Is it necessary to handle all errors ? 
-	//	//logError("Erreur de production " + to_string(prod) + " non gérée par le compilateur.");
-	//	break;
-	//}
-	//int line = lexical->getLine();
-	//int col = lexical->getColumn();
+	case eIdentificateur:
+		expectedSymbols.push_back("logic operator");
+		break;
+	case eCte:
+		expectedSymbols.push_back("const");
+		break;
+	case eParametresPrime:
+		expectedSymbols.push_back(",");
+		break;
+	case eInstructionSeconde:
+		expectedSymbols.push_back("sinon");
+		break;
+	case eEnd:
+			return;
+	default://Is it necessary to handle all errors ? 
+		//logError("Erreur de production " + to_string(prod) + " non gérée par le compilateur.");
+		break;
+	}
+	int line = lexical->getLine();
+	int col = lexical->getColumn();
 
-	//if (expectedSymbols.begin() != expectedSymbols.end()) {//If we found some errors
-	//	auto itr = syntaxErrors.find(pair<int, int>(line, col));
-	//	if (itr != syntaxErrors.end())//We already have some errors at this position
-	//	{
-	//		//Appending to existing errors
-	//		itr->second.insert(itr->second.end(), expectedSymbols.begin(), expectedSymbols.end());
-	//	}
-	//	else {
-	//		//We add it to the errors map (tree)
-	//		syntaxErrors.insert(pair< pair<int, int>, vector<string> >(pair<int, int>(line, col), expectedSymbols));
-	//	}
-	//}
+	if (expectedSymbols.begin() != expectedSymbols.end()) {//If we found some errors
+		auto itr = syntaxErrors.find(pair<int, int>(line, col));
+		if (itr != syntaxErrors.end())//We already have some errors at this position
+		{
+			//Appending to existing errors
+			itr->second.insert(itr->second.end(), expectedSymbols.begin(), expectedSymbols.end());
+		}
+		else {
+			//We add it to the errors map (tree)
+			syntaxErrors.insert(pair< pair<int, int>, vector<string> >(pair<int, int>(line, col), expectedSymbols));
+		}
+	}
 }
 
 //checks if the caracter is premier de l'unite en param

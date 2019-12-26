@@ -1,8 +1,8 @@
 entier t[10], entier a;
-f(entier a, entier b)     
+f(entier a, car b)     
 entier c, entier k;  	 
-{				
-k = a + b;     	    
+{	
+k = a + b;      
 retour k; 			
 }					
 
@@ -11,7 +11,7 @@ entier d;
 {
   a = lire();  	
   tantque(0 < a) faire {  
-	d = f(d, 2 * a);	
+	d = f(d, 2*a);	
 	ecrire(d + 1);  	
 	a = a - 1;
   } 

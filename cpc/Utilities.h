@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include <unordered_map>
+#include <map>
 using namespace std;
 typedef enum
 {
@@ -53,6 +53,26 @@ typedef enum
 	LIRE,
 	ECRIRE,
 } TUnite;
+
+//Tfo ela hayat
+//const std::map<int, string> TUniteToString = {
+//	{PTVRG,"Point virgule"},
+//	{VIRG,"virgule"},
+//	{ACCOUV,"accolade ouvrante"},
+//	{ACCFERM,""},
+//	{PAROUV,},
+//	{PARFERM,},
+//	{CROOUV,},
+//	{CROFER,},
+//	{ET,},
+//	{OU,},
+//	{ADD,},
+//	{SOUS,},
+//	{MUL,},
+//	{DIV,},
+//	{,},
+//	 
+//};
 
 typedef enum//on ajoute le e pour �viter la confusion entre les fonctions et les enums pour le compilateur
 {

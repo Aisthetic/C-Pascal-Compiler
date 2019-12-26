@@ -16,7 +16,6 @@ typedef struct variable // structure pour stocker les infos d'une variable
 	string type;
 	int nb = 0; // differencie entre tableau et var smple
 	int local_global; // indiquer si l'identif est local ou global
-	bool estfct=false; // differencie entre fct et var smple
 	vector<string> param; //stocke les parameteres de la fct
 } variable;
 

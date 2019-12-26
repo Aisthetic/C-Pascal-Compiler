@@ -1,6 +1,7 @@
 #pragma once
 #include "Lexical.h"
 #include "Semantique.h"
+#include "ObjectCodeGenerator.h"
 #include "Utilities.h"
 #include <iostream>
 #include <fstream>
@@ -17,10 +18,17 @@ public:
 	// M�thodes divers
 	void startParsing();
 
+	
+
 private:
+	// variables globales pur le traitement du sémantique, TODO: souhail review this.
+	/*vector<string> listeparam;
+	string tmp;
+	string expr;*/
 	// Attributs	
 	Lexical* lexical;
-	Semantique* Analyseursemantique; /// SOUHAIL
+	Semantique* semantique;  // SOUHAIL
+	ObjectCodeGenerator* generator;
 	TUniteLexicale uniteCourante;
 	vector<string> errors;
 	ofstream xmlFile;
@@ -33,7 +41,6 @@ private:
 	void logError(string error);
 	void logDebug(string message);
 	void syntaxError(Production prod);
-	void consommer();
 	void consommer(TUnite expected);//consomme en vérifiant si ul==expected
 	bool estPremierDe(Production unite);
 	bool estSuivantDe(Production unite);
@@ -76,5 +83,6 @@ private:
 	void comparaison();
 	void identif();
 	void cte();
+	friend class ObjectCodeGenerator;
 };
 

@@ -346,7 +346,8 @@ string Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 	switch (unite.UL)
 	{
 	case IDENT:
-		return identifiants.get(unite.attribut);
+		//return identifiants.get(unite.attribut);
+		return "identifiant";
 		break;
 	case CONST:
 		return to_string(unite.attribut);

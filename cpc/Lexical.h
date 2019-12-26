@@ -10,6 +10,8 @@ using namespace std;
 class Lexical
 {
 private:
+	//constants
+
 	//fields
 	string inputFilename;//avec extension
 	char currentChar; //le charactère courant
@@ -30,7 +32,7 @@ private:
 	string lexemeToString(TUniteLexicale);
 	bool estChiffre(); // prend le caractère courant est vérifie s'il est chiffre
 	bool estCaractere(); //prend la caractère courant est vérifie s'il est caractère 
-	bool enableDebug; //true if you want to see debug outputffffffffffffffffffffffffff
+	bool enableDebug; //true if you want to see debug output
 	void logDebug(string);
 	void logError(string);
 	friend class Syntaxique;
