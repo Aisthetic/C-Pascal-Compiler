@@ -54,6 +54,7 @@ TUniteLexicale Lexical::uniteSuivante()
 			output<<lexicalTable;
 			identifOutput << identifiants.afficher();
 			motsResOutput << motsReserves.afficher();
+			
 
 		}
 		else
@@ -341,8 +342,6 @@ void Lexical::initierMotsReserves()
 
 string Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 {
-	if (!enableDebug)
-		return "";
 	switch (unite.UL)
 	{
 	case IDENT:
@@ -484,7 +483,7 @@ void Lexical::setInput(string file, bool logTableIdentifs = false, bool logTable
 		logError("Erreur lors de l'ouverture du fichier " + file);
 	}
 	if (logTableIdentifs) {
-		cout << ("Reserved words table will be logged at " + TABLE_IDENTIF_OUTPUT_DIRECTORY) << endl;
+		cout << ("Identificators table will be logged at " + TABLE_IDENTIF_OUTPUT_DIRECTORY) << endl;
 		setupIdentifsOutput();
 	}
 	if (logTableMotsRes) {
@@ -517,7 +516,8 @@ void Lexical::setupIdentifsOutput()
 {
 	if (!identifOutput.is_open())//si un input est déjà ouvert on passe au processing direct
 	{
-		identifOutput.open(TABLE_IDENTIF_OUTPUT_DIRECTORY + "/" + getInputFileNameWithoutExt() + ".ident");
+		auto dir = TABLE_IDENTIF_OUTPUT_DIRECTORY + "/" + getInputFileNameWithoutExt() + ".ident";
+		identifOutput.open(dir);
 		if (!identifOutput.is_open()) {
 			logError("Impossible d'ouvrir le fichier d'output de la table des identifs");
 			return;

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-
+#include "ObjectCodeGenerator.h"
 class Syntaxique
 {
 public:
@@ -21,18 +21,22 @@ public:
 	
 
 private:
-	// variables globales pur le traitement du sémantique, TODO: souhail review this.
-	/*vector<string> listeparam;
-	string tmp;
-	string expr;*/
 	// Attributs	
 	Lexical* lexical;
-	Semantique* semantique;  // SOUHAIL
-	ObjectCodeGenerator* generator;
+	Semantique* semantique; 
+	ObjectCodeGenerator *generator;
 	TUniteLexicale uniteCourante;
 	vector<string> errors;
 	ofstream xmlFile;
 	map <pair<int, int>, vector<string>> syntaxErrors;//Un arbre d'erreurs de la forme <<Ln,Col>,vecteur des symbols attendus>
+	// variables du sémantique
+	vector<string> listeparam;
+	string tmp;
+	string expr;
+	string fct_tmp;
+	int ite_varlocalglobal;
+	// variables de la gen de code
+	int nbrDeclarations,nbrParam;
 	// Methodes
 	void end();
 	void printErrors();

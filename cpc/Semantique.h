@@ -12,11 +12,11 @@ using namespace std;
 
 typedef struct variable // structure pour stocker les infos d'une variable
 {
-	string val; //Nom de la variable
+	string nom; //Nom de la variable
 	string type;
 	int nb = 0; // differencie entre tableau et var smple
-	int local_global; // indiquer si l'identif est local ou global
-	vector<string> param; //stocke les parameteres de la fct
+	int scope; // indiquer si l'identif est local ou global (zac : plutot son scope ?)
+	vector<variable> param; //stocke les parameteres de la fct
 } variable;
 
 class Semantique
@@ -35,7 +35,8 @@ public:
 	bool VerifierFonction(string, vector<string>); // verifier si l'identif est une fct en TS
 	void paramFonctTS();		  // identifie des identifiants comme etant des parametres d'une fct 
 	void logError(string error); // afficher les erreurs du semantique
-
+	variable getVariableData(string name);
+	int getVariableAddress(string name);//retruns the variable address in its decalaration scope
 //private:
 	vector<variable> TS; /// tableau des variables
 };

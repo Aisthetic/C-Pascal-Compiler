@@ -1,5 +1,5 @@
 entier t[10], entier a;
-f(entier a, car b)     
+f(entier a, entier b)     
 entier c, entier k;  	 
 {	
 k = a + b;      

@@ -155,6 +155,7 @@
     <ClCompile Include="cpc.cpp" />
     <ClCompile Include="Hashage.cpp" />
     <ClCompile Include="Lexical.cpp" />
+    <ClCompile Include="ObjectCodeGenerator.cpp" />
     <ClCompile Include="Semantique.cpp" />
     <ClCompile Include="Syntaxique.cpp" />
   </ItemGroup>
@@ -164,6 +165,7 @@
     <ClInclude Include="Constants.h" />
     <ClInclude Include="Hashage.h" />
     <ClInclude Include="Lexical.h" />
+    <ClInclude Include="ObjectCodeGenerator.h" />
     <ClInclude Include="Semantique.h" />
     <ClInclude Include="Syntaxique.h" />
     <ClInclude Include="tableFormat.h" />
