@@ -1,7 +1,7 @@
 # THE  C-PASCAL Compiler 
 Un simple compilateur basé sur un langage **"C-PASCAL"** et une **Grammaire LL1** construit pour des raisons éducationnelles. Open source et construit from scratch.
 ## Collaboration
-Sous encadrement et supervision de monsieur 
+Sous encadrement et supervision de  
 - Monsieur Souhaïl El ghazi El Houssaïni 
 
 Avec contribution de :
@@ -28,10 +28,10 @@ Avec contribution de :
  
 
 > Output
-	>> Lexical 
-	>>>TablesIdentif `table des identifiants`
-	>>>TablesMotsRes `table des mots reservés`
-	>>>main.lex `résultat du lexical parsing`
+>> Lexical 
+>>>TablesIdentif `table des identifiants`
+>>>TablesMotsRes `table des mots reservés`
+>>>main.lex `résultat du lexical parsing`
 >>Xml `arbre syntaxique en XML`
 
  4. Génération du code intermediaire
