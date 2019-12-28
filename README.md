@@ -27,12 +27,21 @@ Avec contribution de :
  3. Le résultat de la compilation sera ainsi obtenu sous la forme suivate :
  
 
-> Output
->> Lexical 
->>>TablesIdentif `table des identifiants`
->>>TablesMotsRes `table des mots reservés`
->>>main.lex `résultat du lexical parsing`
->>Xml `arbre syntaxique en XML`
+```
+Output
+│
+└───Lexical
+│   └───TablesIdentif
+│   |   │   main.ident (table des identifiants)
+│   │
+│   └───TablesMotsRes
+│   |   │   main.mrs (table des mots reservés)
+|   |
+|   |___main.lex (résultat du lexical parsing)
+│   
+└───XML
+    │   Arbre syntaxique en XML
+```
 
  4. Génération du code intermediaire
  5. Exécution du code intermédiaire
