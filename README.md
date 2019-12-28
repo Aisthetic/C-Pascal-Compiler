@@ -6,10 +6,10 @@ Sous encadrement et supervision de
 
 Avec contribution de :
 
- - OUTIDRARINE Mohamed
- - EZZAHED Zakaria
- - ECHBLAOUI Yassine
- - AMGHAR Souhail
+ - [OUTIDRARINE Mohamed]( https://github.com/outidrarine )
+ - [EZZAHED Zakaria]( https://github.com/Dreaminguy )
+ - [ECHBLAOUI Yassine]( https://github.com/Testoxe )
+ - [AMGHAR Souhail]( https://github.com/Ssouh )
 
 ## Structure 
 
