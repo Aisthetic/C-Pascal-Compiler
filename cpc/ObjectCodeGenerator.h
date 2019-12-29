@@ -28,9 +28,11 @@ private:
 	const string SAUT = "SAUT";
 	const string LABEL = "LABEL";
 	const string SIFAUX = "SIFAUX";
+	const string FIN = "FIN";
 	//const string = "";
 	//fields
 	ofstream output;
+	ifstream input;//opened at the end to replace labels
 	string fileName;
 	//private functions
 	void setupOutputStream();
@@ -40,6 +42,7 @@ public:
 	ObjectCodeGenerator(string fileName);
 
 	//Public functions
+	void end();
 
 	//Generator functions
 	void empc(int constante);
@@ -49,6 +52,7 @@ public:
 	void appel(string fonction);
 	void retour();
 	void entree();
+	void entree(string name);
 	void sortie();
 	void div();
 	void mul();
@@ -64,6 +68,7 @@ public:
 	void label(string nom);
 	void sifaux(string label);
 	void comp(string oper);
+	void fin();
 	~ObjectCodeGenerator();
 };
 

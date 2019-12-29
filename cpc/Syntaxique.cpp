@@ -73,6 +73,7 @@ bool Syntaxique::isMotCle(string mc)
 void Syntaxique::end() {
 	//Logging the errors : We're trying to be precise and avoid printing too much errors
 	//First, we check if there's multiple errors targeting the same Ln&Col
+	generator->end();
 	for (auto const& element : syntaxErrors) {
 		auto line = element.first.first;
 		auto col = element.first.second;
@@ -108,6 +109,7 @@ void Syntaxique::programme() {
 		nbrDeclarations = 0;
 		//appel du main
 		generator->appel("main");
+		generator->fin();
 		listeDeFonctions();
 	}
 	else {
@@ -132,8 +134,8 @@ void Syntaxique::listeDeFonctions()
 		(semantique->TS.end() - 1)->type = "fct"; 
 
 		//gen de code-
-		generator->entree();
-
+		generator->entree("main");
+		adresses.insert(pair<int, string>{lexical->getLine() - 1, "main"});
 		//syntax checking
 		uniteCourante = lexical->uniteSuivante();
 
@@ -177,7 +179,8 @@ void Syntaxique::fonction()
 		(semantique->TS.end() - 1)->type = "fct"; 
 
 		//gen de code
-		generator->entree();
+		generator->entree(lexical->identifiants.get(uniteCourante.attribut));
+		adresses.insert(pair<int, string>{lexical->getLine() - 1, lexical->identifiants.get(uniteCourante.attribut)});
 		//generator->pile(3);//offset
 
 		//syntax checking
@@ -414,6 +417,9 @@ void Syntaxique::listeInstructions()
 
 void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 {
+	//vars gen de code
+	static int counter = 0; // incrementé à chaque branchement conditionel pour distinguer les labels
+
 	string porteur;
 	xmlOpen("instruction");
 	if (estPremierDe(eIdentificateur)) {
@@ -450,13 +456,16 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	{
 		consommer(SI);
 		expression();
-		generator->sifaux("finsi");
+		int tempCounter = counter; // solution pour les if imbriqués
+		counter++;
+		generator->sifaux("finsi " + to_string(tempCounter));
 		if (uniteCourante.UL == ALORS) {
 			consommer(ALORS);
 			consommer(ACCOUV);
 			listeInstructions();
 			consommer(ACCFERM);
-			generator->label("finsi");
+			generator->label("finsi " + to_string( tempCounter));
+			adresses.insert(adresses.begin(), pair<int, string>(lexical->getLine()-1, "finsi " + to_string(tempCounter)));
 			instructionSeconde();
 		}
 		else { return syntaxError(eInstruction); }
@@ -467,14 +476,19 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		consommer(PAROUV);
 		expression();
 		consommer(PARFERM);
+		int tempCounter = counter; // solution pour les if imbriqués
+		counter++;
 		if (uniteCourante.UL == FAIRE) {
-			generator->label("debuttantque");
+			generator->sifaux("fintantque " + to_string(tempCounter));
+			generator->label("debuttantque " + to_string(tempCounter));
+			adresses.insert(adresses.begin(), pair<int, string>(lexical->getLine()-1, "debuttantque " + to_string(tempCounter)));
 			consommer(FAIRE);
 			consommer(ACCOUV);
 			listeInstructions();
 			consommer(ACCFERM);
-			generator->sifaux("fintantque");
-			generator->saut("debuttantque");
+			generator->saut("debuttantque " + to_string(tempCounter));
+			generator->label("fintantque " + to_string(tempCounter));
+			adresses.insert(adresses.begin(), pair<int, string>(lexical->getLine()-1, "fintantque " + to_string(tempCounter)));
 		}
 		else { return syntaxError(eInstruction); }
 	}
@@ -487,7 +501,6 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		consommer(PTVRG);
 	}
 	else { return syntaxError(eInstruction); }
-
 	xmlClose("instruction");//retard dair open hna
 }
 
@@ -773,6 +786,7 @@ string Syntaxique::facteur() {
 		//gen de code
 		if (identifType == 1){ // une fonction
 			generator->appel(tempIdent);
+			generator->pile(semantique->getVariableData(tempIdent, ite_varlocalglobal).param.size());// on vire les parametres
 		}
 		else if (identifType == 2) { // un tableau
 			//todo

@@ -7,7 +7,15 @@ retour k;
 }					
 
 main()  				
-entier d;
+entier d, entier x;
 {
-  	d = f(d, 2*a);	
+  	a = 3;
+	d = 4;
+	si ( a > d) alors{
+		si (  d < 0 ) alors {
+			d  = 4;
+		}
+		d = 5;
+	}
+	d = 6;
 }

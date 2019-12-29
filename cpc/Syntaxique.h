@@ -35,6 +35,7 @@ private:
 	int ite_varlocalglobal;
 	// variables de la gen de code
 	int nbrDeclarations,nbrParam;
+	map<int, string> adresses;//les adresses des labels <adresse, label>
 	// Methodes
 	void end();
 	void printErrors();
