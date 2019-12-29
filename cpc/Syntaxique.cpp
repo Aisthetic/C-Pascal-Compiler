@@ -764,8 +764,9 @@ string Syntaxique::termePrioritaire() {
 string Syntaxique::facteur() {
 	xmlOpen("facteur");
 	string fac = "";
+	
 	if (estPremierDe(eIdentificateur)) {
-
+		tmp = lexical->identifiants.get(uniteCourante.attribut);
 		//semantique
 		for (int i=semantique->TS.size()-1 ; i >=0 ; i--)
 			if (semantique->TS[i].nom == tmp && semantique->TS[i].estfct == true)
@@ -773,7 +774,7 @@ string Syntaxique::facteur() {
 		fac = semantique->typeidentifTS(tmp);
 
 		//gen de code
-		tmp = lexical->identifiants.get(uniteCourante.attribut); 
+		//tmp = lexical->identifiants.get(uniteCourante.attribut); 
 		variable data = semantique->getVariableData(tmp, ite_varlocalglobal);
 
 		if (data.type == "entier" || data.type == "car") {
