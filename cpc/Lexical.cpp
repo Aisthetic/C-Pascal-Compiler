@@ -16,7 +16,7 @@ Lexical::Lexical(bool debug):lexicalTable('-', '|', '+')
 	lexicalTable.endOfRow();
 	currentChar = '$';
 	initierMotsReserves();
-	enableDebug = true;
+	enableDebug = false;
 	line = 1; col = 0;
 	//Debugging
 	logDebug("Lexical debugging is enabled");
@@ -115,6 +115,7 @@ TUniteLexicale Lexical::uniteSuivante()
 	case '-':
 		lireCar();
 		unite.UL = SOUS;
+		break;
 	case '*':
 		lireCar();
 		unite.UL = MUL;

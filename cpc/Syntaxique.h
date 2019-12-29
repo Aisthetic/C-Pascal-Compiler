@@ -18,8 +18,6 @@ public:
 	// M�thodes divers
 	void startParsing();
 
-	
-
 private:
 	// Attributs	
 	Lexical* lexical;
@@ -79,12 +77,12 @@ private:
 	string termePrime();
 	string termePrioritaire();
 	string facteur(); /// SOUHAIL
-	void facteurPrime(); 
+	int facteurPrime(); 
 	void parametresEffectifs();
 	void expressions();
 	void expressionsPrime();
 	void operateurLogique();
-	void comparaison();
+	string comparaison();
 	void identif();
 	void cte();
 	friend class ObjectCodeGenerator;

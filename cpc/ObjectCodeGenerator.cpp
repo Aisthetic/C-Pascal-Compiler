@@ -69,9 +69,31 @@ void ObjectCodeGenerator::ecriv()
 	output << ECRIV << endl;
 }
 
+void ObjectCodeGenerator::lire()
+{
+	output << LIRE << endl;
+}
+
 void ObjectCodeGenerator::pile(int nbrMots)
 {
 	output << PILE << " " << nbrMots << endl;
+}
+
+void ObjectCodeGenerator::saut(string label) {
+	output << SAUT << " " << label << endl;
+}
+
+void ObjectCodeGenerator::label(string nom) {
+	output << LABEL << " " << nom << endl;
+}
+
+void ObjectCodeGenerator::sifaux(string label) {
+	output << SIFAUX << " " << label << endl;
+}
+
+void ObjectCodeGenerator::comp(string oper)
+{
+	output << oper << endl;
 }
 
 //L'appel de fonction est fait par son nom en premier lieu

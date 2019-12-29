@@ -24,8 +24,11 @@ private:
 	const string EMPL = "EMPL";
 	const string DEPL = "DEPL";
 	const string DEPG = "DEPG";
-	/*const string = "";
-	const string = "";*/
+	const string LIRE = "LIRE";
+	const string SAUT = "SAUT";
+	const string LABEL = "LABEL";
+	const string SIFAUX = "SIFAUX";
+	//const string = "";
 	//fields
 	ofstream output;
 	string fileName;
@@ -56,6 +59,11 @@ public:
 	void depg(int adresse);
 	void depl(int adresse);
 	void ecriv();
+	void lire();
+	void saut(string label);
+	void label(string nom);
+	void sifaux(string label);
+	void comp(string oper);
 	~ObjectCodeGenerator();
 };
 

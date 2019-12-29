@@ -35,8 +35,8 @@ public:
 	bool VerifierFonction(string, vector<string>); // verifier si l'identif est une fct en TS
 	void paramFonctTS();		  // identifie des identifiants comme etant des parametres d'une fct 
 	void logError(string error); // afficher les erreurs du semantique
-	variable getVariableData(string name);
-	int getVariableAddress(string name);//retruns the variable address in its decalaration scope
+	variable getVariableData(string name, int scope);
+	int getVariableAddress(string name, int scope);//retruns the variable address in its decalaration scope
 //private:
 	vector<variable> TS; /// tableau des variables
 };

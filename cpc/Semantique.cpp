@@ -100,20 +100,20 @@ void Semantique::logError(string error)
 
 //Zac's precious functions
 
-variable Semantique::getVariableData(string name)
+variable Semantique::getVariableData(string name, int scope)
 {
-	for (int i = TS.size() - 1; i > -1 ; i--) // local over global
-		if (TS[i].nom == name)
-			return TS[i];
+	for (int i = TS.size() - 1; i > -1 ; i--) // we start by looking for local vars since they're at the end of the table
+		if (TS[i].nom == name && (TS[i].scope == scope || TS[i].scope == 0 || TS[i].param.size() > 0)) // functions are not affected by this scope
+			return TS[i];																				//thingie
 	logError("variable " + name + "'s data not found.");
 	return variable{};
 }
 
-int Semantique::getVariableAddress(string name)
+int Semantique::getVariableAddress(string name, int scope)
 {
 	//L'adresse d'une variable equivaut a son ordre de declaration
 	//on va donc chercher son ordre de declaration dans son scope
-	variable data = getVariableData(name);
+	variable data = getVariableData(name, scope);
 
 	if (data.scope == 0) {//variable globle ez pez
 		int declarationsNumberCount = 0;
@@ -141,16 +141,14 @@ int Semantique::getVariableAddress(string name)
 			logError("Couldn't find containing function for variable " + name);
 			return -1;
 		}
-		else // on ne compte pas la fonction elle même d'où le -1
-			//puis on ajoute l' offset des autres variables dans la pile
-			// l'offset = 3 est celui du resultat + BEL Precedent + addr de retours
-		 declarationsNumberCount = declarationsNumberCount - 1 + 3; 
+		else // on ne compte pas la fonction elle même d'où le -1, l
+		 declarationsNumberCount = declarationsNumberCount - 1 - containingFunction->param.size(); 
 
 		//Si notre variable est un parametre
 		int paramCount = 0;
 		for (auto const& param : containingFunction->param) {
 			if (param.nom == data.nom) {
-				return 3 + paramCount;
+				return  - paramCount - 3; // on se deplace sous sous le BEL
 			}
 			paramCount++;
 		}

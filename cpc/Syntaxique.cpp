@@ -13,6 +13,7 @@ Syntaxique::Syntaxique(string inputFile, bool logTableIden, bool logMotsRes)
 	uniteCourante = { END,0 };
 	ite_varlocalglobal = 0;
 	nbrDeclarations = 0;
+	nbrParam = 0;
 
 	if (lexical->getInputFileNameWithoutExt() == "")
 		logError("File name not specified.");
@@ -27,6 +28,7 @@ Syntaxique::Syntaxique(Lexical* pLexical)
 	uniteCourante = { END,0 };
 	ite_varlocalglobal = 0;
 	nbrDeclarations = 0;
+	nbrParam = 0;
 
 	if (lexical->getInputFileNameWithoutExt() == "")
 		logError("File name not specified.");
@@ -106,7 +108,6 @@ void Syntaxique::programme() {
 		nbrDeclarations = 0;
 		//appel du main
 		generator->appel("main");
-		generator->entree();
 		listeDeFonctions();
 	}
 	else {
@@ -130,8 +131,8 @@ void Syntaxique::listeDeFonctions()
 		semantique->AjouterTS("val", lexical->identifiants.get(uniteCourante.attribut), ite_varlocalglobal);  
 		(semantique->TS.end() - 1)->type = "fct"; 
 
-		//gen de code
-		generator->pile(3);//offset
+		//gen de code-
+		generator->entree();
 
 		//syntax checking
 		uniteCourante = lexical->uniteSuivante();
@@ -140,8 +141,8 @@ void Syntaxique::listeDeFonctions()
 		listeDeParametres();
 
 		//gen code
-		generator->pile(nbrParam);
-		nbrParam = 0;
+		/*generator->pile(nbrParam);
+		nbrParam = 0;*/
 
 		consommer(PARFERM);
 		semantique->paramFonctTS();
@@ -170,12 +171,14 @@ void Syntaxique::fonction()
 	xmlOpen("fonction");
 	if (estPremierDe(eIdentificateur))
 	{
+
 		//actions semantiques
 		semantique->AjouterTS("val", lexical->identifiants.get(uniteCourante.attribut), ite_varlocalglobal);  
 		(semantique->TS.end() - 1)->type = "fct"; 
 
 		//gen de code
-		generator->pile(3);//offset
+		generator->entree();
+		//generator->pile(3);//offset
 
 		//syntax checking
 		consommer(IDENT);
@@ -183,8 +186,8 @@ void Syntaxique::fonction()
 		listeDeParametres();
 
 		//gen code
-		generator->pile(nbrParam);
-		nbrParam = 0;
+		/*generator->pile(nbrParam);
+		nbrParam = 0;*/
 
 		consommer(PARFERM);
 		semantique->paramFonctTS();
@@ -424,13 +427,13 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		instructionPrime(porteur);
 
 		//gen de code
-		variable data = semantique->getVariableData(tempIdent);
+		variable data = semantique->getVariableData(tempIdent, ite_varlocalglobal);
 
 		if (data.type == "entier" || data.type == "car") {
 			if (data.scope == 0)//variable globale
-				generator->depg(semantique->getVariableAddress(tempIdent));
+				generator->depg(semantique->getVariableAddress(tempIdent, ite_varlocalglobal));
 			else {
-				generator->depl(semantique->getVariableAddress(tempIdent));
+				generator->depl(semantique->getVariableAddress(tempIdent, ite_varlocalglobal));
 			}
 		}
 
@@ -447,11 +450,13 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	{
 		consommer(SI);
 		expression();
+		generator->sifaux("finsi");
 		if (uniteCourante.UL == ALORS) {
 			consommer(ALORS);
 			consommer(ACCOUV);
 			listeInstructions();
 			consommer(ACCFERM);
+			generator->label("finsi");
 			instructionSeconde();
 		}
 		else { return syntaxError(eInstruction); }
@@ -463,10 +468,13 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		expression();
 		consommer(PARFERM);
 		if (uniteCourante.UL == FAIRE) {
+			generator->label("debuttantque");
 			consommer(FAIRE);
 			consommer(ACCOUV);
 			listeInstructions();
 			consommer(ACCFERM);
+			generator->sifaux("fintantque");
+			generator->saut("debuttantque");
 		}
 		else { return syntaxError(eInstruction); }
 	}
@@ -538,7 +546,7 @@ void Syntaxique::instructionSeconde()
 	{
 		//silence is golden
 	}
-	else { syntaxError(eInstructionSeconde); }
+	//else { syntaxError(eInstructionSeconde); }
 	xmlClose("instructionSeconde");
 }
 
@@ -548,6 +556,7 @@ string Syntaxique::instructionTriple()
 	xmlOpen("instructionTriple");
 	if (uniteCourante.UL == LIRE) {
 		consommer(LIRE);
+		generator->lire();
 		consommer(PAROUV);
 		consommer(PARFERM); 
 		i++;
@@ -603,9 +612,11 @@ void Syntaxique::expressionLogique() {
 void Syntaxique::expressionLogiquePrime() {
 	xmlOpen("expressionLogiquePrime");
 	if (estPremierDe(eComparaison)) {
-		comparaison();
+		string comp = comparaison();
 		expressionSimple();
+		generator->comp(comp);
 		expressionLogiquePrime();
+		
 	}
 	else if (estSuivantDe(eExpressionLogiquePrime)) {
 		//doz 7yd
@@ -745,23 +756,33 @@ string Syntaxique::facteur() {
 
 		//gen de code
 		tmp = lexical->identifiants.get(uniteCourante.attribut); 
-		variable data = semantique->getVariableData(tmp);
+		variable data = semantique->getVariableData(tmp, ite_varlocalglobal);
 
 		if (data.type == "entier" || data.type == "car") {
 			if (data.scope == 0)//variable globale
-				generator->empg(semantique->getVariableAddress(tmp));
+				generator->empg(semantique->getVariableAddress(tmp, ite_varlocalglobal));
 			else {
-				generator->empl(semantique->getVariableAddress(tmp));
+				generator->empl(semantique->getVariableAddress(tmp, ite_varlocalglobal));
 			}
 		}
 
+		string tempIdent = lexical->identifiants.get(uniteCourante.attribut);
 		identif();
-		facteurPrime();
+		int identifType = facteurPrime(); // si c'est c'est une fonction ou un tableau => traitement special pour la gen de code
+
+		//gen de code
+		if (identifType == 1){ // une fonction
+			generator->appel(tempIdent);
+		}
+		else if (identifType == 2) { // un tableau
+			//todo
+		}
 	}
 	else if (estPremierDe(eCte)) {
 		if (uniteCourante.UL == CONST) {
 			fac = "entier";
 		}
+		generator->empc(uniteCourante.attribut);
 		cte();
 	}
 	else if (uniteCourante.UL == PAROUV) {
@@ -788,9 +809,13 @@ string Syntaxique::facteur() {
 	return fac;
 }
 
-void Syntaxique::facteurPrime() {
+//Checks if the identif is an array or a function
+//Returns 0 if none, 1 for function and 2 for array
+int Syntaxique::facteurPrime() {
+	int facteurType = 0;
 	xmlOpen("facteurPrime");
 	if (uniteCourante.UL == CROOUV) {
+		facteurType = 2;
 		consommer(CROOUV);
 		if (semantique->VerifierTableau(tmp) == false) 
 			semantique->logError("incompatible type: expected a table");
@@ -798,10 +823,18 @@ void Syntaxique::facteurPrime() {
 		consommer(CROOUV);
 	}
 	else if (uniteCourante.UL == PAROUV) {
+		facteurType = 1;
 		consommer(PAROUV);
+		
+		//gen de code 
+		generator->pile(1);// varaible resultat
+
 		parametresEffectifs();
+
+		//Actions semantiques
 		if (semantique->VerifierFonction(fct_tmp, listeparam) == false) 
 			semantique->logError("incompatible type: declaration of function incompatible");
+
 		consommer(PARFERM);
 	}
 	else if (estSuivantDe(eFacteurPrime)) {
@@ -811,6 +844,7 @@ void Syntaxique::facteurPrime() {
 		syntaxError(eFacteurPrime);
 	}
 	xmlClose("facteurPrime");
+	return facteurType;
 }
 
 void Syntaxique::parametresEffectifs() {
@@ -873,24 +907,34 @@ void Syntaxique::operateurLogique()
 	xmlClose("operateurLogique");
 }
 
-void Syntaxique::comparaison()
+string Syntaxique::comparaison()
 {
+	string comp = "";
 	xmlOpen("comparaison");
-	if (uniteCourante.UL == SUP)
+	if (uniteCourante.UL == SUP) {
 		consommer(SUP);
-	else if (uniteCourante.UL == INFEGAL)
+		comp = "SUP";
+	}
+	else if (uniteCourante.UL == INFEGAL) {
 		consommer(INFEGAL);
-	else if (uniteCourante.UL == SUPEGAL)
+		comp = "INFEGAL";
+	}
+	else if (uniteCourante.UL == SUPEGAL){
 		consommer(SUPEGAL);
-	else if (uniteCourante.UL == INF) 
+		comp = "SUPEGAL";
+	}
+	else if (uniteCourante.UL == INF) {
 		consommer(INF);
-	else if (uniteCourante.UL == EGAL) 
-		consommer(EGAL);
-	else if (uniteCourante.UL == EGALEGAL)
+		comp = "INF";
+	}
+	else if (uniteCourante.UL == EGALEGAL) {
 		consommer(EGALEGAL);
+		comp = "EGAL";
+	}
 	else
 		syntaxError(eComparaison);
 	xmlClose("comparaison");
+	return comp;
 }
 
 void Syntaxique::identif()
