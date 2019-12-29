@@ -451,7 +451,7 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		expression();
 		// affectation  de type pour fct
 		for (int j = semantique->TS.size() -1; j >= 0 ; j--)
-			if (semantique->TS[j].estfct == true )
+			if (semantique->TS[j].estfct == true)
 				semantique->TS[j].type = expr;
 		generator->retour();
 		consommer(PTVRG);
@@ -532,7 +532,7 @@ void Syntaxique::instructionPrime(string instruprime)
 	if (estPremierDe(eInstructionPrime)) {
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); 
-		if (instrutriple != instruprime && instrutriple !="fct" ) 
+		if (instrutriple != instruprime ) 
 			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
 	}
 	else if (uniteCourante.UL == CROFER) {
@@ -543,7 +543,7 @@ void Syntaxique::instructionPrime(string instruprime)
 		consommer(CROFER);
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); 
-		if (instrutriple != instruprime && instrutriple != "fct" ) 
+		if (instrutriple != instruprime ) 
 			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
 	}
 	else { syntaxError(eInstructionPrime); }
@@ -767,8 +767,9 @@ string Syntaxique::facteur() {
 	if (estPremierDe(eIdentificateur)) {
 
 		//semantique
-		if (semantique->typeidentifTS(tmp) == "fct" )
-			fct_tmp = tmp; 
+		for (int i=semantique->TS.size()-1 ; i >=0 ; i--)
+			if (semantique->TS[i].nom == tmp && semantique->TS[i].estfct == true)
+				fct_tmp = tmp; 
 		fac = semantique->typeidentifTS(tmp);
 
 		//gen de code
