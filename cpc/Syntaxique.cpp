@@ -131,7 +131,7 @@ void Syntaxique::listeDeFonctions()
 		xmlOpen("main");
 		//actions semantiques
 		semantique->AjouterTS("val", lexical->identifiants.get(uniteCourante.attribut), ite_varlocalglobal);  
-		(semantique->TS.end() - 1)->type = "fct"; 
+		(semantique->TS.end() - 1)->estfct = true; 
 
 		//gen de code-
 		generator->entree("main");
@@ -176,7 +176,7 @@ void Syntaxique::fonction()
 
 		//actions semantiques
 		semantique->AjouterTS("val", lexical->identifiants.get(uniteCourante.attribut), ite_varlocalglobal);  
-		(semantique->TS.end() - 1)->type = "fct"; 
+		(semantique->TS.end() - 1)->estfct = true; /// SOUHAIL
 
 		//gen de code
 		generator->entree(lexical->identifiants.get(uniteCourante.attribut));
@@ -449,6 +449,10 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	{
 		consommer(RETOUR);
 		expression();
+		// affectation  de type pour fct
+		for (int j = semantique->TS.size() -1; j >= 0 ; j--)
+			if (semantique->TS[j].estfct == true )
+				semantique->TS[j].type = expr;
 		generator->retour();
 		consommer(PTVRG);
 	}

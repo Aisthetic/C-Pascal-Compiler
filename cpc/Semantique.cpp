@@ -41,7 +41,7 @@ void Semantique::AfficherTS()
 {
 	cout << "- Le tableau des Symboles contient : " << endl;
 	for (int i = 0; i < TS.size(); i++) {
-		cout << "  -- La Valeur = " << TS[i].nom << ", de type = " << TS[i].type << ", dans le scope = " << TS[i].scope << endl;
+		cout << "  -- La Valeur = " << TS[i].nom << " , est-elle une fonction = " << TS[i].estfct << ", de type = " << TS[i].type << ", dans le scope = " << TS[i].scope << endl;
 	}
 }
 
@@ -50,11 +50,11 @@ void Semantique::ControlerTS()
 	AfficherTS();
 	cout << "- Le tableau de Symboles contient des erreurs :\n";
 	for (int i = 0; i < TS.size(); i++) {
-		if (TS[i].type != "entier" && TS[i].type != "car" && TS[i].type != "fct")
+		if (TS[i].type != "entier" && TS[i].type != "car" && TS[i].estfct != true)
 			cout << "  -- La Valeur = " << TS[i].nom << " n'est pas declare " << endl;
 
 		for (int j = i + 1; j < TS.size(); j++) {
-			if (TS[i].nom == TS[j].nom && TS[i].type == "fct" && TS[j].type == "fct" && TS[i].param.size() == TS[j].param.size() && TS[i].scope == TS[j].scope)
+			if (TS[i].nom == TS[j].nom && TS[i].estfct == TS[j].estfct && TS[i].param.size() == TS[j].param.size() && TS[i].scope == TS[j].scope)
 				cout << "  -- La Valeur = " << TS[i].nom << " est repetee " << endl;
 		}
 	}
@@ -85,10 +85,10 @@ void Semantique::paramFonctTS()
 	vector<variable> listeparam;
 	int functionPostion = TS.size() - 1;
 
-	while (TS[functionPostion].type != "fct")
+	while (TS[functionPostion].estfct != true)
 		functionPostion--;
 		
-	for (int i = TS.size() - 1; TS[i].type != "fct"; i--) {
+	for (int i = TS.size() - 1; TS[i].estfct != true; i--) {
 		TS[functionPostion].param.insert(TS[functionPostion].param.begin(),TS[i]);
 	}
 }
@@ -131,7 +131,7 @@ int Semantique::getVariableAddress(string name, int scope)
 		int declarationsNumberCount = 0;
 
 		for (auto & variable : TS) {// on cherche les inforamation de la fonction contenant notre variable
-			if (variable.type == "fct" && variable.scope == data.scope) {
+			if (variable.estfct == true && variable.scope == data.scope) {
 				containingFunction = &variable;
 			}
 		}
