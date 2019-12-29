@@ -17,10 +17,10 @@ private:
 	array<string, MEMORYSIZE> cells;
 
 	// Registers
-	int co = 0; // Adress of the current executed instruction
-	int beg = 0; // Adress of the first global variable
-	int bel = 0; // Adress of the local memory of a function
-	int sp = 0; // Adress of the cell right after the summit of the stack
+	int co = 0; // address of the current executed instruction
+	int beg = 0; // address of the first global variable
+	int bel = 0; // address of the local memory of a function
+	int sp = 0; // address of the cell right after the summit of the stack
 
 	// Global variables
 	int varGloNum = 0;
@@ -40,6 +40,7 @@ public:
 	int getSp();
 	string getCell(int num);
 	int getStCellNum(int cell);
+	int getVarGloNum();
 
 	// Setters
 	void incCo();

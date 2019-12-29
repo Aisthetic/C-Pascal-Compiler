@@ -17,6 +17,7 @@ private:
 	Memoire * memoire;
 	Process * process;
 	string currentInstruction;
+	vector<string> console;
 	bool debugMode = false;
 
 public:
@@ -28,6 +29,8 @@ public:
 	void drawCell(int num, string value);
 	void endDrawing();
 	void drawStack();
+	void drawPConsoleLine(int line);
+	void drawPConsole();
 	void clearConsole();
 };
 

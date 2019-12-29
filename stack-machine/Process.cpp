@@ -10,8 +10,7 @@ void Process::empc(string value)
 {
 	if (memoire->stackFull()) {
 		cout << "Overflow de la pile !\n";
-			//stop();
-		return;
+		stop();
 	}
 	else 
 	{
@@ -24,17 +23,62 @@ void Process::empc(string value)
 	}
 }
 
-void Process::depl(int adress)
+void Process::empl(int address)
 {
+	int realAddress = address + memoire->getBel();
+	string varLoc = memoire->getCell(realAddress);
+	emp(varLoc);
+	memoire->incCo();
+}
+
+void Process::depl(int address)
+{
+	int realAddress = address + memoire->getBel();
+	string varLoc = dep();
+	memoire->setCell(realAddress, varLoc);
+	memoire->incCo();
+}
+
+void Process::empg(int address)
+{
+	int realAddress = address + memoire->getBeg();
+	string varGlo = memoire->getCell(realAddress);
+	emp(varGlo);
+	memoire->incCo();
+}
+
+void Process::depg(int address)
+{
+	int realAddress = address + memoire->getBeg();
+	string varGlo = dep();
+	memoire->setCell(realAddress, varGlo);
+	memoire->incCo();
+}
+
+void Process::empt(int address)
+{
+	int realAddress = address + memoire->getBeg();
+	int i = stoi(dep());
+	string value = memoire->getCell(realAddress + i);
+	emp(value);
+	memoire->incCo();
+}
+
+void Process::dept(int address)
+{
+	int realAddress = address + memoire->getBeg();
+	string value = dep();
+	int i = stoi(dep());
+	memoire->setCell(realAddress + i, value);
 
 }
 
 void Process::addi()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
 		cout << "sp =" << memoire->getSp() << "and beg = " << memoire->getBeg();
 		cout << "Cellules insuffisantes dans la pile pour effectuer l'addition !\n";
-		;
+		stop();
 	}
 	else if (false) {
 		// has to Check if int or car ... should be int !!!!!!!!!!!
@@ -58,8 +102,9 @@ void Process::addi()
 
 void Process::sous()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
 		cout << "Cellules insuffisantes dans la pile pour effectuer la soustraction !\n";
+		stop();
 	}
 	else if (false) {
 		// has to Check if int or car ... should be int !!!!!!!!!!!
@@ -84,8 +129,9 @@ void Process::sous()
 
 void Process::mul()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
 		cout << "Cellules insuffisantes dans la pile pour effectuer la multiplication !\n";
+		stop();
 	}
 	else if (false) {
 		// has to Check if int or car ... should be int !!!!!!!!!!!
@@ -110,8 +156,9 @@ void Process::mul()
 
 void Process::div()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
 		cout << "Cellules insuffisantes dans la pile pour effectuer la division !\n";
+		stop();
 	}
 	else if (false) {
 		// has to Check if int or car ... should be int !!!!!!!!!!!
@@ -136,8 +183,9 @@ void Process::div()
 
 void Process::mod()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
 		cout << "Cellules insuffisantes dans la pile pour effectuer le modulo !\n";
+		stop();
 	}
 	else if (false) {
 		// has to Check if int or car ... should be int !!!!!!!!!!!
@@ -162,9 +210,9 @@ void Process::mod()
 
 void Process::egal()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
 		cout << "Cellules insuffisantes dans la pile pour verifier l'egalite !\n";
-		exit(0);
+		stop();
 	}
 	else {
 		// Popping out first term
@@ -189,8 +237,9 @@ void Process::egal()
 
 void Process::inf()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
 		cout << "Cellules insuffisantes dans la pile pour verifier l'inferiorité !\n";
+		stop();
 	}
 	else {
 		// Popping out first term
@@ -215,8 +264,9 @@ void Process::inf()
 
 void Process::infeg()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
 		cout << "Cellules insuffisantes dans la pile pour verifier l'infeg !\n";
+		stop();
 	}
 	else {
 		// Popping out first term
@@ -241,14 +291,15 @@ void Process::infeg()
 
 void Process::non()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 2) {
-		cout << "Cellules insuffisantes dans la pile pour verifier l'infeg !\n";
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 2) {
+		cout << "Cellules insuffisantes dans la pile pour verifier !\n";
+		stop();
 	}
 	else {
 		// Popping out first term
 		int t1 = stoi(dep());
 
-		if (t1) {
+		if (t1 == 0) {
 			cout << t1 << " == 0\n.";
 			emp(to_string(1));
 		}
@@ -267,14 +318,16 @@ void Process::lire()
 	string toRead;
 	cin >> toRead;
 	emp(toRead);
+	memoire->incCo();
 }
 
 
 void Process::dup()
 {
-	if (memoire->getSp() <= memoire->getBeg() + 1) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 1) {
 		cout << "sp =" << memoire->getSp() << "and beg = " << memoire->getBeg();
 		cout << "Cellules insuffisantes dans la pile pour effectuer la duplication !\n";
+		stop();
 	}
 	else 
 	{
@@ -298,6 +351,11 @@ void Process::pop()
 	memoire->incCo();
 }
 
+void Process::stop()
+{
+	exit(0);
+}
+
 string Process::dep()
 {
 	string cell = memoire->getCell(memoire->getSp() - 1);
@@ -309,8 +367,7 @@ void Process::emp(string value)
 {
 	if (memoire->stackFull()) {
 		cout << "Overflow de la pile !\n";
-		//stop();
-		return;
+		stop();
 	}
 	else
 	{
@@ -320,21 +377,28 @@ void Process::emp(string value)
 	}
 }
 
-void Process::ecriv()
+string Process::ecriv()
 {
+	string value;
 	if (memoire->stackEmpty()) {
 		cout << "Pile vide !\n";
+		return "";
 	}
 	else {
 		// Popping out stack
-		string value = dep();
+		value = dep();
+
+		// Writing to debug
+		cout << value << ".\n";
 
 		// Writing to console
-		cout << value << ".\n";
+		
 	}
 
 	// Next instruction
 	memoire->incCo();
+
+	return value;
 }
 
 void Process::saut(int address)
@@ -342,17 +406,17 @@ void Process::saut(int address)
 	memoire->setCo(address);
 }
 
-void Process::sivrai(int adress)
+void Process::sivrai(int address)
 {
-	if (memoire->getSp() <= memoire->getBeg() + 1) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 1) {
 		cout << "Cellules insuffisantes dans la pile pour verifier si vrai !\n";
 	}
 	else {
 		// Popping out first term
 		int t1 = stoi(dep());
 
-		if (!t1) {
-			saut(adress);
+		if (t1) {
+			saut(address);
 		}
 		else {
 			memoire->incCo();
@@ -360,17 +424,17 @@ void Process::sivrai(int adress)
 	}
 }
 
-void Process::sifaux(int adress)
+void Process::sifaux(int address)
 {
-	if (memoire->getSp() <= memoire->getBeg() + 1) {
+	if (memoire->getSp() <= memoire->getBeg() + memoire->getVarGloNum() + 1) {
 		cout << "Cellules insuffisantes dans la pile pour verifier si faux !\n";
 	}
 	else {
 		// Popping out first term
 		int t1 = stoi(dep());
 
-		if (t1) {
-			saut(adress);
+		if (!t1) {
+			saut(address);
 		}
 		else {
 			memoire->incCo();
@@ -378,10 +442,10 @@ void Process::sifaux(int adress)
 	}
 }
 
-void Process::appel(int adress)
+void Process::appel(int address)
 {
 	emp(to_string(memoire->getCo() + 1));
-	saut(adress);
+	saut(address);
 }
 
 void Process::retour()
@@ -406,6 +470,12 @@ void Process::sortie()
 	memoire->setBel(stoi(dep()));
 
 	// Next instruction
+	memoire->incCo();
+}
+
+void Process::pile(int number)
+{
+	memoire->setSp(memoire->getSp() + number);
 	memoire->incCo();
 }
 

@@ -35,7 +35,7 @@ void Interpreter::drawCell(int num, string value)
 	else { cout << num; }
 	cout << "| ";
 	cout << value;
-	int remainingSpace = 24 - value.length();
+	int remainingSpace = 24 - (int)value.length();
 	cout << string(remainingSpace, ' ');
 	cout << "|\n";
 }
@@ -55,6 +55,23 @@ void Interpreter::drawStack()
 	endDrawing();
 }
 
+void Interpreter::drawPConsoleLine(int line)
+{
+	string value = console[line];
+	int remainingSpace = 42 - (int)value.length();
+	cout << "|" << value << string(remainingSpace, ' ') << "|\n";
+}
+
+void Interpreter::drawPConsole()
+{
+	cout << "\n\nConsole :\n";
+	cout << "|------------------------------------------|\n";
+	for (int i = 0; i < console.size(); i++) {
+		drawPConsoleLine(i);
+	}
+	cout << "|------------------------------------------|\n\n";
+}
+
 void Interpreter::clearConsole()
 {
 	cout << "\033[2J\033[1;1H";
@@ -67,14 +84,21 @@ void Interpreter::exInstr()
     
     // Recognition of the instruction
     if (currentInstruction == "STOP") {
-        // what to do when stopped
+		cout << "STOP: Arret du programme.\n";
+		drawPConsole();
+		process->stop();
     }
-    else { // Not a stoppign instruction
+	else if (currentInstruction.substr(0, 1) == "#") {
+		memoire->incCo();
+		exInstr();
+	}
+    else { // Not a stopping instruction
+
         cout << currentInstruction << ": ";
 		if (currentInstruction.substr(0, 4) == "EMPC") {
 			process->empc(currentInstruction.substr(5));
         }
-		/*else if (currentInstruction.substr(0, 4) == "EMPL") {
+		else if (currentInstruction.substr(0, 4) == "EMPL") {
 			process->empl(stoi(currentInstruction.substr(5)));
 		}
 		else if (currentInstruction.substr(0, 4) == "DEPL") {
@@ -88,7 +112,7 @@ void Interpreter::exInstr()
 		}
 		else if (currentInstruction.substr(0, 4) == "DEPT") {
 			process->dept(stoi(currentInstruction.substr(5)));
-		}*/
+		}
 		else if (currentInstruction == "ADD") {
 			process->addi();
 		}
@@ -120,7 +144,7 @@ void Interpreter::exInstr()
 			process->lire();
 		}
         else if (currentInstruction == "ECRIV") {
-            process->ecriv();
+            console.push_back(process->ecriv());
         }
 		else if (currentInstruction.substr(0, 4) == "SAUT") {
 			process->saut(stoi(currentInstruction.substr(5)));
@@ -143,9 +167,9 @@ void Interpreter::exInstr()
 		else if (currentInstruction == "SORTIE") {
 			process->sortie();
 		}
-		/*else if (currentInstruction.substr(0, 4) == "PILE") {
+		else if (currentInstruction.substr(0, 4) == "PILE") {
 			process->pile(stoi(currentInstruction.substr(5)));
-		}*/
+		}
         else if (currentInstruction == "DUP") {
             process->dup();
         }
@@ -159,6 +183,7 @@ void Interpreter::exInstr()
 			cout << "\n\n";
 			string test;
 			drawStack();
+			drawPConsole();
 			cin.clear();
 			getline(cin, test);
 			clearConsole();

@@ -54,6 +54,11 @@ int Memoire::getStCellNum(int cell)
 	return cell - beg - varGloNum - 2;
 }
 
+int Memoire::getVarGloNum()
+{
+	return varGloNum;
+}
+
 void Memoire::incCo()
 {
 	co++;
