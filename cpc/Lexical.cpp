@@ -140,20 +140,27 @@ TUniteLexicale Lexical::uniteSuivante()
 		unite.UL = CONSTCAR;
 		unite.attribut = currentChar;//code ascii
 
-		while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de caractère = fin de ligne ou un autre "'"
-		{
-			err = true;
-			lireCar();
-		}
-		if (err) {
-			unite.UL = ERR;
-			unite.attribut = 1;//Caractère incorrect
-		}
+		//while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de caractère = fin de ligne ou un autre "'"
+		//{
+		//	err = true;
+		//	lireCar();
+		//}
+		//if (err) {
+		//	unite.UL = ERR;
+		//	unite.attribut = 1;//Caractère incorrect
+		//}
+
+		lireCar();
 		lireCar();
 		break;
 	case '=':
 		lireCar();
-		unite.UL = EGAL;
+		if (currentChar == '=') {
+			lireCar();
+			unite.UL = EGALEGAL;
+		}
+		else
+			unite.UL = EGAL;
 		break;
 	case '!':
 		lireCar();
@@ -458,6 +465,8 @@ string Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 	case CONSTCAR:
 		return "CONSTCAR";
 		break;
+	case EGALEGAL:
+		return "EGALEGAL";
 	default:
 		break;
 	}

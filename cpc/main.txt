@@ -1,9 +1,4 @@
-car a;
-f(car a)     	 
-{	     
-retour a; 			
-}					
-
+car a;				
 main()  				
 entier d, entier x;
 {

@@ -813,9 +813,7 @@ string Syntaxique::facteur() {
 		cte();
 	}
 	else if (uniteCourante.UL == CONSTCAR) {
-		if (uniteCourante.UL == CONST) {
-			fac = "car";
-		}
+		fac = "car";
 		generator->empc(uniteCourante.attribut);
 		consommer(CONSTCAR);
 	}
