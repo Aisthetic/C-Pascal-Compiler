@@ -40,7 +40,16 @@ Output
 |   |___main.lex (résultat du lexical parsing)
 │   
 └───XML
-    │   Arbre syntaxique en XML
+|   │   Arbre syntaxique en XML
+|
+|___PMachineCode
+|   |
+|   |___ code généré
+|
+|
+|___TS_Table
+    |
+    |__ Table des symboles sémantique
 ```
 
  4. Génération du code intermediaire
