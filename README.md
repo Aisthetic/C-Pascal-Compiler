@@ -77,6 +77,37 @@ Description des parties du compilateur C-Pascal :
 ### Machine virtuelle P-Machine :
 - Equipée d'une pile sert à exécuter le code générer par le générateur de code.
 - Equipée de deux modes, mode débuggage et mode automatique, le mode débuggage affiche graphiquement la pile d'éxécution et son évolution au cours de l'éxécution.
+
+## Option numro 1 : Les caractères
+Le language et fait de tel sorte à ce qu'il prend en main le type **caractère**
+### Exemple
+```
+car a;				
+main()  				
+entier d, entier x;
+{
+  	a = 'n';
+	si( a == 'b' ) alors{
+		ecrire('y');
+	}
+}
+```
+Le code intermediaire généré par cet exemple : 
+```
+PILE 1
+APPEL 3
+FIN
+ENTREE
+PILE 2
+EMPC n
+DEPG 0
+EMPG 0
+EMPC b
+EGAL
+SIFAUX 13
+EMPC y
+ECRIV
+```
 ## License:
 CPC Compiler est sous la Licence Publique Générale GNU vous pouvez le redistribuer et/ou le modifier selon les termes de la license GNU. Nous avons utilisé CLI pour gérer la ligne de commande qui est aussi sous la Lisence Générale GNU.
 
