@@ -54,6 +54,7 @@ Output
 
  4. Génération du code intermediaire
  5. Exécution du code intermédiaire
+ Ejouter le fichier **stack-machine.exe** dans la variable d'environnement et exécuter la commande **stack-machine.exe + votre_fichier_à_exécuter**
 ## License:
 CPC Compiler est sous la Licence Publique Générale GNU vous pouvez le redistribuer et/ou le modifier selon les termes de la license GNU. Nous avons utilisé CLI pour gérer la ligne de commande qui est aussi sous la Lisence Générale GNU.
 
