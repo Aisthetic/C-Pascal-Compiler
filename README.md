@@ -40,7 +40,7 @@ Output
 |   |___main.lex (résultat du lexical parsing)
 │   
 └───XML
-|   │   Arbre syntaxique en XML
+|   │___ Arbre syntaxique en XML
 |
 |___PMachineCode
 |   |
