@@ -135,6 +135,7 @@ void Syntaxique::listeDeFonctions()
 
 		//gen de code-
 		generator->entree("main");
+		currentFunction = "main";
 		adresses.insert(pair<int, string>{lexical->getLine() - 1, "main"});
 		//syntax checking
 		uniteCourante = lexical->uniteSuivante();
@@ -179,7 +180,8 @@ void Syntaxique::fonction()
 		(semantique->TS.end() - 1)->type = "fct"; 
 
 		//gen de code
-		generator->entree(lexical->identifiants.get(uniteCourante.attribut));
+		currentFunction = lexical->identifiants.get(uniteCourante.attribut);
+		generator->entree(currentFunction);
 		adresses.insert(pair<int, string>{lexical->getLine() - 1, lexical->identifiants.get(uniteCourante.attribut)});
 		//generator->pile(3);//offset
 
@@ -422,12 +424,13 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 
 	string porteur;
 	xmlOpen("instruction");
+	string tempIdent;
 	if (estPremierDe(eIdentificateur)) {
 		//semantique 
 		tmp = lexical->identifiants.get(uniteCourante.attribut); 
 		porteur = semantique->typeidentifTS(tmp); 
 
-		string tempIdent = lexical->identifiants.get(uniteCourante.attribut);
+		tempIdent = lexical->identifiants.get(uniteCourante.attribut);
 
 		identif();
 		instructionPrime(porteur);
@@ -449,6 +452,9 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	{
 		consommer(RETOUR);
 		expression();
+		int nbrParam = semantique->getVariableData(currentFunction, ite_varlocalglobal).param.size();
+		generator->depl(-1 - nbrParam - 1); // -1 pour adr retour
+		generator->sortie();
 		generator->retour();
 		consommer(PTVRG);
 	}
@@ -786,7 +792,8 @@ string Syntaxique::facteur() {
 		//gen de code
 		if (identifType == 1){ // une fonction
 			generator->appel(tempIdent);
-			generator->pile(semantique->getVariableData(tempIdent, ite_varlocalglobal).param.size());// on vire les parametres
+			int nbrParam = semantique->getVariableData(tempIdent, ite_varlocalglobal).param.size();
+			generator->pile(-nbrParam);// on vire les parametres
 		}
 		else if (identifType == 2) { // un tableau
 			//todo

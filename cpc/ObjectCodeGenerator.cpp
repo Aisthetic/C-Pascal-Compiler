@@ -201,6 +201,7 @@ void ObjectCodeGenerator::sortie()
 
 void ObjectCodeGenerator::div()
 {
+	output << DIV << endl;
 }
 
 ObjectCodeGenerator::~ObjectCodeGenerator()

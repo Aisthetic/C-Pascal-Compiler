@@ -2,7 +2,7 @@ entier a;
 f(entier a, entier b)     
 entier c, entier k;  	 
 {	
-k = a + b;      
+k = a / b;      
 retour k; 			
 }					
 
@@ -11,11 +11,8 @@ entier d, entier x;
 {
   	a = 3;
 	d = 4;
-	si ( a > d) alors{
-		si (  d < 0 ) alors {
-			d  = 4;
-		}
-		d = 5;
+	si( a < d ) alors{
+
 	}
-	d = 6;
+	ecrire(f(a,d));
 }
