@@ -149,7 +149,7 @@ int Semantique::getVariableAddress(string name, int scope)
 		for (int i = containingFunction->param.size() - 1; i >= 0; i--) {
 			auto param = containingFunction->param[i];
 			if (param.nom == data.nom) {
-				return  - paramCount - 2; // on se deplace sous sous le BEL
+				return  - paramCount - 3; // on se deplace sous sous le BEL
 			}
 			paramCount++;
 		}

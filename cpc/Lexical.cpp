@@ -139,17 +139,17 @@ TUniteLexicale Lexical::uniteSuivante()
 		lireCar();//On lit le contenu de la constante
 		unite.UL = CONSTCAR;
 		unite.attribut = currentChar;//code ascii
-		lireCar();
 
 		while (currentChar != '\'' || currentChar == '\n')//exemple d'erreur 'abc', fin de caractère = fin de ligne ou un autre "'"
 		{
 			err = true;
-			input.ignore();
+			lireCar();
 		}
 		if (err) {
 			unite.UL = ERR;
 			unite.attribut = 1;//Caractère incorrect
 		}
+		lireCar();
 		break;
 	case '=':
 		lireCar();
@@ -454,6 +454,9 @@ string Lexical::lexemeToString(TUniteLexicale unite)//pour afficher les lexemes
 		break;
 	case ERR:
 		return "ERR";
+		break;
+	case CONSTCAR:
+		return "CONSTCAR";
 		break;
 	default:
 		break;

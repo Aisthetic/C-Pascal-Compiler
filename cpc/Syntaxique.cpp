@@ -453,7 +453,7 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		consommer(RETOUR);
 		expression();
 		int nbrParam = semantique->getVariableData(currentFunction, ite_varlocalglobal).param.size();
-		generator->depl(-1 - nbrParam - 1); // -1 pour adr retour
+		generator->depl(-2 - nbrParam - 1); // -bel-ad retour-nb param-1 
 		generator->sortie();
 		// affectation  de type pour fct
 		for (int j = semantique->TS.size() -1; j >= 0 ; j--)
@@ -811,6 +811,13 @@ string Syntaxique::facteur() {
 		}
 		generator->empc(uniteCourante.attribut);
 		cte();
+	}
+	else if (uniteCourante.UL == CONSTCAR) {
+		if (uniteCourante.UL == CONST) {
+			fac = "car";
+		}
+		generator->empc(uniteCourante.attribut);
+		consommer(CONSTCAR);
 	}
 	else if (uniteCourante.UL == PAROUV) {
 		consommer(PAROUV);

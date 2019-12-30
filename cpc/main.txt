@@ -1,18 +1,14 @@
-entier a;
-f(entier a, entier b)     
-entier c, entier k;  	 
-{	
-k = a / b;      
-retour k; 			
+car a;
+f(car a)     	 
+{	     
+retour a; 			
 }					
 
 main()  				
 entier d, entier x;
 {
-  	a = 3;
-	d = 4;
-	si( a < d ) alors{
-
+  	a = 'n';
+	si( a == 'b' ) alors{
+		ecrire('y');
 	}
-	ecrire(f(a,d));
 }
