@@ -131,7 +131,7 @@ void Syntaxique::listeDeFonctions()
 		xmlOpen("main");
 		//actions semantiques
 		semantique->AjouterTS("val", lexical->identifiants.get(uniteCourante.attribut), ite_varlocalglobal);  
-		(semantique->TS.end() - 1)->type = "fct"; 
+		(semantique->TS.end() - 1)->estfct = true; 
 
 		//gen de code-
 		generator->entree("main");
@@ -177,7 +177,7 @@ void Syntaxique::fonction()
 
 		//actions semantiques
 		semantique->AjouterTS("val", lexical->identifiants.get(uniteCourante.attribut), ite_varlocalglobal);  
-		(semantique->TS.end() - 1)->type = "fct"; 
+		(semantique->TS.end() - 1)->estfct = true; /// SOUHAIL
 
 		//gen de code
 		currentFunction = lexical->identifiants.get(uniteCourante.attribut);
@@ -455,6 +455,10 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		int nbrParam = semantique->getVariableData(currentFunction, ite_varlocalglobal).param.size();
 		generator->depl(-1 - nbrParam - 1); // -1 pour adr retour
 		generator->sortie();
+		// affectation  de type pour fct
+		for (int j = semantique->TS.size() -1; j >= 0 ; j--)
+			if (semantique->TS[j].estfct == true)
+				semantique->TS[j].type = expr;
 		generator->retour();
 		consommer(PTVRG);
 	}
@@ -534,7 +538,7 @@ void Syntaxique::instructionPrime(string instruprime)
 	if (estPremierDe(eInstructionPrime)) {
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); 
-		if (instrutriple != instruprime && instrutriple !="fct" ) 
+		if (instrutriple != instruprime ) 
 			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
 	}
 	else if (uniteCourante.UL == CROFER) {
@@ -545,7 +549,7 @@ void Syntaxique::instructionPrime(string instruprime)
 		consommer(CROFER);
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); 
-		if (instrutriple != instruprime && instrutriple != "fct" ) 
+		if (instrutriple != instruprime ) 
 			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
 	}
 	else { syntaxError(eInstructionPrime); }
@@ -766,15 +770,17 @@ string Syntaxique::termePrioritaire() {
 string Syntaxique::facteur() {
 	xmlOpen("facteur");
 	string fac = "";
+	
 	if (estPremierDe(eIdentificateur)) {
-
+		tmp = lexical->identifiants.get(uniteCourante.attribut);
 		//semantique
-		if (semantique->typeidentifTS(tmp) == "fct" )
-			fct_tmp = tmp; 
+		for (int i=semantique->TS.size()-1 ; i >=0 ; i--)
+			if (semantique->TS[i].nom == tmp && semantique->TS[i].estfct == true)
+				fct_tmp = tmp; 
 		fac = semantique->typeidentifTS(tmp);
 
 		//gen de code
-		tmp = lexical->identifiants.get(uniteCourante.attribut); 
+		//tmp = lexical->identifiants.get(uniteCourante.attribut); 
 		variable data = semantique->getVariableData(tmp, ite_varlocalglobal);
 
 		if (data.type == "entier" || data.type == "car") {

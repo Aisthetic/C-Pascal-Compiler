@@ -14,6 +14,7 @@ typedef struct variable // structure pour stocker les infos d'une variable
 {
 	string nom; //Nom de la variable
 	string type;
+	bool estfct = false; // differencie entre fct et var smple
 	int nb = 0; // differencie entre tableau et var smple
 	int scope; // indiquer si l'identif est local ou global (zac : plutot son scope ?)
 	vector<variable> param; //stocke les parameteres de la fct
