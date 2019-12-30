@@ -9,6 +9,7 @@ private:
 	//constants
 	const string EMPC = "EMPC";
 	const string ECRIV = "ECRIV";
+	const string ECRIC = "ECRIC";
 	const string STOP = "STOP";
 	const string PILE = "PILE";
 	const string APPEL = "APPEL";
@@ -46,6 +47,7 @@ public:
 
 	//Generator functions
 	void empc(int constante);
+	void empc(char constante);
 	void stop();
 	void add();
 	void pile(int nbrMots);
@@ -63,6 +65,7 @@ public:
 	void depg(int adresse);
 	void depl(int adresse);
 	void ecriv();
+	void ecric();
 	void lire();
 	void saut(string label);
 	void label(string nom);

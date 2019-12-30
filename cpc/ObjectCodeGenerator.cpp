@@ -88,6 +88,10 @@ void ObjectCodeGenerator::empc(int constante)
 	output << EMPC << ' ' << constante << endl;
 }
 
+void ObjectCodeGenerator::empc(char constante)
+{
+	output << EMPC << ' ' << constante << endl;
+}
 
 void ObjectCodeGenerator::stop()
 {
@@ -137,6 +141,11 @@ void ObjectCodeGenerator::depl(int adresse)
 void ObjectCodeGenerator::ecriv()
 {
 	output << ECRIV << endl;
+}
+
+void ObjectCodeGenerator::ecric()
+{
+	output << ECRIC << endl;
 }
 
 void ObjectCodeGenerator::lire()

@@ -814,7 +814,7 @@ string Syntaxique::facteur() {
 	}
 	else if (uniteCourante.UL == CONSTCAR) {
 		fac = "car";
-		generator->empc(uniteCourante.attribut);
+		generator->empc(static_cast<char>(uniteCourante.attribut));
 		consommer(CONSTCAR);
 	}
 	else if (uniteCourante.UL == PAROUV) {
@@ -1275,7 +1275,7 @@ bool Syntaxique::estSuivantDe(Production production) {
 		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN;
 		break;
 	case eListeDeDeclarations:
-		return uniteCourante.UL == IDENT || uniteCourante.UL == MAIN;
+		return	ACCOUV;
 		break;
 	case eDeclarations:
 		return uniteCourante.UL == PTVRG;
