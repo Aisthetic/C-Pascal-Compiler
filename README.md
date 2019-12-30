@@ -55,6 +55,28 @@ Output
  4. Génération du code intermediaire
  5. Exécution du code intermédiaire
  Ejouter le fichier **stack-machine.exe** dans la variable d'environnement et exécuter la commande **stack-machine.exe + votre_fichier_à_exécuter**
+ 
+## Architecture:
+Nous disposons ici d'une solution divisée en deux :
+- Le Compilateur C-Pascal :
+Donne comme résultat les fichiers cités au-dessus
+- La machine virtuelle P-Machine :
+Exécute le code intermedaire généré par le générateur de code
+Description des parties du compilateur C-Pascal :
+### Le parseur lexical :
+- Equipé par une **Table de hashage** il fait la reconnaissance des unités lexicales du language dans le code source écrit en C-Pascal
+- Génère une **une table des identifiants** et une **une table des mots reservés** ainsi que un fichier **main.lex** contenant le résultat du parsing lexical
+### Le parseur syntaxique :
+- Génère l'arbre syntaxique en XML en se basant sur les règles de producations de la grammaire
+### L'analyseur sémantique :
+- Grifé dans le santaxique il génère une table des symboles contenant tous les informations à propos des symboles utilisés dans le code source en C-Pascal
+### Générateur de code :
+- Il génére le code intermediaire en p-code destiné à être exécuté par la machine virtual p-machine.
+- Il est gréfé dans le syntaxique et se sert des règles de production pour générer le code intermediaire.
+- Il  gère l'adressage des fonctions et leur appels.
+### Machine virtuelle P-Machine :
+- Equipée d'une pile sert à exécuter le code générer par le générateur de code.
+- Equipée de deux modes, mode débuggage et mode automatique, le mode débuggage affiche graphiquement la pile d'éxécution et son évolution au cours de l'éxécution.
 ## License:
 CPC Compiler est sous la Licence Publique Générale GNU vous pouvez le redistribuer et/ou le modifier selon les termes de la license GNU. Nous avons utilisé CLI pour gérer la ligne de commande qui est aussi sous la Lisence Générale GNU.
 
