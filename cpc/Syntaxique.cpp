@@ -497,15 +497,15 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 	}
 	else if (uniteCourante.UL == TANTQUE)
 	{
-		consommer(TANTQUE);
-		consommer(PAROUV);
-		expression();
-		consommer(PARFERM);
 		int tempCounter = counter; // solution pour les if imbriqués
 		counter++;
+		consommer(TANTQUE);
+		consommer(PAROUV);
+		generator->label("debuttantque " + to_string(tempCounter));
+		expression();
+		consommer(PARFERM);
 		if (uniteCourante.UL == FAIRE) {
 			generator->sifaux("fintantque " + to_string(tempCounter));
-			generator->label("debuttantque " + to_string(tempCounter));
 			adresses.insert(adresses.begin(), pair<int, string>(lexical->getLine()-1, "debuttantque " + to_string(tempCounter)));
 			consommer(FAIRE);
 			consommer(ACCOUV);

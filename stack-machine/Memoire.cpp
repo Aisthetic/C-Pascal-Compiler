@@ -97,3 +97,8 @@ void Memoire::setCell(int num, string value)
 {
 	cells[num] = value;
 }
+
+void Memoire::setVarGloNum(int toSet)
+{
+	varGloNum = toSet;
+}

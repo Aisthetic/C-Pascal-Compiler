@@ -73,6 +73,8 @@ void Process::dept(int address)
 	int i = stoi(dep());
 	memoire->setCell(realAddress + i, value);
 
+	// Next instruction
+	memoire->incCo();
 }
 
 void Process::addi()

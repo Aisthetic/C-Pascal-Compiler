@@ -110,6 +110,9 @@ void Interpreter::exInstr()
 		else if (currentInstruction.substr(0, 4) == "DEPG") {
 			process->depg(stoi(currentInstruction.substr(5)));
 		}
+		else if (currentInstruction.substr(0, 4) == "EMPT") {
+			process->empt(stoi(currentInstruction.substr(5)));
+		}
 		else if (currentInstruction.substr(0, 4) == "DEPT") {
 			process->dept(stoi(currentInstruction.substr(5)));
 		}
@@ -168,7 +171,12 @@ void Interpreter::exInstr()
 			process->sortie();
 		}
 		else if (currentInstruction.substr(0, 4) == "PILE") {
-			process->pile(stoi(currentInstruction.substr(5)));
+			if (firstLine) {
+				memoire->setVarGloNum(stoi(currentInstruction.substr(5)));
+			}
+			else {
+				process->pile(stoi(currentInstruction.substr(5)));
+			}
 		}
         else if (currentInstruction == "DUP") {
             process->dup();
@@ -187,9 +195,11 @@ void Interpreter::exInstr()
 			cin.clear();
 			getline(cin, test);
 			clearConsole();
+			if (firstLine) firstLine = false;
 			exInstr();
 		}
 		else {
+			if (firstLine) firstLine = false;
 			exInstr();
 		}
     }

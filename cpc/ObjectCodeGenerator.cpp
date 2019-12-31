@@ -64,6 +64,13 @@ void ObjectCodeGenerator::end()
 			std::string labelName = line.substr(position);
 			line.replace(SIFAUX.length() + 1, line.length(), to_string(adresses[labelName]));
 		}
+		//replacing labels on sifaux
+		if (line.find(SIVRAI) != string::npos) {
+			std::string delimiter = " ";
+			auto position = line.find(delimiter);
+			std::string labelName = line.substr(position);
+			line.replace(SIVRAI.length() + 1, line.length(), to_string(adresses[labelName]));
+		}
 		//replacing labels on saut
 		if (line.find(SAUT) != string::npos) {
 			std::string delimiter = " ";

@@ -32,7 +32,7 @@ private:
 	const string LABEL = "LABEL";
 	const string SIFAUX = "SIFAUX";
 	const string SIVRAI = "SIVRAI";
-	const string FIN = "FIN";
+	const string FIN = "STOP";
 	//const string = "";
 	//fields
 	ofstream output;

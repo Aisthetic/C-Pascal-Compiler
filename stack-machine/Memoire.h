@@ -51,5 +51,6 @@ public:
 	void setBel(int toSet);
 	void setSp(int toSet);
 	void setCell(int num, string value);
+	void setVarGloNum(int toSet);
 };
 

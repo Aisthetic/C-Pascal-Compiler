@@ -19,6 +19,7 @@ private:
 	string currentInstruction;
 	vector<string> console;
 	bool debugMode = false;
+	bool firstLine = true;
 
 public:
 	void exInstr(); // Execute instruction
