@@ -6,16 +6,15 @@ Memoire::Memoire(vector<string> code)
 	std::copy(code.begin(), code.end(), cells.begin());
 
 	// Changing registers accordingly
-	beg = code.size(); //         has to add global variables handling !!!!!!!!!!
-	bel = code.size();
-	sp = code.size()+1;
+	beg = (int)code.size();
+	bel =(int) code.size();
+	sp = (int)code.size() + 1;
 }
 
 bool Memoire::stackFull()
 {
 	if (sp >= MEMORYSIZE) { return true; } 
 	else { return false; }
-	
 }
 
 bool Memoire::stackEmpty()
@@ -49,6 +48,16 @@ string Memoire::getCell(int num)
 	return cells[num];
 }
 
+int Memoire::getStCellNum(int cell)
+{
+	return cell - beg - varGloNum - 2;
+}
+
+int Memoire::getVarGloNum()
+{
+	return varGloNum;
+}
+
 void Memoire::incCo()
 {
 	co++;
@@ -64,9 +73,24 @@ void Memoire::decSp()
 	sp--;
 }
 
+void Memoire::incVarGloNum()
+{
+	varGloNum++;
+}
+
 void Memoire::setCo(int toSet)
 {
 	co = toSet;
+}
+
+void Memoire::setBel(int toSet)
+{
+	bel = toSet;
+}
+
+void Memoire::setSp(int toSet)
+{
+	sp = toSet;
 }
 
 void Memoire::setCell(int num, string value)

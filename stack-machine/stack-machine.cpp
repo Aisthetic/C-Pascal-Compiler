@@ -6,7 +6,7 @@
 
 int main()
 {
-    Interpreter* interpreter = new Interpreter("p-code.txt");
+    Interpreter* interpreter = new Interpreter("calc.txt");
     interpreter->exInstr();
 }
 
