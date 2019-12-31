@@ -16,26 +16,26 @@ div(entier a, entier b)
 	retour a / b;
 }
 main()  				
-car choix, entier a, entier b, entier resultat;
+entier choix, entier a, entier b, entier resultat;
 {
 	
 	choix = lire();
 	a = lire();
 	b = lire();
 	tantque( choix > 0) faire{
-		si ( choix == 'd') alors
+		si ( choix == 1) alors
 		{
 			resultat = div(a,b);
 		}
-		si ( choix == 'm') alors
+		si ( choix == 2) alors
 		{
 			resultat = mul(a,b);
 		}
-		si ( choix == 'a') alors
+		si ( choix == 3) alors
 		{
 			resultat = somme(a,b);
 		}
-		si ( choix == 's') alors
+		si ( choix == 4) alors
 		{
 			resultat = souprictop(a,b);
 		}
@@ -44,4 +44,5 @@ car choix, entier a, entier b, entier resultat;
 		a = lire();
 		b = lire();
 	}
+	retour 1;
 }
