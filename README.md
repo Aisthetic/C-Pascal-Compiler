@@ -23,9 +23,15 @@ Avec contribution de :
 ## Comment utiliser :
  
  1. Ajouter **cpc.exe** dans la variable d'evironnemment **path**
- 2. Exécuter la commande **cpc -h** pour l'aide
- 3. Le résultat de la compilation sera ainsi obtenu sous la forme suivate :
- 
+ 2. Pour obtenir de l'aide tappez la commande 
+ ```
+ cpc.exe -h
+ ```
+ 3. Compiler le code source **p-code** en tappant la commande 
+ ```
+ cpc.exe nom_du_fichier
+ ```
+ Le résultat de la compilation sera obtenu sous la l'architecture suivante :
 
 ```
 Output
@@ -53,8 +59,14 @@ Output
 ```
 
  4. Génération du code intermediaire
+ Dans le dossier output vous allez obtenir un fichier objet qui contient le code **p-code**
  5. Exécution du code intermédiaire
- Ejouter le fichier **stack-machine.exe** dans la variable d'environnement et exécuter la commande **stack-machine.exe + votre_fichier_à_exécuter**
+  Ejouter le fichier **stack-machine.exe** dans la variable d'environnement et exécuter la commande **stack-machine.exe + votre_fichier_à_exécuter**
+ Après la compilation on aura obtenu un code source en language intermediaire p-code que vous pouvez exécuter en utilisant la machine virtuelle, vous pouvez exécuter un tappant la commande 
+ ```
+ stack-machine nom_du_fichier.o
+ ```
+
  
 ## Architecture:
 Nous disposons ici d'une solution divisée en deux :
