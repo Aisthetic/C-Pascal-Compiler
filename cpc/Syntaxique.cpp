@@ -131,6 +131,7 @@ void Syntaxique::listeDeFonctions()
 		xmlOpen("main");
 		//actions semantiques
 		semantique->AjouterTS("val", lexical->identifiants.get(uniteCourante.attribut), ite_varlocalglobal);  
+		(semantique->TS.end() - 1)->nom = "main"; 
 		(semantique->TS.end() - 1)->estfct = true; 
 
 		//gen de code-
@@ -312,8 +313,12 @@ void Syntaxique::declarationSeconde()
 	{
 		consommer(CROOUV);
 		(*semantique).TS.back().nb = 1; 
-		expression();
+		int taille = uniteCourante.attribut;
+		consommer(CONST);
 		consommer(CROFER);
+
+		//gen de code
+		nbrDeclarations = taille + semantique->TS.back().nb - 1;
 	}
 	else if (estSuivantDe(eDeclarationSeconde))
 	{
@@ -440,7 +445,10 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 
 		if (data.type == "entier" || data.type == "car") {
 			if (data.scope == 0)//variable globale
-				generator->depg(semantique->getVariableAddress(tempIdent, ite_varlocalglobal));
+				if(data.nb > 0)//tableau
+					generator->dept(semantique->getVariableAddress(tempIdent, ite_varlocalglobal));
+				else
+					generator->depg(semantique->getVariableAddress(tempIdent, ite_varlocalglobal));
 			else {
 				generator->depl(semantique->getVariableAddress(tempIdent, ite_varlocalglobal));
 			}
@@ -468,13 +476,25 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 		expression();
 		int tempCounter = counter; // solution pour les if imbriqués
 		counter++;
-		generator->sifaux("finsi " + to_string(tempCounter));
+		if (needReverse) {
+			needReverse = false;
+			generator->sivrai("finsi " + to_string(tempCounter));
+		}
+		else 
+			generator->sifaux("finsi " + to_string(tempCounter));
+
 		if (uniteCourante.UL == ALORS) {
 			consommer(ALORS);
 			consommer(ACCOUV);
 			listeInstructions();
 			consommer(ACCFERM);
-			generator->label("finsi " + to_string( tempCounter));
+			if (needReverse) {
+				needReverse = false;
+				generator->sivrai("finsi " + to_string(tempCounter));
+			}
+			else
+				generator->sifaux("finsi " + to_string(tempCounter));
+
 			adresses.insert(adresses.begin(), pair<int, string>(lexical->getLine()-1, "finsi " + to_string(tempCounter)));
 			instructionSeconde();
 		}
@@ -521,7 +541,7 @@ void Syntaxique::instructionPrime()
 		consommer(EGAL);
 		instructionTriple();
 	}
-	else if (uniteCourante.UL == CROFER) {
+	else if (uniteCourante.UL == CROOUV) {
 		consommer(CROOUV);
 		expression();
 		consommer(CROFER);
@@ -535,13 +555,8 @@ void Syntaxique::instructionPrime()
 void Syntaxique::instructionPrime(string instruprime) 
 {
 	xmlOpen("instructionPrime");
-	if (estPremierDe(eInstructionPrime)) {
-		consommer(EGAL);
-		string instrutriple = instructionTriple(); 
-		if (instrutriple != instruprime ) 
-			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
-	}
-	else if (uniteCourante.UL == CROFER) {
+	
+	if (uniteCourante.UL == CROOUV) {
 		consommer(CROOUV);
 		if (semantique->VerifierTableau(tmp) == false) 
 			semantique->logError("incompatible type: expected a table");
@@ -549,7 +564,13 @@ void Syntaxique::instructionPrime(string instruprime)
 		consommer(CROFER);
 		consommer(EGAL);
 		string instrutriple = instructionTriple(); 
-		if (instrutriple != instruprime ) 
+		if (instrutriple != instruprime && instrutriple !=  "")
+			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
+	}
+	else if (estPremierDe(eInstructionPrime)) {
+		consommer(EGAL);
+		string instrutriple = instructionTriple();
+		if (instrutriple != instruprime && instrutriple != "")
 			semantique->logError("conflicting type " + instrutriple + " differe de " + instruprime);
 	}
 	else { syntaxError(eInstructionPrime); }
@@ -785,7 +806,10 @@ string Syntaxique::facteur() {
 
 		if (data.type == "entier" || data.type == "car") {
 			if (data.scope == 0)//variable globale
+			{
+				if(data.nb == 0) // pas tab			
 				generator->empg(semantique->getVariableAddress(tmp, ite_varlocalglobal));
+			}
 			else {
 				generator->empl(semantique->getVariableAddress(tmp, ite_varlocalglobal));
 			}
@@ -852,7 +876,8 @@ int Syntaxique::facteurPrime() {
 		if (semantique->VerifierTableau(tmp) == false) 
 			semantique->logError("incompatible type: expected a table");
 		expression();
-		consommer(CROOUV);
+		consommer(CROFER);
+		generator->empt(semantique->getVariableAddress(tmp, ite_varlocalglobal));
 	}
 	else if (uniteCourante.UL == PAROUV) {
 		facteurType = 1;
@@ -945,7 +970,8 @@ string Syntaxique::comparaison()
 	xmlOpen("comparaison");
 	if (uniteCourante.UL == SUP) {
 		consommer(SUP);
-		comp = "SUP";
+		comp = "INF";
+		needReverse = true;
 	}
 	else if (uniteCourante.UL == INFEGAL) {
 		consommer(INFEGAL);
@@ -953,7 +979,8 @@ string Syntaxique::comparaison()
 	}
 	else if (uniteCourante.UL == SUPEGAL){
 		consommer(SUPEGAL);
-		comp = "SUPEGAL";
+		comp = "INFEGAL";
+		needReverse = true;
 	}
 	else if (uniteCourante.UL == INF) {
 		consommer(INF);
@@ -998,7 +1025,7 @@ void Syntaxique::consommer(TUnite expected) {
 	if (uniteCourante.UL != expected)
 	{
 		int line = lexical->getLine();
-		int col = lexical->getColumn();
+		int col = lexical->getColumn(); 
 
 		auto itr = syntaxErrors.find(pair<int, int>(line, col));
 		if (itr != syntaxErrors.end())//We already have some errors at this position

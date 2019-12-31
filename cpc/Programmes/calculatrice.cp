@@ -40,8 +40,5 @@ car choix, entier a, entier b, entier resultat;
 			resultat = souprictop(a,b);
 		}
 		ecrire(resultat);
-		choix = lire();
-		a = lire();
-		b = lire();
 	}
 }

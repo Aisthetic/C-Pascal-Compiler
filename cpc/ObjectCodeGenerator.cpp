@@ -63,6 +63,13 @@ void ObjectCodeGenerator::end()
 			std::string labelName = line.substr(position);
 			line.replace(SIFAUX.length() + 1, line.length(), to_string(adresses[labelName]));
 		}
+		//replacing labels on saut
+		if (line.find(SAUT) != string::npos) {
+			std::string delimiter = " ";
+			auto position = line.find(delimiter);
+			std::string labelName = line.substr(position);
+			line.replace(SAUT.length() + 1, line.length(), to_string(adresses[labelName]));
+		}
 		//deleting labels on entree
 		if(line.find(ENTREE) != string::npos)
 			line.replace(ENTREE.length(), line.length(), "");
@@ -123,6 +130,12 @@ void ObjectCodeGenerator::empg(int adresse)
 	output << EMPG << " " << adresse << endl;
 }
 
+void ObjectCodeGenerator::empt(int adresse)
+{
+	output << EMPT << " " << adresse << endl;
+}
+
+
 void ObjectCodeGenerator::empl(int adresse)
 {
 	output << EMPL << " " << adresse << endl;
@@ -131,6 +144,10 @@ void ObjectCodeGenerator::empl(int adresse)
 void ObjectCodeGenerator::depg(int adresse)
 {
 	output << DEPG << " " << adresse << endl;
+}
+void ObjectCodeGenerator::dept(int adresse)
+{
+	output << DEPT << " " << adresse << endl;
 }
 
 void ObjectCodeGenerator::depl(int adresse)
@@ -155,6 +172,7 @@ void ObjectCodeGenerator::lire()
 
 void ObjectCodeGenerator::pile(int nbrMots)
 {
+	if (nbrMots == 0) return;
 	output << PILE << " " << nbrMots << endl;
 }
 
@@ -168,6 +186,10 @@ void ObjectCodeGenerator::label(string nom) {
 
 void ObjectCodeGenerator::sifaux(string label) {
 	output << SIFAUX << " " << label << endl;
+}
+
+void ObjectCodeGenerator::sivrai(string label) {
+	output << SIVRAI << " " << label << endl;
 }
 
 void ObjectCodeGenerator::comp(string oper)

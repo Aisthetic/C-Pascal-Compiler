@@ -37,6 +37,7 @@ private:
 	int nbrDeclarations,nbrParam;
 	map<int, string> adresses;//les adresses des labels <adresse, label>
 	string currentFunction;
+	bool needReverse;
 	// Methodes
 	void end();
 	void printErrors();
