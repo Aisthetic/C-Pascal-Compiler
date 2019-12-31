@@ -59,6 +59,7 @@ Output
 ```
 
  4. Génération du code intermediaire
+ Dans le dossier output vous allez obtenir un fichier objet qui contient le code **p-code**
  5. Exécution du code intermédiaire
  Après la compilation on aura obtenu un code source en language intermediaire p-code que vous pouvez exécuter en utilisant la machine virtuelle, vous pouvez exécuter un tappant la commande 
  ```
