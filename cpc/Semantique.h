@@ -26,6 +26,8 @@ public:
 	// Constructeurs - Destructeurs
 	Semantique();
 	~Semantique();
+	ofstream TSOutput;//identif table 
+	TextTable SementicTable;
 
 	//methodes
 	void AjouterTS(string nom,string dans_quelle_cas_var_on_ajoute,int); // crée une variable et l'ajout au TS
@@ -38,6 +40,8 @@ public:
 	void logError(string error); // afficher les erreurs du semantique
 	variable getVariableData(string name, int scope);
 	int getVariableAddress(string name, int scope);//retruns the variable address in its decalaration scope
+
+	void setupTSOutput();//Cree un fichier d'output 
 //private:
 	vector<variable> TS; /// tableau des variables
 };

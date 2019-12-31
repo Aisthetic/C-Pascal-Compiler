@@ -8,8 +8,15 @@
 using namespace std;
 
 //Constructeurs
-Semantique::Semantique()
+Semantique::Semantique() :SementicTable('-', '|', '+')
 {
+	setupTSOutput();
+	//Initializing members
+	SementicTable.add("Valeur d'identifiant");
+	SementicTable.add("est_elle fonction");
+	SementicTable.add("Type");
+	SementicTable.add("Scope");
+	SementicTable.endOfRow();
 
 }
 
@@ -37,12 +44,26 @@ string Semantique::typeidentifTS(string nom)
 			return TS[i].type;
 }
 
+//void Semantique::AfficherTS()
+//{
+//	cout << "- Le tableau des Symboles contient : " << endl;
+//	for (int i = 0; i < TS.size(); i++) {
+//		cout << "  -- La Valeur = " << TS[i].nom << " , est-elle une fonction = " << TS[i].estfct << ", de type = " << TS[i].type << ", dans le scope = " << TS[i].scope << endl;
+//	}
+//}
 void Semantique::AfficherTS()
 {
-	cout << "- Le tableau des Symboles contient : " << endl;
+	cout << "TS table will be logged at ./Output/Semantique/TS_Table.txt" << endl;
 	for (int i = 0; i < TS.size(); i++) {
-		cout << "  -- La Valeur = " << TS[i].nom << " , est-elle une fonction = " << TS[i].estfct << ", de type = " << TS[i].type << ", dans le scope = " << TS[i].scope << endl;
+		//cout << "  -- La Valeur = " << TS[i].nom << " , est-elle une fonction = " << TS[i].estfct << ", de type = " << TS[i].type << ", dans le scope = " << TS[i].scope << endl;
+		SementicTable.add(TS[i].nom);
+		SementicTable.add(to_string(TS[i].estfct));
+		SementicTable.add(TS[i].type);
+		SementicTable.add(to_string(TS[i].scope));
+		SementicTable.endOfRow();
 	}
+
+	TSOutput << SementicTable;
 }
 
 void Semantique::ControlerTS()
@@ -164,4 +185,16 @@ int Semantique::getVariableAddress(string name, int scope)
 		}
 	}
 	return -1;
+}
+
+//Cree un fichier d'output 
+void Semantique::setupTSOutput() {
+	if (!TSOutput.is_open())//si un input est déjà ouvert on passe au processing direct
+	{
+		TSOutput.open(SEMANTIQUE_OUTPUT_DIRECTORY + "/TS_Table.txt");
+		if (!TSOutput.is_open()) {
+			logError("Impossible d'ouvrir le fichier d'TSOutput");
+			return;
+		}
+	}
 }
