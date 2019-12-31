@@ -35,6 +35,7 @@ void ObjectCodeGenerator::end()
 			adresses.insert(adresses.begin(), pair<string, int>(token, noLine - nbLabels));
 			nbLabels++;
 		}
+
 		noLine++;
 
 	}

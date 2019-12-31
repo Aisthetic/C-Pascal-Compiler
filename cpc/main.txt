@@ -22,27 +22,27 @@ entier choix, entier a, entier b, entier resultat;
 	choix = lire();
 	a = lire();
 	b = lire();
-	tantque( choix > 0) faire{
-		si ( choix == 1) alors
-		{
-			resultat = div(a,b);
-		}
-		si ( choix == 2) alors
-		{
-			resultat = mul(a,b);
-		}
-		si ( choix == 3) alors
-		{
-			resultat = somme(a,b);
-		}
-		si ( choix == 4) alors
-		{
-			resultat = souprictop(a,b);
-		}
-		ecrire(resultat);
-		choix = lire();
-		a = lire();
-		b = lire();
+	
+	si ( choix == 1) alors
+	{
+		resultat = div(a,b);
 	}
+	si ( choix == 2) alors
+	{
+		resultat = mul(a,b);
+	}
+	si ( choix == 3) alors
+	{
+		resultat = somme(a,b);
+	}
+	si ( choix == 4) alors
+	{
+		resultat = souprictop(a,b);
+	}
+	ecrire(resultat);
+	choix = lire();
+	a = lire();
+	b = lire();
+	
 	retour 1;
 }

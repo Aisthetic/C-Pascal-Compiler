@@ -153,6 +153,7 @@
     <ClCompile Include="stack-machine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CLI11.hpp" />
     <ClInclude Include="Constantes.h" />
     <ClInclude Include="Interpreter.h" />
     <ClInclude Include="Memoire.h" />

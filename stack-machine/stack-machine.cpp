@@ -3,11 +3,24 @@
 
 #include <iostream>
 #include "Interpreter.h"
+#include "CLI11.hpp"
 
-int main()
+int main(int argc, char* argv[])
 {
-    Interpreter* interpreter = new Interpreter("p-code.txt");
-    interpreter->exInstr();
+	CLI::App app{ "Machine virtuelle du language C-Pascal" };
+	//Processing multiple files
+	vector<string> files;
+	app.add_option("files", files, "Files to add");
+
+	CLI11_PARSE(app, argc, argv);
+
+	for (auto file : files) {
+		cout << "Processing file : " << file << endl;
+		//Utilisation du 2eme constructeur pour avoir acces au lexical depuis le main (facile à debug)
+		Interpreter* interpreter = new Interpreter(file);
+		interpreter->exInstr();
+	}
+	return 0;
 }
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage

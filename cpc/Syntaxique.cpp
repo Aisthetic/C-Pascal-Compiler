@@ -488,12 +488,7 @@ void Syntaxique::instruction() //URFENT TODO: REMOVE IS MOT CLE
 			consommer(ACCOUV);
 			listeInstructions();
 			consommer(ACCFERM);
-			if (needReverse) {
-				needReverse = false;
-				generator->sivrai("finsi " + to_string(tempCounter));
-			}
-			else
-				generator->sifaux("finsi " + to_string(tempCounter));
+			generator->label("finsi " + to_string(tempCounter));
 
 			adresses.insert(adresses.begin(), pair<int, string>(lexical->getLine()-1, "finsi " + to_string(tempCounter)));
 			instructionSeconde();
