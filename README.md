@@ -61,11 +61,12 @@ Output
  4. Génération du code intermediaire
  Dans le dossier output vous allez obtenir un fichier objet qui contient le code **p-code**
  5. Exécution du code intermédiaire
+  Ejouter le fichier **stack-machine.exe** dans la variable d'environnement et exécuter la commande **stack-machine.exe + votre_fichier_à_exécuter**
  Après la compilation on aura obtenu un code source en language intermediaire p-code que vous pouvez exécuter en utilisant la machine virtuelle, vous pouvez exécuter un tappant la commande 
  ```
  stack-machine nom_du_fichier.o
  ```
- Ejouter le fichier **stack-machine.exe** dans la variable d'environnement et exécuter la commande **stack-machine.exe + votre_fichier_à_exécuter**
+
  
 ## Architecture:
 Nous disposons ici d'une solution divisée en deux :
