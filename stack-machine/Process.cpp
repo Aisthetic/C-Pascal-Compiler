@@ -36,6 +36,7 @@ void Process::depl(int address)
 	int realAddress = address + memoire->getBel();
 	string varLoc = dep();
 	memoire->setCell(realAddress, varLoc);
+	cout << "Depilation et affectation de " << varLoc << " dans la variable local " << address << ".\n";
 	memoire->incCo();
 }
 
@@ -52,6 +53,7 @@ void Process::depg(int address)
 	int realAddress = address + memoire->getBeg();
 	string varGlo = dep();
 	memoire->setCell(realAddress, varGlo);
+	cout << "Depilation et affectation de " << varGlo << " dans la variable globale " << address << ".\n";
 	memoire->incCo();
 }
 
@@ -92,8 +94,8 @@ void Process::addi()
 		cout << t2 << " = ";
 
 		// Stacking the addition
-		cout << t1 + t2 << ". ";
-		emp(to_string(t1 + t2));
+		cout << t2 + t1 << ". ";
+		emp(to_string(t2 + t1));
 
 		// Next instruction
 		memoire->incCo();
@@ -119,8 +121,8 @@ void Process::sous()
 		cout << t2 << " = ";
 
 		// Stacking the substraction
-		cout << t1 - t2 << ". ";
-		emp(to_string(t1 - t2));
+		cout << t2 - t1 << ". ";
+		emp(to_string(t2 - t1));
 
 		// Next instruction
 		memoire->incCo();
@@ -146,7 +148,7 @@ void Process::mul()
 		cout << t2 << " = ";
 
 		// Stacking the mul
-		cout << t1 * t2 << ". ";
+		cout << t2 * t1 << ". ";
 		emp(to_string(t2 * t1));
 
 		// Next instruction
@@ -173,8 +175,8 @@ void Process::div()
 		cout << t2 << " = ";
 
 		// Stacking the div
-		cout << t1 / t2 << ". ";
-		emp(to_string(t1 / t2));
+		cout << t2 / t1 << ". ";
+		emp(to_string(t2 / t1));
 
 		// Next instruction
 		memoire->incCo();
@@ -200,8 +202,8 @@ void Process::mod()
 		cout << t2 << " = ";
 
 		// Stacking the mod
-		cout << t1 % t2 << ". ";
-		emp(to_string(t1 % t2));
+		cout << t2 % t1 << ". ";
+		emp(to_string(t2 % t1));
 
 		// Next instruction
 		memoire->incCo();
@@ -216,10 +218,10 @@ void Process::egal()
 	}
 	else {
 		// Popping out first term
-		int t1 = stoi(dep());
+		string t1 = dep();
 
 		// Popping out second term
-		int t2 = stoi(dep());
+		string t2 = dep();
 
 		if (t1 == t2) {
 			cout << t1 << " == " << t2 << "\n";
@@ -248,12 +250,12 @@ void Process::inf()
 		// Popping out second term
 		int t2 = stoi(dep());
 
-		if (t1 < t2) {
-			cout << t1 << " < " << t2 << "\n";
+		if (t2 < t1) {
+			cout << t2 << " < " << t1 << "\n";
 			emp(to_string(1));
 		}
 		else {
-			cout << t1 << " !< " << t2 << "\n";
+			cout << t2 << " !< " << t1 << "\n";
 			emp(to_string(0));
 		}
 
@@ -275,12 +277,12 @@ void Process::infeg()
 		// Popping out second term
 		int t2 = stoi(dep());
 
-		if (t1 <= t2) {
-			cout << t1 << " <= " << t2 << "\n";
+		if (t2 <= t1) {
+			cout << t2 << " <= " << t1 << "\n";
 			emp(to_string(1));
 		}
 		else {
-			cout << t1 << " !<= " << t2 << "\n";
+			cout << t2 << " !<= " << t1 << "\n";
 			emp(to_string(0));
 		}
 
@@ -453,6 +455,7 @@ void Process::retour()
 	int address;
 	address = stoi(dep());
 	saut(address);
+	cout << "Retour effectue\n";
 }
 
 void Process::entree()
@@ -466,7 +469,7 @@ void Process::entree()
 
 void Process::sortie()
 {
-	memoire->setSp(memoire->getBeg());
+	memoire->setSp(memoire->getBel());
 	memoire->setBel(stoi(dep()));
 
 	// Next instruction
@@ -476,6 +479,7 @@ void Process::sortie()
 void Process::pile(int number)
 {
 	memoire->setSp(memoire->getSp() + number);
+	cout << number << " cellules reservees dans la memoire\n";
 	memoire->incCo();
 }
 

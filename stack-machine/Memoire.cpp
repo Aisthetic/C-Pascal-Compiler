@@ -6,7 +6,7 @@ Memoire::Memoire(vector<string> code)
 	std::copy(code.begin(), code.end(), cells.begin());
 
 	// Changing registers accordingly
-	beg = (int)code.size(); //         has to add global variables handling !!!!!!!!!!
+	beg = (int)code.size();
 	bel =(int) code.size();
 	sp = (int)code.size() + 1;
 }
@@ -15,7 +15,6 @@ bool Memoire::stackFull()
 {
 	if (sp >= MEMORYSIZE) { return true; } 
 	else { return false; }
-	
 }
 
 bool Memoire::stackEmpty()
