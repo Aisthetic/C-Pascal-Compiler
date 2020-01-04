@@ -1,4 +1,0 @@
-EMPC a
-ECRIV
-STOP
-

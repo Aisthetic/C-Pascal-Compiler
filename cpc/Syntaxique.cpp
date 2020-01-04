@@ -75,11 +75,16 @@ void Syntaxique::end() {
 	//First, we check if there's multiple errors targeting the same Ln&Col
 	generator->end();
 	for (auto const& element : syntaxErrors) {
+		string mostAccurate = ";";
 		auto line = element.first.first;
 		auto col = element.first.second;
 		string message =  lexical->inputFilename + ":" + "at Ln " + to_string(line) + ", Col "+ to_string(col) +  ": expected ";
 		for (auto const& symbol : element.second)
-			message += symbol + " ";
+			if (symbol == "constant")
+				mostAccurate == "constant";
+			else if (symbol == "alors")
+				mostAccurate == "alors";
+			message += mostAccurate + " ";
 		logError(message);
 	}
 	//Writing XML file
@@ -1061,7 +1066,7 @@ void Syntaxique::syntaxError(Production prod) {
 	case eDeclarationPrime:
 	case eOperateurLogique:
 	case eComparaison:
-		expectedSymbols.push_back("logic operator");
+		expectedSymbols.push_back(";");
 		break;
 	case eListeInstructions:
 	case eInstruction:
@@ -1069,65 +1074,64 @@ void Syntaxique::syntaxError(Production prod) {
 	case eExpression:
 	case eInstructionTriple:
 	case eInstructionPrime:
-		expectedSymbols.push_back("operator");
+		expectedSymbols.push_back("constant");
 		break;
 	case eDeclarationsPrime:
-		expectedSymbols.push_back(",");
+		expectedSymbols.push_back(";");
 		break;
 	case eDeclarationSeconde:
-		expectedSymbols.push_back("[");
+		expectedSymbols.push_back(";");
 			break;
 	case eExpressionLogique:
-		expectedSymbols.push_back("logic expression");
+		expectedSymbols.push_back(";");
 		break;
 	case eExpressionLogiquePrime:
-		expectedSymbols.push_back("logic operator");
+		expectedSymbols.push_back(";");
 		break;
 	case eExpressionSimple:
 		expectedSymbols.push_back("constant");
 		break;
 	case eExpressionSimplePrime:
-		expectedSymbols.push_back("arithmetic operator");
+		expectedSymbols.push_back(";");
 		break;
 	case eTerme:
 		expectedSymbols.push_back("constant");
 		break;
 	case eTermePrime:
-		expectedSymbols.push_back("*"); expectedSymbols.push_back("/");
+		expectedSymbols.push_back(";");
 		break;
 	case eTermePrioritaire:
-		expectedSymbols.push_back("!"); expectedSymbols.push_back("(");
+		expectedSymbols.push_back("expression");
 		break;
 	case eFacteur:
-		expectedSymbols.push_back("const");
-		expectedSymbols.push_back("(");
+		expectedSymbols.push_back("constant");
 		break;
 	case eFacteurPrime:
-		expectedSymbols.push_back("[");
-		expectedSymbols.push_back("(");
+		expectedSymbols.push_back(";");
+		//expectedSymbols.push_back("(");
 		break;
 	case eParametresEffectifs:
-		expectedSymbols.push_back("*");
-		expectedSymbols.push_back("/");
+		//expectedSymbols.push_back("*");
+		expectedSymbols.push_back(";");
 		break;
 	case eExpressions:
-		expectedSymbols.push_back("-"); 
-		expectedSymbols.push_back("!"); 
-		expectedSymbols.push_back("const");
-		expectedSymbols.push_back("(");
+		//expectedSymbols.push_back("-"); 
+		//expectedSymbols.push_back("!"); 
+		//expectedSymbols.push_back("const");
+		expectedSymbols.push_back(";");
 		break;
 	case eExpressionsPrime:
 		expectedSymbols.push_back(",");
 		break;
 
 	case eIdentificateur:
-		expectedSymbols.push_back("logic operator");
+		expectedSymbols.push_back(";");
 		break;
 	case eCte:
 		expectedSymbols.push_back("const");
 		break;
 	case eParametresPrime:
-		expectedSymbols.push_back(",");
+		expectedSymbols.push_back(")");
 		break;
 	case eInstructionSeconde:
 		expectedSymbols.push_back("sinon");

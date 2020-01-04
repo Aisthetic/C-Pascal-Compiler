@@ -1,4 +1,5 @@
 #include "Interpreter.h"
+#include "CLI11.hpp"
 
 using namespace std;
 
@@ -74,7 +75,8 @@ void Interpreter::drawPConsole()
 
 void Interpreter::clearConsole()
 {
-	cout << "\033[2J\033[1;1H";
+	//cout << "\033[2J\033[1;1H";
+	cout << string(100, '\n');
 }
 
 void Interpreter::exInstr()
